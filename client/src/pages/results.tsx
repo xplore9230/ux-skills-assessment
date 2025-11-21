@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight, Download, Loader } from "lucide-react";
 import CategoryCard from "@/components/CategoryCard";
 import WeekCard from "@/components/WeekCard";
 
@@ -33,9 +34,38 @@ export default function ResultsPage({
   maxScore,
   summary,
   categories,
-  improvementPlan,
+  improvementPlan: defaultPlan,
   onRestart,
 }: ResultsPageProps) {
+  const [improvementPlan, setImprovementPlan] = useState(defaultPlan);
+  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+
+  useEffect(() => {
+    const generateAIPlan = async () => {
+      try {
+        const response = await fetch("/api/generate-improvement-plan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            stage,
+            totalScore,
+            maxScore,
+            categories,
+          }),
+        });
+        const data = await response.json();
+        if (data.weeks) {
+          setImprovementPlan(data.weeks);
+        }
+      } catch (error) {
+        console.error("Failed to generate AI plan:", error);
+      } finally {
+        setIsLoadingPlan(false);
+      }
+    };
+
+    generateAIPlan();
+  }, [stage, totalScore, maxScore, categories]);
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-6 py-16 space-y-16">
@@ -94,22 +124,29 @@ export default function ResultsPage({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-2">Your 4-Week Improvement Plan</h2>
+            <h2 className="text-3xl font-bold mb-2">Your AI-Powered 4-Week Improvement Plan</h2>
             <p className="text-lg text-muted-foreground">
-              A personalized roadmap to level up your UX skills
+              Personalized roadmap generated based on your assessment results
             </p>
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {improvementPlan.map((week, index) => (
-              <WeekCard
-                key={week.week}
-                week={week.week}
-                tasks={week.tasks}
-                delay={0.7 + index * 0.1}
-              />
-            ))}
-          </div>
+          {isLoadingPlan ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader className="w-6 h-6 animate-spin" />
+              <span className="ml-3">Generating your personalized plan...</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {improvementPlan.map((week, index) => (
+                <WeekCard
+                  key={week.week}
+                  week={week.week}
+                  tasks={week.tasks}
+                  delay={0.7 + index * 0.1}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <motion.div
