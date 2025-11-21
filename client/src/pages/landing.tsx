@@ -15,7 +15,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex justify-center mb-16"
+          className="flex justify-center mb-6"
         >
           <img 
             src={illustrationImage} 
@@ -29,9 +29,9 @@ export default function LandingPage({ onStart }: LandingPageProps) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="max-w-2xl mx-auto space-y-8"
+          className="max-w-2xl mx-auto space-y-6"
         >
-          <div className="space-y-6 text-center">
+          <div className="space-y-4 text-center">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight" data-testid="text-hero-title">
               Find Your UX Career Stage
             </h1>
@@ -40,7 +40,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             </p>
           </div>
           
-          <div className="flex justify-center">
+          <div className="flex justify-center pt-2">
             <Button
               size="lg"
               className="text-lg px-8 py-6 rounded-xl group"
@@ -52,19 +52,19 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             </Button>
           </div>
           
-          <div className="pt-8 space-y-3 text-center">
-            <p className="text-sm text-muted-foreground">What you'll discover:</p>
-            <ul className="space-y-2 text-muted-foreground max-w-xl mx-auto">
+          <div className="space-y-3 text-center pt-4">
+            <p className="text-sm text-muted-foreground font-semibold">What you'll discover:</p>
+            <ul className="space-y-2 text-muted-foreground inline-flex flex-col items-start gap-3">
               <li className="flex items-start gap-3">
-                <span className="text-foreground">✓</span>
+                <span className="text-foreground flex-shrink-0">✓</span>
                 <span>Your current career stage from Explorer to Strategic Lead</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-foreground">✓</span>
+                <span className="text-foreground flex-shrink-0">✓</span>
                 <span>Detailed breakdown across 5 key skill areas</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-foreground">✓</span>
+                <span className="text-foreground flex-shrink-0">✓</span>
                 <span>Personalized 4-week improvement plan</span>
               </li>
             </ul>
