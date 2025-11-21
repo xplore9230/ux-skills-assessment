@@ -61,6 +61,65 @@ Create a concise, actionable 4-week plan. For each week, provide 3 specific, pra
     }
   });
 
+  // Career stage readup and resource recommendations endpoint
+  app.post("/api/generate-resources", async (req, res) => {
+    try {
+      if (!process.env.AI_INTEGRATIONS_OPENAI_API_KEY) {
+        return res.status(500).json({ error: "AI service not configured" });
+      }
+
+      const openai = new OpenAI({
+        apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+      });
+
+      const { stage, categories } = req.body;
+
+      const categoryDetails = categories
+        .map((c: any) => `${c.name}: ${c.score}/${c.maxScore}`)
+        .join("\n");
+
+      const prompt = `You are a UX career expert. Based on this assessment result, provide:
+1. A brief, inspiring career stage readup (2-3 sentences)
+2. 4-5 highly relevant and real articles/resources with actual URLs
+
+Career Stage: ${stage}
+
+Skill Breakdown:
+${categoryDetails}
+
+Focus on resources that directly address the weakest skill areas. Format as JSON:
+{
+  "readup": "Brief inspiring paragraph about their career stage",
+  "resources": [
+    {"title": "Article Title", "url": "https://...", "description": "Brief description"},
+    {"title": "Article Title", "url": "https://...", "description": "Brief description"}
+  ]
+}
+
+IMPORTANT: Only include real, verified articles and resources with correct URLs. Research actual UX articles and resources.`;
+
+      const message = await openai.chat.completions.create({
+        model: "gpt-4o",
+        max_tokens: 1500,
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      });
+
+      const content = message.choices[0].message.content || "";
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      const data = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+
+      res.json(data || { readup: "", resources: [] });
+    } catch (error) {
+      console.error("Error generating resources:", error);
+      res.status(500).json({ error: "Failed to generate resources" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
