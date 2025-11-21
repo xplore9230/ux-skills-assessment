@@ -139,33 +139,32 @@ export default function ResultsPage({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className={`text-center space-y-8 max-w-3xl mx-auto rounded-lg p-8 md:p-12 border-2 border-border ${stageBgColor}`}
+          className="text-center space-y-6 max-w-3xl mx-auto"
         >
           <div className="flex justify-center">
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
-              className={`p-4 rounded-full bg-background`}
             >
               <StageIcon className={`w-12 h-12 ${stageColor}`} />
             </motion.div>
           </div>
 
-          <div>
-            <Badge className="text-sm px-4 py-1 mb-4" data-testid="badge-stage">
-              Your UX Career Stage
-            </Badge>
-            <h1
-              className="text-5xl md:text-6xl font-bold mb-4"
-              data-testid="text-stage"
-            >
-              {stage}
-            </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              {summary}
-            </p>
-          </div>
+          <Badge className="text-sm px-4 py-1" data-testid="badge-stage">
+            Your UX Career Stage
+          </Badge>
+
+          <h1
+            className="text-5xl md:text-6xl font-bold"
+            data-testid="text-stage"
+          >
+            {stage}
+          </h1>
+
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            {summary}
+          </p>
 
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -177,17 +176,19 @@ export default function ResultsPage({
           </motion.div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="rounded-lg p-8 border-2 border-border bg-muted/30 max-w-3xl mx-auto space-y-4"
-        >
-          <h2 className="text-2xl font-bold">What This Means For Your Career</h2>
-          {stageReadup && (
-            <p className="text-lg leading-relaxed text-foreground">{stageReadup}</p>
-          )}
-        </motion.div>
+        {stageReadup && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="space-y-4 max-w-3xl mx-auto"
+          >
+            <h2 className="text-2xl font-bold">What This Means For Your Career</h2>
+            <p className="text-lg leading-relaxed text-muted-foreground">
+              {stageReadup}
+            </p>
+          </motion.div>
+        )}
 
         {resources.length > 0 && (
           <motion.div
