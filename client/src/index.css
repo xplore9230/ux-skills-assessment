@@ -26,8 +26,8 @@
   --popover: 0 0% 92%;
   --popover-foreground: 0 0% 8%;
   --popover-border: 0 0% 88%;
-  --primary: 38 92% 48%;
-  --primary-foreground: 0 0% 98%;
+  --primary: 38 92% 58%;
+  --primary-foreground: 220 45% 3%;
   --secondary: 0 0% 88%;
   --secondary-foreground: 0 0% 8%;
   --muted: 0 0% 90%;
@@ -43,8 +43,8 @@
   --chart-3: 180 62% 32%;
   --chart-4: 220 70% 38%;
   --chart-5: 280 65% 35%;
-  --font-sans: Inter, system-ui, sans-serif;
-  --font-serif: Newsreader, Georgia, serif;
+  --font-sans: 'Playfair Display', Georgia, serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: .5rem;
   --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
@@ -93,12 +93,12 @@
   --opaque-button-border-intensity: 9;
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
-  --background: 220 45% 3%;
-  --foreground: 0 0% 95%;
-  --border: 220 35% 12%;
-  --card: 220 42% 5%;
-  --card-foreground: 0 0% 95%;
-  --card-border: 220 38% 8%;
+  --background: 220 58% 3%;
+  --foreground: 0 0% 98%;
+  --border: 220 40% 10%;
+  --card: 220 48% 6%;
+  --card-foreground: 0 0% 98%;
+  --card-border: 220 42% 9%;
   --sidebar: 220 40% 7%;
   --sidebar-foreground: 0 0% 95%;
   --sidebar-border: 220 36% 10%;
@@ -107,20 +107,20 @@
   --sidebar-accent: 220 35% 12%;
   --sidebar-accent-foreground: 0 0% 95%;
   --sidebar-ring: 38 92% 58%;
-  --popover: 220 38% 10%;
-  --popover-foreground: 0 0% 95%;
-  --popover-border: 220 35% 14%;
-  --primary: 38 92% 48%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 220 32% 15%;
-  --secondary-foreground: 0 0% 95%;
-  --muted: 220 30% 14%;
-  --muted-foreground: 0 0% 75%;
+  --popover: 220 48% 6%;
+  --popover-foreground: 0 0% 98%;
+  --popover-border: 220 42% 9%;
+  --primary: 38 92% 58%;
+  --primary-foreground: 220 58% 3%;
+  --secondary: 220 40% 12%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 220 35% 12%;
+  --muted-foreground: 0 0% 70%;
   --accent: 38 18% 14%;
-  --accent-foreground: 0 0% 95%;
+  --accent-foreground: 0 0% 98%;
   --destructive: 0 84% 42%;
   --destructive-foreground: 0 0% 98%;
-  --input: 220 30% 25%;
+  --input: 220 40% 15%;
   --ring: 38 92% 58%;
   --chart-1: 38 92% 68%;
   --chart-2: 24 88% 65%;
@@ -171,7 +171,11 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-serif antialiased bg-background text-foreground;
+  }
+  
+  html {
+    @apply dark;
   }
 }
 
