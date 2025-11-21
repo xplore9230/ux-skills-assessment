@@ -13,9 +13,9 @@ export default function ProgressBar({ current, total }: ProgressBarProps) {
       <p className="text-sm text-muted-foreground" data-testid="text-progress">
         Question {current} of {total}
       </p>
-      <div className="h-2 bg-secondary rounded-full overflow-hidden">
+      <div className="h-2 bg-muted rounded-full overflow-hidden border">
         <motion.div
-          className="h-full bg-primary rounded-full"
+          className="h-full bg-foreground"
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 0.5, ease: "easeOut" }}

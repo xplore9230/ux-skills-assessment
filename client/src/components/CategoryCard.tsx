@@ -15,12 +15,6 @@ export default function CategoryCard({
   status,
 }: CategoryCardProps) {
   const percentage = (score / maxScore) * 100;
-  
-  const statusColors = {
-    "strong": "bg-chart-3",
-    "decent": "bg-chart-1",
-    "needs-work": "bg-chart-2"
-  };
 
   return (
     <motion.div
@@ -28,7 +22,7 @@ export default function CategoryCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className="p-6 space-y-4 bg-card" data-testid={`category-${name.toLowerCase().replace(/\s+/g, '-')}`}>
+      <Card className="p-6 space-y-4 bg-card border" data-testid={`category-${name.toLowerCase().replace(/\s+/g, '-')}`}>
         <div className="space-y-2">
           <h3 className="font-semibold text-lg">{name}</h3>
           <p className="text-2xl font-bold text-foreground">
@@ -37,9 +31,9 @@ export default function CategoryCard({
         </div>
         
         <div className="space-y-2">
-          <div className="h-2 bg-secondary rounded-full overflow-hidden">
+          <div className="h-2 bg-muted rounded-full overflow-hidden border">
             <motion.div
-              className={`h-full rounded-full ${statusColors[status]}`}
+              className="h-full bg-foreground"
               initial={{ width: 0 }}
               animate={{ width: `${percentage}%` }}
               transition={{ duration: 0.8, delay: 0.2 }}

@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import ReportPreview from "@/components/ReportPreview";
-import heroBackground from "@assets/generated_images/premium_dark_hero_background.png";
 
 interface LandingPageProps {
   onStart: () => void;
@@ -10,17 +9,8 @@ interface LandingPageProps {
 
 export default function LandingPage({ onStart }: LandingPageProps) {
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      <div 
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage: `url(${heroBackground})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      
-      <div className="relative z-10 container mx-auto px-6 py-24">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-6 py-24">
         <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[80vh]">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -51,15 +41,15 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               <p className="text-sm text-muted-foreground">What you'll discover:</p>
               <ul className="space-y-2 text-muted-foreground">
                 <li className="flex items-start gap-3">
-                  <span className="text-primary">✓</span>
+                  <span className="text-foreground">✓</span>
                   <span>Your current career stage from Explorer to Strategic Lead</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-primary">✓</span>
+                  <span className="text-foreground">✓</span>
                   <span>Detailed breakdown across 5 key skill areas</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-primary">✓</span>
+                  <span className="text-foreground">✓</span>
                   <span>Personalized 4-week improvement plan</span>
                 </li>
               </ul>
