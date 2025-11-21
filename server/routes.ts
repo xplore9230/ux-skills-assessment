@@ -7,12 +7,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI-generated improvement plan endpoint
   app.post("/api/generate-improvement-plan", async (req, res) => {
     try {
-      if (!process.env.AI_INTEGRATIONS_OPENAI_API_KEY) {
+      if (!process.env.OPENAI_API_KEY) {
         return res.status(500).json({ error: "AI service not configured" });
       }
 
       const openai = new OpenAI({
-        apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+        apiKey: process.env.OPENAI_API_KEY,
       });
 
       const { stage, totalScore, maxScore, categories } = req.body;
@@ -64,12 +64,12 @@ Create a concise, actionable 4-week plan. For each week, provide 3 specific, pra
   // Career stage readup and resource recommendations endpoint
   app.post("/api/generate-resources", async (req, res) => {
     try {
-      if (!process.env.AI_INTEGRATIONS_OPENAI_API_KEY) {
+      if (!process.env.OPENAI_API_KEY) {
         return res.status(500).json({ error: "AI service not configured" });
       }
 
       const openai = new OpenAI({
-        apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+        apiKey: process.env.OPENAI_API_KEY,
       });
 
       const { stage, categories } = req.body;
