@@ -50,9 +50,34 @@ export default function ResultsPage({
   const [isLoadingResources, setIsLoadingResources] = useState(true);
 
   useEffect(() => {
-    // Set default plan and resources immediately
     setIsLoadingPlan(false);
     setIsLoadingResources(false);
+
+    const generateResources = async () => {
+      try {
+        const response = await fetch("/api/generate-resources", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            stage,
+            categories,
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.readup) {
+            setStageReadup(data.readup);
+          }
+          if (data.resources) {
+            setResources(data.resources);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to generate resources:", error);
+      }
+    };
+
+    generateResources();
   }, [stage, totalScore, maxScore, categories]);
   return (
     <div className="min-h-screen bg-background">
@@ -91,7 +116,49 @@ export default function ResultsPage({
         >
           <h2 className="text-2xl font-bold">What This Means For Your Career</h2>
           <p className="text-lg leading-relaxed text-muted-foreground italic">{summary}</p>
+          {stageReadup && (
+            <p className="text-lg leading-relaxed text-foreground">{stageReadup}</p>
+          )}
         </motion.div>
+
+        {resources.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="space-y-6"
+          >
+            <div>
+              <h2 className="text-3xl font-bold mb-4">Recommended Learning Resources</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {resources.map((resource, index) => (
+                  <motion.a
+                    key={index}
+                    href={resource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
+                    className="p-4 border border-border rounded-lg hover-elevate transition-all group"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <h3 className="font-semibold group-hover:text-foreground text-foreground mb-1">
+                          {resource.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {resource.description}
+                        </p>
+                      </div>
+                      <ExternalLink className="w-4 h-4 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         <div className="space-y-8">
           <motion.div
