@@ -228,9 +228,9 @@ const ResultsPage = memo(function ResultsPage({
 
     jobs: !isLoadingJobs && jobLinks ? (
       <div key="jobs" className="space-y-8 border-t border-border/40 pt-16">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-serif font-bold">Find Your Next Role</h2>
-          <p className="text-muted-foreground">
+        <div className="text-center space-y-3">
+          <h2 className="text-3xl md:text-4xl font-serif font-bold">Find Your Next Role</h2>
+          <p className="text-muted-foreground text-lg">
             Based on your experience, we recommend looking for 
             <span className="font-bold text-foreground mx-1">{jobLinks.job_title}</span>
             roles.
@@ -242,7 +242,7 @@ const ResultsPage = memo(function ResultsPage({
             href={jobLinks.linkedin_url}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-center gap-2 px-8 py-4 bg-[#0077b5] text-white rounded-lg font-semibold hover:bg-[#006097] transition-colors shadow-sm"
+            className="flex items-center justify-center gap-2 px-8 py-4 bg-[#0A66C2] text-white rounded-lg font-semibold hover:bg-[#004182] transition-all duration-200 shadow-lg hover:shadow-xl border border-[#0A66C2]/20"
           >
             Search on LinkedIn
             <ExternalLink className="w-4 h-4" />
@@ -252,7 +252,7 @@ const ResultsPage = memo(function ResultsPage({
             href={jobLinks.google_url}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-center gap-2 px-8 py-4 bg-white border border-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-50 transition-colors shadow-sm"
+            className="flex items-center justify-center gap-2 px-8 py-4 bg-card border border-border/60 text-foreground rounded-lg font-semibold hover:bg-muted/50 hover:border-border transition-all duration-200 shadow-lg"
           >
             Search on Google Jobs
             <ExternalLink className="w-4 h-4" />

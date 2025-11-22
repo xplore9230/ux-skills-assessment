@@ -14,11 +14,11 @@ RUN curl -fsSL https://ollama.com/install.sh | sh
 WORKDIR /app
 
 # Copy and install Python dependencies first (better caching)
-COPY requirements.txt .
+COPY server_py/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY . .
+COPY server_py/ .
 
 # Create startup script that will run on container start
 COPY <<EOF /app/start.sh

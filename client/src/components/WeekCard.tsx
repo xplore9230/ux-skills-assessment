@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
 
 interface WeekCardProps {
   week: number;
@@ -8,6 +9,13 @@ interface WeekCardProps {
 }
 
 const WeekCard = memo(function WeekCard({ week, tasks, delay = 0 }: WeekCardProps) {
+  const handleTaskClick = (task: string) => {
+    // Extract key terms for Google search
+    const searchQuery = encodeURIComponent(task);
+    const googleSearchUrl = `https://www.google.com/search?q=${searchQuery}+UX+design+tutorial`;
+    window.open(googleSearchUrl, '_blank');
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -15,16 +23,27 @@ const WeekCard = memo(function WeekCard({ week, tasks, delay = 0 }: WeekCardProp
       transition={{ duration: 0.5, delay }}
       className="h-full"
     >
-      <div className="h-full p-6 border-l-2 border-border/40 hover:border-foreground/40 transition-all duration-300 space-y-4 bg-gradient-to-r from-muted/5 to-transparent">
-        <h3 className="font-serif text-xl font-bold text-foreground">
-          Week {week}
-        </h3>
+      <div className="h-full p-6 border border-border/30 rounded-lg hover:border-border/60 transition-all duration-300 space-y-4 bg-card/30 backdrop-blur-sm">
+        <div className="space-y-1">
+          <h3 className="font-serif text-xl font-bold text-foreground">
+            Week {week}
+          </h3>
+          <p className="text-xs text-muted-foreground/70">
+            Click any task to learn more
+          </p>
+        </div>
         
-        <ul className="space-y-4">
+        <ul className="space-y-3">
           {tasks.map((task, index) => (
-            <li key={index} className="flex items-start gap-3 text-sm text-muted-foreground font-medium leading-relaxed">
-              <span className="mt-2 w-1.5 h-1.5 rounded-full bg-primary/60 flex-shrink-0" />
-              <span>{task}</span>
+            <li key={index}>
+              <button
+                onClick={() => handleTaskClick(task)}
+                className="group flex items-start gap-3 text-left text-sm text-muted-foreground hover:text-foreground font-medium leading-relaxed w-full transition-colors duration-200"
+              >
+                <span className="mt-2 w-1.5 h-1.5 rounded-full bg-primary/60 group-hover:bg-primary flex-shrink-0" />
+                <span className="flex-1">{task}</span>
+                <ExternalLink className="w-3 h-3 mt-1 opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0" />
+              </button>
             </li>
           ))}
         </ul>
