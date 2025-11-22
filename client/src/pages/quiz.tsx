@@ -86,7 +86,7 @@ export default function QuizPage({ questions, onComplete, onBack }: QuizPageProp
                   </h2>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3 md:space-y-4">
                   {currentQuestion.options.map((option) => (
                     <AnswerOption
                       key={option.value}
