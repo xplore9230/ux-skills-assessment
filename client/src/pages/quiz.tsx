@@ -73,20 +73,26 @@ export default function QuizPage({ questions, onComplete, onBack }: QuizPageProp
               custom={direction}
               initial={{
                 opacity: 0,
-                x: direction * 100,
-                rotateY: direction * -20,
+                x: direction * 200,
+                y: -50,
+                rotateY: direction * -35,
+                scale: 0.8,
               }}
               animate={{
                 opacity: 1,
                 x: 0,
+                y: 0,
                 rotateY: 0,
+                scale: 1,
               }}
               exit={{
                 opacity: 0,
-                x: direction * -100,
-                rotateY: direction * 20,
+                x: direction * -500,
+                y: 100,
+                rotateY: direction * 45,
+                scale: 0.6,
               }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
               style={{
                 perspective: 1200,
               }}
