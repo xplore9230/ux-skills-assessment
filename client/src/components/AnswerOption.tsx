@@ -19,21 +19,21 @@ export default function AnswerOption({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex gap-3 md:gap-4 items-start w-full"
+      className="flex gap-2 md:gap-3 lg:gap-4 items-start w-full"
     >
-      <span className={`flex-shrink-0 font-semibold font-mono pt-3 md:pt-4 text-sm md:text-base ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
+      <span className={`flex-shrink-0 font-semibold font-mono pt-2.5 md:pt-3 lg:pt-4 text-xs md:text-sm lg:text-base min-w-fit ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
         {value}
       </span>
       
       <Button
         variant={isSelected ? "default" : "outline"}
-        className={`flex-1 h-auto py-3 md:py-4 px-4 md:px-6 rounded-full text-left justify-start transition-all ${
+        className={`flex-1 h-auto py-2 md:py-3 lg:py-4 px-3 md:px-4 lg:px-6 rounded-full text-left justify-start transition-all overflow-visible ${
           isSelected ? "bg-primary text-primary-foreground border-primary" : "bg-card border-card-border hover:bg-primary hover:text-primary-foreground hover:border-primary"
         }`}
         onClick={onClick}
         data-testid={`option-${value}`}
       >
-        <span className="text-sm md:text-base leading-relaxed">{label}</span>
+        <span className="text-xs md:text-sm lg:text-base leading-snug md:leading-relaxed break-words whitespace-normal">{label}</span>
       </Button>
     </motion.div>
   );

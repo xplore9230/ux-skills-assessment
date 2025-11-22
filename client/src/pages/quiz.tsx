@@ -76,7 +76,7 @@ export default function QuizPage({ questions, onComplete, onBack }: QuizPageProp
               exit={{ opacity: 0, x: direction * -50 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="p-4 md:p-8 lg:p-12 space-y-6 md:space-y-8 bg-card border">
+              <Card className="p-3 md:p-6 lg:p-12 space-y-4 md:space-y-6 lg:space-y-8 bg-card border">
                 <div className="space-y-4">
                   <p className="text-sm font-semibold uppercase tracking-wide">
                     {currentQuestion.category}
@@ -86,7 +86,7 @@ export default function QuizPage({ questions, onComplete, onBack }: QuizPageProp
                   </h2>
                 </div>
 
-                <div className="space-y-3 md:space-y-4">
+                <div className="space-y-2 md:space-y-3 lg:space-y-4">
                   {currentQuestion.options.map((option) => (
                     <AnswerOption
                       key={option.value}
