@@ -76,7 +76,7 @@ export default function QuizPage({ questions, onComplete, onBack }: QuizPageProp
               exit={{ opacity: 0, x: direction * -50 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="p-8 md:p-12 space-y-8 bg-card border">
+              <Card className="p-4 md:p-8 lg:p-12 space-y-6 md:space-y-8 bg-card border">
                 <div className="space-y-4">
                   <p className="text-sm font-semibold uppercase tracking-wide">
                     {currentQuestion.category}
