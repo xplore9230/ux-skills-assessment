@@ -22,17 +22,17 @@ export default function AnswerOption({
     >
       <Button
         variant={isSelected ? "default" : "outline"}
-        className={`w-full h-auto py-4 px-6 rounded-full text-left justify-start transition-all ${
+        className={`w-full h-auto py-3 px-4 md:py-4 md:px-6 rounded-full text-left justify-start transition-all ${
           isSelected ? "bg-primary text-primary-foreground border-primary" : "bg-card border-card-border hover:bg-primary hover:text-primary-foreground hover:border-primary"
         }`}
         onClick={onClick}
         data-testid={`option-${value}`}
       >
-        <span className="flex items-start gap-4 w-full">
-          <span className={`text-sm font-semibold font-mono ${isSelected ? "" : "text-muted-foreground"}`}>
+        <span className="flex items-start gap-2 md:gap-4 w-full">
+          <span className={`flex-shrink-0 text-xs md:text-sm font-semibold font-mono ${isSelected ? "" : "text-muted-foreground"}`}>
             {value}
           </span>
-          <span className="flex-1 text-base leading-relaxed">{label}</span>
+          <span className="flex-1 text-sm md:text-base leading-relaxed break-words">{label}</span>
         </span>
       </Button>
     </motion.div>
