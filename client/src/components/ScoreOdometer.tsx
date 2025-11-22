@@ -31,26 +31,19 @@ export default function ScoreOdometer({
   }, [score, duration]);
 
   return (
-    <div className="flex items-center justify-center gap-2">
-      <motion.div
-        initial={{ y: 40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: duration * 0.8, ease: "easeOut" }}
-        className="tabular-nums"
-      >
-        <p className="text-8xl font-bold font-mono leading-none">
-          {String(displayScore).padStart(2, "0")}
-        </p>
-      </motion.div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="flex items-center justify-center gap-2"
+    >
+      <div className="font-mono font-bold text-8xl leading-none w-32 text-center tabular-nums">
+        {String(displayScore).padStart(2, "0")}
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="text-2xl text-muted-foreground font-mono"
-      >
+      <div className="text-2xl text-muted-foreground font-mono">
         <p>/ {maxScore}</p>
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 }
