@@ -10,12 +10,11 @@ RUN apt-get update && \
 # Set working directory for dependency install
 WORKDIR /code
 
-# Copy Python requirements and install
-COPY server_py/requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the backend source
+# Copy the backend source and Python requirements (keep requirements with the code for consistent paths)
 COPY server_py/ /code/server_py/
+
+# Install Python dependencies from the backend directory
+RUN pip install --no-cache-dir -r /code/server_py/requirements.txt
 
 # Switch into the backend directory for runtime so the start command doesn't rely on `cd`
 WORKDIR /code/server_py
