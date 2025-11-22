@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.local
+__pycache__
+*.pyc
+.chroma
+client
+server
+attached_assets
+*.md
+.env
+
