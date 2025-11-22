@@ -7,7 +7,7 @@ RUN apt-get update && \
     curl -fsSL https://ollama.com/install.sh | sh && \
     rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Set working directory for dependency install
 WORKDIR /code
 
 # Copy Python requirements and install
@@ -16,6 +16,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the backend source
 COPY server_py/ /code/server_py/
+
+# Switch into the backend directory for runtime so the start command doesn't rely on `cd`
+WORKDIR /code/server_py
 
 # Preload the llama3.2 model during the build so deployments ship with the AI assets
 RUN ollama serve & \
@@ -30,8 +33,6 @@ RUN ollama serve & \
 RUN cat <<'ENTRYPOINT' > /code/entrypoint.sh
 #!/bin/bash
 set -euo pipefail
-
-cd /code/server_py
 
 # Start Ollama in the background
 ollama serve &
