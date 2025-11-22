@@ -92,13 +92,19 @@ class IngestionPipeline:
         
         print(f"📥 Processing {len(urls_to_scrape)} URLs from {source}...\n")
         
+        # Determine the correct scraping method
+        if source == 'lawsofux':
+            scrape_method = scraper.scrape_law
+        else:
+            scrape_method = scraper.scrape_article
+        
         # Scrape each URL
         for idx, url in enumerate(urls_to_scrape, 1):
             print(f"[{idx}/{len(urls_to_scrape)}] {url}")
             
             try:
                 # Scrape the resource
-                resource = scraper.scrape_article(url)
+                resource = scrape_method(url)
                 
                 if resource:
                     # Process and store
@@ -207,7 +213,11 @@ class IngestionPipeline:
             return False
         
         try:
-            resource = scraper.scrape_article(url)
+            # Use the correct method for each scraper
+            if source == 'lawsofux':
+                resource = scraper.scrape_law(url)
+            else:
+                resource = scraper.scrape_article(url)
             
             if resource:
                 return self._process_and_store(resource)

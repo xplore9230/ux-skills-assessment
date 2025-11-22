@@ -88,45 +88,40 @@ def generate_plan(data: AssessmentInput):
 @app.post("/api/generate-resources")
 def generate_resources(data: AssessmentInput):
     """
-    Generates career stage readup using Ollama, and returns CURATED resources
-    from our local JSON file based on weakest categories.
+    Generates career stage readup using Ollama with RAG-enhanced recommendations.
+    Returns resources from the RAG knowledge base based on weakest categories.
     """
     try:
-        # 1. Get the inspiring readup from AI
+        # Generate resources using RAG-enhanced Ollama function
+        # This now returns both readup text AND RAG-retrieved resources
         categories_dict = [c.model_dump() for c in data.categories]
         ai_response = generate_resources_ollama(data.stage, categories_dict)
         
-        # 2. Pick resources based on weakest categories
-        # Sort categories by score percentage (lowest first)
-        sorted_categories = sorted(
-            data.categories, 
-            key=lambda c: (c.score / c.maxScore) if c.maxScore > 0 else 0
-        )
-        
-        # Get top 2 weakest categories
-        weakest_categories = sorted_categories[:2]
-        
-        selected_resources = []
-        for cat in weakest_categories:
-            # Find matching resources in our JSON
-            # We do a simple lookup; in production you might want fuzzy matching
-            if cat.name in CURATED_RESOURCES:
-                # Add top 2 resources from this category
-                selected_resources.extend(CURATED_RESOURCES[cat.name][:2])
-        
-        # If we don't have enough, just add some from the first category available
-        if not selected_resources and CURATED_RESOURCES:
-            first_key = list(CURATED_RESOURCES.keys())[0]
-            selected_resources = CURATED_RESOURCES[first_key][:3]
-            
+        # The ai_response now contains both readup and resources from RAG
         return {
             "readup": ai_response.get("readup", "Keep growing your skills!"),
-            "resources": selected_resources
+            "resources": ai_response.get("resources", [])
         }
         
     except Exception as e:
         print(f"Error generating resources: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        # Fallback to static resources if RAG fails
+        sorted_categories = sorted(
+            data.categories, 
+            key=lambda c: (c.score / c.maxScore) if c.maxScore > 0 else 0
+        )
+        weakest_categories = sorted_categories[:2]
+        selected_resources = []
+        for cat in weakest_categories:
+            if cat.name in CURATED_RESOURCES:
+                selected_resources.extend(CURATED_RESOURCES[cat.name][:2])
+        if not selected_resources and CURATED_RESOURCES:
+            first_key = list(CURATED_RESOURCES.keys())[0]
+            selected_resources = CURATED_RESOURCES[first_key][:3]
+        return {
+            "readup": "Keep growing your UX skills!",
+            "resources": selected_resources
+        }
 
 @app.post("/api/generate-deep-dive")
 def generate_deep_dive(data: AssessmentInput):

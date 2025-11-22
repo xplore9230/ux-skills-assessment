@@ -10,6 +10,7 @@ import ScoreOdometer from "@/components/ScoreOdometer";
 import CategoryCard from "@/components/CategoryCard";
 import { useResultsData } from "@/hooks/useResultsData";
 import type { CategoryScore, ImprovementWeek } from "@/types";
+import type { PrecomputedResults } from "@/hooks/useBackgroundComputation";
 
 interface ResultsPageProps {
   stage: string;
@@ -19,6 +20,7 @@ interface ResultsPageProps {
   categories: CategoryScore[];
   improvementPlan: ImprovementWeek[];
   onRestart: () => void;
+  cachedResults?: PrecomputedResults | null;
 }
 
 const ResultsPage = memo(function ResultsPage({
@@ -29,6 +31,7 @@ const ResultsPage = memo(function ResultsPage({
   categories,
   improvementPlan,
   onRestart,
+  cachedResults,
 }: ResultsPageProps) {
   const {
     stageReadup,
@@ -42,7 +45,7 @@ const ResultsPage = memo(function ResultsPage({
     isLoadingJobs,
     isLoadingLayout,
     isLoadingInsights,
-  } = useResultsData(stage, categories, totalScore, maxScore);
+  } = useResultsData(stage, categories, totalScore, maxScore, cachedResults);
 
   // Map category insights by category name for easy lookup
   const insightsMap = useMemo(() => {

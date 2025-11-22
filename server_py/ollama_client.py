@@ -25,7 +25,8 @@ def call_ollama(prompt: str, model: str = MODEL_NAME) -> Dict[str, Any]:
             "format": "json",
             "stream": False,
             "options": {
-                "temperature": 0.7
+                "temperature": 0.3,  # Lower = faster and more focused
+                "num_predict": 800    # Limit response length for speed
             }
         }
         
@@ -71,50 +72,25 @@ def generate_improvement_plan_ollama(stage: str, total_score: int, max_score: in
         except Exception as e:
             print(f"RAG retrieval error: {e}")
     
-    prompt = f"""
-    You are a UX career coach. Create a highly personalized 4-week improvement plan for a {stage} level designer.
-    
-    Career Stage: {stage}
-    Total Score: {total_score}/{max_score} ({percentage}%)
-    
-    Full Skill Breakdown:
-    {category_details}
-    
-    WEAKEST AREAS (focus here):
-    {weakest_details}
-    
-    IMPORTANT GUIDELINES:
-    1. This is a {stage} level designer - tasks must match their current capabilities
-    2. Focus HEAVILY on the 2 weakest categories above
-    3. Each task must be:
-       - Specific and actionable (not generic advice)
-       - Completable in 1-2 hours
-       - Measurable (clear done criteria)
-       - Reference their actual score gaps
-    4. Build progressively: Week 1 = basics, Week 4 = advanced
-    5. Mention the {stage} stage in context (e.g., "As a {stage}, you should...")
-    
-    EXAMPLES OF GOOD TASKS:
-    - "Create 3 wireframes for a checkout flow, focusing on error states you missed"
-    - "Conduct 2 user interviews and document 5 pain points using the Jobs-to-be-Done framework"
-    - "Redesign your portfolio's navigation using the 8-point grid system"
-    
-    EXAMPLES OF BAD TASKS:
-    - "Learn more about UX" (too vague)
-    - "Become better at design" (not measurable)
-    - "Read articles" (not specific enough)
-    {rag_context}
-    
-    Return ONLY valid JSON with this structure:
-    {{
-      "weeks": [
-        {{"week": 1, "tasks": ["Specific task referencing their weak area", "Another concrete task", "Third actionable task"]}},
-        {{"week": 2, "tasks": ["Build on week 1", "More advanced task", "Third task"]}},
-        {{"week": 3, "tasks": ["Even more advanced", "Task 2", "Task 3"]}},
-        {{"week": 4, "tasks": ["Most advanced task", "Final push", "Capstone task"]}}
-      ]
-    }}
-    """
+    prompt = f"""Create a 4-week UX improvement plan for a {stage} designer (score: {percentage}%).
+
+Weakest areas: {weakest_details}
+
+Requirements:
+- Focus on weakest 2 categories
+- 3 specific, actionable tasks per week (1-2 hours each)
+- Progressive difficulty (Week 1=basics, Week 4=advanced)
+- Match {stage} level capabilities
+
+Return JSON:
+{{
+  "weeks": [
+    {{"week": 1, "tasks": ["task1", "task2", "task3"]}},
+    {{"week": 2, "tasks": ["task1", "task2", "task3"]}},
+    {{"week": 3, "tasks": ["task1", "task2", "task3"]}},
+    {{"week": 4, "tasks": ["task1", "task2", "task3"]}}
+  ]
+}}"""
     
     return call_ollama(prompt)
 
@@ -143,19 +119,11 @@ def generate_resources_ollama(stage: str, categories: List[Dict[str, Any]]) -> D
             'tags': res.get('tags', [])
         })
     
-    prompt = f"""
-    You are a UX career expert. Based on this assessment result, provide a brief, inspiring career stage readup (2-3 sentences).
-    
-    Career Stage: {stage}
-    
-    Skill Breakdown:
-    {category_details}
-    
-    Return ONLY valid JSON with this structure:
-    {{
-      "readup": "Brief inspiring paragraph about their career stage"
-    }}
-    """
+    prompt = f"""Brief inspiring readup for {stage} UX designer (2 sentences).
+
+Skills: {category_details}
+
+JSON: {{"readup": "Your message"}}"""
     
     ai_response = call_ollama(prompt)
     
@@ -182,37 +150,24 @@ def generate_deep_dive_topics_ollama(stage: str, categories: List[Dict[str, Any]
         except Exception as e:
             print(f"RAG retrieval error: {e}")
     
-    prompt = f"""
-    You are a UX career expert. Based on this assessment result, provide 2-3 deep dive topics for focused learning.
-    
-    Career Stage: {stage}
-    
-    Skill Breakdown:
-    {category_details}
-    
-    For each topic, provide:
-    - name: Topic title
-    - pillar: Which skill area (from the 5 categories)
-    - level: Beginner/Intermediate/Advanced
-    - summary: 1-2 sentence explanation of why this matters for them
-    - practice_points: 3 specific action items
-    
-    Focus on their weakest areas first.
-    {rag_context}
-    
-    Return ONLY valid JSON with this structure:
+    prompt = f"""Provide 2-3 deep dive topics for a {stage} UX designer.
+
+Skills: {category_details}
+
+For each topic return JSON:
+{{
+  "topics": [
     {{
-      "topics": [
-        {{
-          "name": "Topic Name",
-          "pillar": "Category Name",
-          "level": "Intermediate",
-          "summary": "Why this matters...",
-          "practice_points": ["action1", "action2", "action3"]
-        }}
-      ]
+      "name": "Topic",
+      "pillar": "Category",
+      "level": "Intermediate",
+      "summary": "1 sentence why this matters",
+      "practice_points": ["action1", "action2", "action3"]
     }}
-    """
+  ]
+}}
+
+Focus on weakest areas."""
     
     return call_ollama(prompt)
 
@@ -225,50 +180,19 @@ def generate_layout_strategy(stage: str, total_score: int, max_score: int, categ
     # Calculate percentage for context
     percentage = round((total_score / max_score * 100)) if max_score > 0 else 0
     
-    prompt = f"""
-    You are a UX career advisor. Analyze this assessment result and determine the best way to present the results page.
-    
-    Career Stage: {stage}
-    Total Score: {total_score}/{max_score} ({percentage}%)
-    
-    Skill Breakdown:
-    {category_details}
-    
-    Based on their situation, decide:
-    1. Section order priority (what should they see first?)
-    2. Content depth per section (minimal/standard/detailed)
-    3. A priority message explaining your layout focus
-    
-    Available sections: hero, stage-readup, skill-breakdown, resources, deep-dive, improvement-plan, jobs
-    
-    IMPORTANT: ALL sections must be visible (jobs section is ALWAYS shown for everyone).
-    
-    Rules for section ordering and depth:
-    - Explorer (low scores): Focus on fundamentals first, then jobs. Show detailed learning resources.
-    - Practitioner (mid scores): Balance all sections, standard depth, jobs in middle.
-    - Emerging Senior (high scores): Emphasize strategy, show jobs prominently.
-    - Strategic Lead (very high): Focus on advanced topics and career progression, jobs near top.
-    
-    Return ONLY valid JSON with this structure:
-    {{
-      "section_order": ["hero", "stage-readup", "skill-breakdown", "resources", "deep-dive", "improvement-plan", "jobs"],
-      "section_visibility": {{
-        "hero": true,
-        "stage-readup": true,
-        "skill-breakdown": true,
-        "resources": true,
-        "deep-dive": true,
-        "improvement-plan": true,
-        "jobs": true
-      }},
-      "content_depth": {{
-        "resources": "detailed",
-        "deep-dive": "standard",
-        "improvement-plan": "standard"
-      }},
-      "priority_message": "Based on your {stage} level at {percentage}%, here's your personalized roadmap."
-    }}
-    """
+    prompt = f"""Layout for {stage} designer ({percentage}%).
+
+Skills: {category_details}
+
+Return section order, all visible, depth, message.
+
+JSON:
+{{
+  "section_order": ["hero", "stage-readup", "skill-breakdown", "resources", "deep-dive", "improvement-plan", "jobs"],
+  "section_visibility": {{"hero": true, "stage-readup": true, "skill-breakdown": true, "resources": true, "deep-dive": true, "improvement-plan": true, "jobs": true}},
+  "content_depth": {{"resources": "detailed", "deep-dive": "standard", "improvement-plan": "standard"}},
+  "priority_message": "Focus message"
+}}"""
     
     return call_ollama(prompt)
 
@@ -279,42 +203,23 @@ def generate_category_insights(stage: str, categories: List[Dict[str, Any]]) -> 
     """
     category_details = "\n".join([f"{c['name']}: {c['score']}/{c['maxScore']}" for c in categories])
     
-    prompt = f"""
-    You are a UX career coach. For each skill category, provide personalized insights based on their score and career stage.
-    
-    Career Stage: {stage}
-    
-    Skill Breakdown:
-    {category_details}
-    
-    For EACH category, provide:
-    1. brief: 1-2 sentences explaining what their score means SPECIFICALLY for a {stage} level designer
-    2. detailed: A full paragraph comparing their performance to {stage} stage expectations, with specific examples
-    3. actionable: 3-5 concrete next steps appropriate for a {stage} level designer
-    
-    IMPORTANT:
-    - Always reference the {stage} stage in your insights
-    - Compare their score to what's expected at {stage} level
-    - If they're below {stage} expectations, explain the gap
-    - If they're above {stage} expectations, acknowledge their strength
-    - Make actionable items match {stage} capabilities
-    
-    Return ONLY valid JSON with this structure:
+    prompt = f"""Insights for {stage} designer.
+
+Skills: {category_details}
+
+For each category: brief (1 sentence), detailed (2 sentences), actionable (3 items).
+
+JSON:
+{{
+  "insights": [
     {{
-      "insights": [
-        {{
-          "category": "UX Fundamentals",
-          "brief": "As a {stage}, your fundamentals score of 75% shows solid understanding of core UX principles.",
-          "detailed": "At the {stage} level, you're expected to have strong grasp of user flows and wireframing, which you demonstrate well at 75%. You're comfortable breaking down problems and documenting decisions. To advance beyond {stage}, focus on anticipating edge cases earlier in the design process and building more robust information architectures that scale.",
-          "actionable": [
-            "Document 3 edge cases for your current project that you initially missed",
-            "Create a comprehensive IA diagram for a complex multi-step flow",
-            "Review Nielsen's 10 heuristics and find violations in a popular app"
-          ]
-        }}
-      ]
+      "category": "Category Name",
+      "brief": "Score meaning for {stage}",
+      "detailed": "Performance vs {stage} expectations",
+      "actionable": ["step1", "step2", "step3"]
     }}
-    """
+  ]
+}}"""
     
     return call_ollama(prompt)
 

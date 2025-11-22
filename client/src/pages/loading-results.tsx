@@ -1,10 +1,12 @@
 import { memo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Lottie from "lottie-react";
+import type { PrecomputationStatus } from "@/hooks/useBackgroundComputation";
 
 interface LoadingResultsPageProps {
   onComplete: () => void;
   stage: string;
+  precomputationStatus?: PrecomputationStatus;
 }
 
 const messages = [
@@ -18,10 +20,14 @@ const messages = [
 const LoadingResultsPage = memo(function LoadingResultsPage({
   onComplete,
   stage,
+  precomputationStatus = 'idle',
 }: LoadingResultsPageProps) {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [loaderAnimation, setLoaderAnimation] = useState<any>(null);
+  
+  // Start with higher progress if precomputation is cached
+  const initialProgress = precomputationStatus === 'cached' ? 80 : 0;
 
   // Load Lottie animation
   useEffect(() => {
@@ -32,6 +38,9 @@ const LoadingResultsPage = memo(function LoadingResultsPage({
   }, []);
 
   useEffect(() => {
+    // Set initial progress
+    setProgress(initialProgress);
+    
     // Cycle through messages
     const messageInterval = setInterval(() => {
       setCurrentMessageIndex((prev) => {
@@ -52,20 +61,23 @@ const LoadingResultsPage = memo(function LoadingResultsPage({
       });
     }, 200);
 
-    // Minimum display time of 3 seconds, then complete
+    // Determine completion time based on precomputation status
+    const completionDelay = precomputationStatus === 'cached' ? 1000 : 3000;
+    
+    // Complete loading after delay
     const completeTimer = setTimeout(() => {
       setProgress(100);
       setTimeout(() => {
         onComplete();
       }, 500);
-    }, 3000);
+    }, completionDelay);
 
     return () => {
       clearInterval(messageInterval);
       clearInterval(progressInterval);
       clearTimeout(completeTimer);
     };
-  }, [onComplete]);
+  }, [initialProgress, precomputationStatus, onComplete]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
@@ -111,7 +123,9 @@ const LoadingResultsPage = memo(function LoadingResultsPage({
             transition={{ delay: 0.3 }}
             className="text-muted-foreground"
           >
-            Crafting your personalized {stage} roadmap
+            {precomputationStatus === 'cached' 
+              ? `Finalizing your personalized ${stage} roadmap` 
+              : `Crafting your personalized ${stage} roadmap`}
           </motion.p>
         </div>
 

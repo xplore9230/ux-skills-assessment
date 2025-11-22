@@ -17,6 +17,8 @@ function App() {
   const [results, setResults] = useState<ResultsData | null>(null);
   const [aiRoadmap, setAiRoadmap] = useState<ImprovementWeek[]>([]);
   const [resetKey, setResetKey] = useState(0);
+  const [loadingStartTime, setLoadingStartTime] = useState(0);
+  const [criticalDataLoaded, setCriticalDataLoaded] = useState(false);
 
   // Memoized questions that persist across renders
   const questions = useQuizQuestions(resetKey);
@@ -42,11 +44,14 @@ function App() {
     const calculatedResults = calculateResults(answers);
     setResults(calculatedResults);
     setAppState("loading-results");
+    setLoadingStartTime(Date.now());
+    setCriticalDataLoaded(false);
     
     // Check if we have cached precomputed results
     if (cachedResults && cachedResults.improvementPlan) {
       console.log("✅ Using cached improvement plan from precomputation");
       setAiRoadmap(cachedResults.improvementPlan);
+      setCriticalDataLoaded(true);
     } else {
       // Fetch AI-generated roadmap if not cached
       console.log("⏳ Fetching improvement plan (not cached)");
@@ -78,6 +83,8 @@ function App() {
         console.error("Failed to fetch AI roadmap:", error);
         // Fallback to static plan
         setAiRoadmap(calculatedResults.improvementPlan);
+      } finally {
+        setCriticalDataLoaded(true);
       }
     }
   }, [cachedResults]);
@@ -89,6 +96,8 @@ function App() {
   const handleRestart = useCallback(() => {
     setResults(null);
     setAiRoadmap([]);
+    setCriticalDataLoaded(false);
+    setLoadingStartTime(0);
     setAppState("landing");
     // Clear precomputation cache
     clearCache();
@@ -117,7 +126,8 @@ function App() {
           <LoadingResultsPage
             onComplete={handleLoadingComplete}
             stage={results.stage}
-            precomputationStatus={precomputationStatus}
+            criticalDataLoaded={criticalDataLoaded}
+            loadingStartTime={loadingStartTime}
           />
         )}
         {appState === "results" && results && (

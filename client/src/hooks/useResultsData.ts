@@ -330,6 +330,12 @@ export function useResultsData(
     };
 
     const fetchJobs = async () => {
+      // Skip if we already have cached job links
+      if (cachedResults && cachedResults.jobLinks) {
+        console.log("⏭️  Skipping job links API call (using cache)");
+        return;
+      }
+      
       try {
         dispatch({ type: "SET_LOADING_JOBS", payload: true });
         
@@ -369,6 +375,12 @@ export function useResultsData(
     };
 
     const fetchLayout = async () => {
+      // Skip if we already have cached layout strategy
+      if (cachedResults && cachedResults.layoutStrategy) {
+        console.log("⏭️  Skipping layout API call (using cache)");
+        return;
+      }
+      
       try {
         dispatch({ type: "SET_LOADING_LAYOUT", payload: true });
         
@@ -411,6 +423,12 @@ export function useResultsData(
     };
 
     const fetchInsights = async () => {
+      // Skip if we already have cached category insights
+      if (cachedResults && cachedResults.categoryInsights) {
+        console.log("⏭️  Skipping insights API call (using cache)");
+        return;
+      }
+      
       try {
         dispatch({ type: "SET_LOADING_INSIGHTS", payload: true });
         
@@ -466,7 +484,7 @@ export function useResultsData(
       layoutAborted = true;
       insightsAborted = true;
     };
-  }, [stage, categories, totalScore, maxScore]);
+  }, [stage, categories, totalScore, maxScore, cachedResults]);
 
   return state;
 }
