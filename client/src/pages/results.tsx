@@ -154,7 +154,7 @@ const ResultsPage = memo(function ResultsPage({
         // - container mx-auto = centers the container and adds horizontal margin
         // - max-w-5xl = max width of 80rem (1280px) - change to max-w-4xl (896px) or max-w-6xl (1152px)
         // - overflow-hidden = clips content that goes outside
-        className="relative flex flex-col items-center text-center py-16 px-4 sm:px-6 container mx-auto max-w-5xl overflow-hidden"
+        className="relative flex flex-col items-center text-center pt-12 sm:pt-16 pb-8 sm:pb-12 px-4 sm:px-6 container mx-auto max-w-5xl overflow-hidden"
       >
         {/* 
           GRADIENT OVAL BLUR EFFECT (Desktop - tablets and up):
@@ -223,7 +223,7 @@ const ResultsPage = memo(function ResultsPage({
             tracking-wide = letter spacing (change to tracking-normal for less, tracking-wider for more)
             mb-8 = 32px margin bottom (space below) - change mb-8 to mb-4 for less space, mb-12 for more
           */}
-          <div className="text-xs font-serif text-muted-foreground/70 tracking-wide mb-8">
+          <div className="text-xs font-serif text-muted-foreground/70 tracking-wide mb-6 sm:mb-8">
             {formattedDate} • Assessment #{assessmentId}
           </div>
 
@@ -297,7 +297,7 @@ const ResultsPage = memo(function ResultsPage({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-            className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-tight mt-8 px-4 break-words"
+            className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-tight mt-6 sm:mt-8 px-4 break-words"
           >
             {stage}
           </motion.h1>
@@ -324,7 +324,7 @@ const ResultsPage = memo(function ResultsPage({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
-            className="text-base sm:text-lg md:text-xl text-foreground/90 max-w-3xl mx-auto leading-relaxed font-serif italic mt-8 px-4 break-words"
+            className="text-base sm:text-lg md:text-xl text-foreground/90 max-w-3xl mx-auto leading-relaxed font-serif italic mt-6 sm:mt-8 px-4 break-words pb-0"
           >
             "{summary}"
           </motion.p>
@@ -339,7 +339,7 @@ const ResultsPage = memo(function ResultsPage({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="max-w-3xl mx-auto text-center border-t border-border/40 pt-0 space-y-6 px-4"
+          className="max-w-3xl mx-auto text-center border-t border-border/40 pt-8 sm:pt-10 pb-4 sm:pb-6 space-y-5 px-4"
         >
           <h2 className="text-2xl font-serif font-bold italic break-words">What this means for you</h2>
           <p className="text-lg leading-relaxed text-muted-foreground/90 font-medium break-words">
@@ -362,7 +362,7 @@ const ResultsPage = memo(function ResultsPage({
     ) : null,
 
     "skill-breakdown": (
-      <div key="skill-breakdown" className="space-y-12 border-t border-border/40 pt-16 w-full overflow-hidden">
+      <div key="skill-breakdown" className="space-y-8 sm:space-y-10 border-t border-border/40 pt-10 sm:pt-12 pb-4 sm:pb-6 w-full overflow-hidden">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -394,7 +394,7 @@ const ResultsPage = memo(function ResultsPage({
     ),
 
     resources: resources.length > 0 ? (
-      <div key="resources" className="space-y-8 border-t border-border/40 pt-16 w-full overflow-hidden">
+      <div key="resources" className="space-y-6 sm:space-y-8 border-t border-border/40 pt-10 sm:pt-12 pb-4 sm:pb-6 w-full overflow-hidden">
         <div className="text-center space-y-3 px-4">
           <h2 className="text-3xl md:text-4xl font-serif font-bold break-words">Curated Resources</h2>
           <p className="text-muted-foreground font-medium break-words">Hand-picked for your specific skill gaps</p>
@@ -461,7 +461,7 @@ const ResultsPage = memo(function ResultsPage({
     ) : null,
 
     "deep-dive": !isLoadingDeepDive && deepDiveTopics.length > 0 ? (
-      <div key="deep-dive-wrapper" className="border-t border-border/40 pt-16 w-full overflow-hidden">
+      <div key="deep-dive-wrapper" className="border-t border-border/40 pt-10 sm:pt-12 pb-4 sm:pb-6 w-full overflow-hidden">
         <DeepDiveSection
           key="deep-dive"
           topics={deepDiveTopics}
@@ -481,7 +481,7 @@ const ResultsPage = memo(function ResultsPage({
     ) : null,
 
     "improvement-plan": (
-      <div key="improvement-plan" className="space-y-12 border-t border-border/40 pt-16 w-full overflow-hidden">
+      <div key="improvement-plan" className="space-y-8 sm:space-y-10 border-t border-border/40 pt-10 sm:pt-12 pb-4 sm:pb-6 w-full overflow-hidden">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -504,7 +504,7 @@ const ResultsPage = memo(function ResultsPage({
         </div>
 
         {/* Mobile Horizontal Scroll View */}
-        <div className="flex md:hidden overflow-x-auto gap-4 pb-8 -mx-4 sm:-mx-6 px-4 sm:px-6 snap-x snap-mandatory scrollbar-hide w-full">
+        <div className="flex md:hidden overflow-x-auto gap-4 pb-4 -mx-4 sm:-mx-6 px-4 sm:px-6 snap-x snap-mandatory scrollbar-hide w-full">
           {improvementPlan.map((week, index) => (
             <div key={week.week} className="min-w-[85vw] sm:min-w-[350px] snap-center h-full flex-shrink-0">
               <WeekCard
@@ -519,7 +519,7 @@ const ResultsPage = memo(function ResultsPage({
     ),
 
     jobs: !isLoadingJobs && jobLinks ? (
-      <div key="jobs" className="space-y-8 border-t border-border/40 pt-16 w-full overflow-hidden">
+      <div key="jobs" className="space-y-6 sm:space-y-8 border-t border-border/40 pt-10 sm:pt-12 pb-8 sm:pb-12 w-full overflow-hidden">
         <div className="text-center space-y-3 px-4">
           <h2 className="text-3xl md:text-4xl font-serif font-bold break-words">Find Your Next Role</h2>
           <p className="text-muted-foreground font-medium text-base sm:text-lg break-words">
@@ -598,7 +598,7 @@ const ResultsPage = memo(function ResultsPage({
         font-sans = default sans-serif font (remove to use other font)
         selection:bg-foreground/10 = when you highlight text, background is light (change /10 to /20 for darker)
       */}
-      
+
       {/* Dynamic Sections */}
       {sectionOrder.map((sectionId, index) => {
         const shouldShow = sectionVisibility[sectionId] !== false;
@@ -610,6 +610,8 @@ const ResultsPage = memo(function ResultsPage({
         // isHero = checks if this is the hero section (with trophy and score)
         // Hero gets full-width gradient background, other sections get normal container
         const isHero = sectionId === 'hero';
+        const isLastSection = index === sectionOrder.length - 1;
+        const isStageReadup = sectionId === 'stage-readup';
         
         return (
           <div 
@@ -640,20 +642,18 @@ const ResultsPage = memo(function ResultsPage({
               // overflow-hidden = prevents content from overflowing container
               // w-full = ensures full width with proper containment
               //
-              // SPACING BETWEEN SECTIONS:
-              // stage-readup section (first after hero):
-              //   - pt-12 sm:pt-16 = responsive top padding (48px mobile, 64px desktop)
-              //   - pb-6 sm:pb-8 = responsive bottom padding (24px mobile, 32px desktop)
-              //
-              // All other sections:
-              //   - py-12 sm:py-16 lg:py-20 = responsive vertical padding (48px/64px/80px)
-              //   - Creates consistent spacing that scales with screen size
-              //
-              // TO ADJUST SPACING:
-              // - Change py values for more/less space between sections
-              // - Change pt values for space after hero
-              // - Change pb values for space before next section
-              <div className={`container mx-auto px-4 sm:px-6 max-w-5xl w-full overflow-hidden ${index === sectionOrder.indexOf('stage-readup') ? "pt-12 sm:pt-16 pb-6 sm:pb-8" : "py-12 sm:py-16 lg:py-20"}`}>
+              // OPTIMIZED SPACING SYSTEM (consistent, reduced padding):
+              // - stage-readup (first after hero): pt-8 sm:pt-10 (32px/40px), pb-0 (no extra bottom - handled by section)
+              // - All other sections: pt-6 sm:pt-8 lg:pt-10 (24px/32px/40px top)
+              // - Last section (jobs): pb-6 sm:pb-8 (24px/32px final bottom padding)
+              // - Internal section spacing handled by each section's own padding
+              <div className={`container mx-auto px-4 sm:px-6 max-w-5xl w-full overflow-hidden ${
+                isStageReadup 
+                  ? "pt-8 sm:pt-10 pb-0" 
+                  : isLastSection 
+                    ? "pt-6 sm:pt-8 lg:pt-10 pb-0" 
+                    : "pt-6 sm:pt-8 lg:pt-10 pb-0"
+              }`}>
                 {section}
               </div>
             )}
