@@ -47,16 +47,11 @@ USE_PREGENERATED = os.getenv("USE_PREGENERATED", "true").lower() == "true" and P
 app = FastAPI(title="UX Skills Assessment API")
 
 # Enable CORS for local development and production
+# Allow all origins for Vercel deployments (wildcard doesn't work in FastAPI CORS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # Local dev (npm run dev)
-        "http://localhost:5173",  # Local dev (vite)
-        "http://localhost:5000",  # Local dev Express
-        "https://*.vercel.app",  # Vercel preview and production deployments
-        # Add your custom domain here after deployment
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],  # Allow all origins - Vercel uses dynamic preview URLs
+    allow_credentials=False,  # Must be False when allow_origins=["*"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
