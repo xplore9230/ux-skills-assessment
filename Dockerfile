@@ -1,5 +1,6 @@
-# Use Python 3.11 base image
-FROM python:3.11-bullseye
+# Use Python 3.11 base image with newer SQLite3 (bookworm has SQLite 3.40+)
+# Required for ChromaDB which needs sqlite3 >= 3.35.0
+FROM python:3.11-bookworm
 
 # Install system dependencies and Ollama
 RUN apt-get update && \
