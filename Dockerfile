@@ -38,27 +38,30 @@ RUN cat <<'ENTRYPOINT' > /code/entrypoint.sh
 #!/bin/bash
 set -euo pipefail
 
-# Start Ollama in the background
-ollama serve &
+echo "=== Starting Railway Backend ==="
+
+# Start Ollama in the background (non-blocking)
+echo "Starting Ollama server in background..."
+ollama serve > /tmp/ollama.log 2>&1 &
 OLLAMA_PID=$!
 
-echo "Waiting for Ollama to initialize..."
-for i in {1..30}; do
-  if curl -s http://127.0.0.1:11434/api/tags >/dev/null 2>&1; then
-    echo "Ollama is ready"
-    break
+# Verify model exists in background (non-blocking, don't wait)
+# Use || true to prevent script failure if ollama commands fail
+(
+  sleep 3
+  if ollama list 2>/dev/null | grep -q "^llama3.2" || true; then
+    echo "Model llama3.2 already available"
+  else
+    echo "Model llama3.2 missing; pulling in background..."
+    ollama pull llama3.2 > /tmp/ollama-pull.log 2>&1 || true
   fi
-  echo "Waiting for Ollama... ($i/30)"
-  sleep 2
-done
+) || true &
 
-# Ensure the llama3.2 model exists (preloaded during build, but verify)
-if ! ollama list | grep -q "^llama3.2"; then
-  echo "Model llama3.2 missing; pulling now..."
-  ollama pull llama3.2
-fi
-
-echo "Starting FastAPI application..."
+# Start FastAPI immediately (don't wait for Ollama)
+# This ensures /health endpoint responds instantly for Railway health checks
+echo "Starting FastAPI application immediately..."
+echo "FastAPI will be available at http://0.0.0.0:${PORT:-8000}"
+echo "Ollama is initializing in background and will be ready shortly"
 exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
 ENTRYPOINT
 

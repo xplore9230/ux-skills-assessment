@@ -88,7 +88,32 @@ class AssessmentInput(BaseModel):
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok", "service": "python-backend"}
+    """
+    Health check endpoint for Railway deployment.
+    Returns immediately without blocking on Ollama initialization.
+    This ensures Railway's health check passes quickly (< 1 second).
+    """
+    import requests
+    
+    # Fast response - always return immediately
+    response = {
+        "status": "ok",
+        "service": "python-backend",
+        "ollama": "initializing"  # Default: Ollama may still be starting
+    }
+    
+    # Quick non-blocking Ollama status check (0.3s timeout max)
+    # This doesn't block the response if Ollama isn't ready
+    try:
+        ollama_check = requests.get("http://127.0.0.1:11434/api/tags", timeout=0.3)
+        if ollama_check.status_code == 200:
+            response["ollama"] = "ready"
+    except:
+        # Ollama not ready yet - that's fine, it's initializing in background
+        # The app works with pregenerated data even if Ollama isn't ready
+        pass
+    
+    return response
 
 @app.post("/api/generate-improvement-plan")
 def generate_plan(data: AssessmentInput):
