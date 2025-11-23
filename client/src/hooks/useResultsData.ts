@@ -225,8 +225,19 @@ export function useResultsData(
     let layoutAborted = false;
     let insightsAborted = false;
     
-    // Use environment variable for Python API URL, fallback to localhost for dev
-    const PYTHON_API_URL = import.meta.env.VITE_PYTHON_API_URL || "http://localhost:8000";
+    // Use environment variable for Python API URL when provided.
+    // In production (no env var), fall back to same-origin `/api` routes
+    // served by the Node backend using pregenerated JSON.
+    let PYTHON_API_URL = import.meta.env.VITE_PYTHON_API_URL as string | undefined;
+    if (!PYTHON_API_URL) {
+      if (typeof window !== "undefined" && window.location.hostname === "localhost") {
+        // Local development: default to FastAPI dev server
+        PYTHON_API_URL = "http://localhost:8000";
+      } else {
+        // Production / preview on Vercel: hit same-origin Express routes
+        PYTHON_API_URL = "";
+      }
+    }
 
     const generateResources = async () => {
       // Skip if we already have cached resources

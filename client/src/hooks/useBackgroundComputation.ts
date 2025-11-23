@@ -41,7 +41,19 @@ interface UseBackgroundComputationReturn {
   clearCache: () => void;
 }
 
-const PYTHON_API_URL = import.meta.env.VITE_PYTHON_API_URL || "http://localhost:8000";
+// Resolve Python API base:
+// - If VITE_PYTHON_API_URL is set, always use it.
+// - If running on localhost without env, default to FastAPI dev server.
+// - Otherwise (production), fall back to same-origin `/api` Express routes
+//   which serve pregenerated JSON.
+let PYTHON_API_URL = import.meta.env.VITE_PYTHON_API_URL as string | undefined;
+if (!PYTHON_API_URL) {
+  if (typeof window !== "undefined" && window.location.hostname === "localhost") {
+    PYTHON_API_URL = "http://localhost:8000";
+  } else {
+    PYTHON_API_URL = "";
+  }
+}
 
 /**
  * Hook to manage background precomputation of results
