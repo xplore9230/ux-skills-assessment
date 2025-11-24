@@ -11,36 +11,39 @@ if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
 }
 
-// Create a handler that ensures routes are initialized
-let routesPromise: Promise<any> | null = null;
+// Initialize routes - use IIFE to handle async initialization
+let routesReady = false;
+let routesError: Error | null = null;
 
-const getRoutesPromise = (): Promise<any> => {
-  if (!routesPromise) {
-    routesPromise = registerRoutes(app)
-      .then((server) => {
-        // Routes initialized successfully, server is created but not used in serverless
-        return server;
-      })
-      .catch((err) => {
-        console.error("Failed to initialize routes:", err);
-        routesPromise = null; // Reset on error
-        throw err;
-      });
+(async () => {
+  try {
+    await registerRoutes(app);
+    routesReady = true;
+  } catch (err) {
+    console.error("Failed to initialize routes:", err);
+    routesError = err instanceof Error ? err : new Error(String(err));
   }
-  return routesPromise;
-};
-
-// Start initialization immediately
-getRoutesPromise().catch(() => {
-  // Error logged above, will retry on next request
-});
+})();
 
 // Serve index.html for all other routes (SPA fallback)
 app.use("*", async (_req, res) => {
+  // Wait for routes to be ready (max 5 seconds)
+  let attempts = 0;
+  while (!routesReady && !routesError && attempts < 500) {
+    await new Promise(resolve => setTimeout(resolve, 10));
+    attempts++;
+  }
+  
+  if (routesError) {
+    console.error("Routes initialization error:", routesError);
+    return res.status(500).send("Internal server error");
+  }
+  
+  if (!routesReady) {
+    return res.status(503).send("Service initializing, please try again");
+  }
+  
   try {
-    // Ensure routes are initialized
-    await getRoutesPromise();
-    
     const indexPath = path.resolve(distPath, "index.html");
     if (fs.existsSync(indexPath)) {
       res.sendFile(indexPath);
@@ -48,7 +51,7 @@ app.use("*", async (_req, res) => {
       res.status(404).send("Not found");
     }
   } catch (error) {
-    console.error("Error in request handler:", error);
+    console.error("Error serving file:", error);
     res.status(500).send("Internal server error");
   }
 });
