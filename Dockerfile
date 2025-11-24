@@ -36,14 +36,16 @@ RUN ollama serve & \
 # Create an entrypoint script
 RUN cat <<'ENTRYPOINT' > /code/entrypoint.sh
 #!/bin/bash
-set -euo pipefail
 
 echo "=== Starting Railway Backend ==="
+echo "Working directory: $(pwd)"
+echo "PORT environment variable: ${PORT:-8000}"
 
 # Start Ollama in the background (non-blocking)
 echo "Starting Ollama server in background..."
 ollama serve > /tmp/ollama.log 2>&1 &
 OLLAMA_PID=$!
+echo "Ollama started with PID: $OLLAMA_PID"
 
 # Verify model exists in background (non-blocking, don't wait)
 # Use || true to prevent script failure if ollama commands fail
@@ -62,6 +64,17 @@ OLLAMA_PID=$!
 echo "Starting FastAPI application immediately..."
 echo "FastAPI will be available at http://0.0.0.0:${PORT:-8000}"
 echo "Ollama is initializing in background and will be ready shortly"
+
+# Change to server_py directory
+cd /code/server_py || {
+  echo "ERROR: Failed to change to /code/server_py directory"
+  exit 1
+}
+
+# Use exec to replace shell with uvicorn process
+# This ensures proper signal handling and keeps the container alive
+# exec replaces the shell process, so signals go directly to uvicorn
+echo "Launching uvicorn..."
 exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
 ENTRYPOINT
 
