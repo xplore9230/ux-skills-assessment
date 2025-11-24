@@ -4,7 +4,6 @@ import express from "express";
 import { app } from "./app";
 import { registerRoutes } from "./routes";
 
-// Serve static files - must be before routes
 const distPath = path.resolve(process.cwd(), "dist/public");
 
 // Initialize routes - use IIFE to handle async initialization
@@ -21,19 +20,22 @@ let routesError: Error | null = null;
   }
 })();
 
-// Serve static files AFTER routes are registered but BEFORE catch-all
+// Serve static files FIRST (before catch-all)
 if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath, { index: false })); // Don't serve index.html automatically
+  app.use(express.static(distPath, { 
+    index: false, // Don't auto-serve index.html
+    fallthrough: false // Don't continue to next middleware if file found
+  }));
 }
 
-// Serve index.html for all other routes (SPA fallback) - must be last
-app.use("*", async (_req, res, next) => {
-  // Skip if this is an API route
+// Serve index.html for all non-API, non-static routes (SPA fallback)
+app.get("*", async (_req, res) => {
+  // Skip API routes
   if (_req.path.startsWith("/api")) {
-    return next();
+    return res.status(404).send("API route not found");
   }
   
-  // Wait for routes to be ready (max 5 seconds)
+  // Wait for routes to be ready
   let attempts = 0;
   while (!routesReady && !routesError && attempts < 500) {
     await new Promise(resolve => setTimeout(resolve, 10));
