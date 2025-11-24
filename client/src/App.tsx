@@ -6,6 +6,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import LandingPage from "@/pages/landing";
+import QuizWrapper from "@/pages/QuizWrapper";
+import ResultsWrapper from "@/pages/ResultsWrapper";
 
 // Conditionally load Analytics component
 function ConditionalAnalytics() {
@@ -59,6 +61,8 @@ function App() {
             <main id="main-content">
               <Routes>
                 <Route path="/" element={<LandingPageWrapper />} />
+                <Route path="/quiz" element={<QuizWrapper />} />
+                <Route path="/results" element={<ResultsWrapper />} />
               </Routes>
             </main>
           </TooltipProvider>
