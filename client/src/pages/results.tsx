@@ -97,38 +97,59 @@ const ResultsPage = memo(function ResultsPage({
   const [displayScore, setDisplayScore] = useState(0);
   const hasAnimatedRef = useRef(false);
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const targetScoreRef = useRef<number | null>(null);
   
   useEffect(() => {
     // If totalScore is invalid, don't animate
     if (totalScore <= 0) {
       setDisplayScore(0);
+      targetScoreRef.current = null;
       return;
     }
 
-    // If animation has already completed, just update the score directly
-    // This prevents the animation from restarting if totalScore prop changes
+    // If we've already animated to this exact score, don't restart
+    if (hasAnimatedRef.current && targetScoreRef.current === totalScore) {
+      return;
+    }
+
+    // If animation is in progress and totalScore changes, update target but don't restart
+    if (animationIntervalRef.current && targetScoreRef.current !== null) {
+      // Just update the target - let current animation continue
+      targetScoreRef.current = totalScore;
+      return;
+    }
+
+    // If animation has already completed but score changed, update directly without animating
     if (hasAnimatedRef.current) {
       setDisplayScore(totalScore);
+      targetScoreRef.current = totalScore;
       return;
     }
 
     // Clear any existing interval
     if (animationIntervalRef.current) {
       clearInterval(animationIntervalRef.current);
+      animationIntervalRef.current = null;
     }
 
-    // Start animation only once
+    // Start animation only once from 0 to target
     const duration = 1.2; // seconds
     const start = 0;
     const target = totalScore;
+    targetScoreRef.current = target;
     const totalFrames = Math.max(1, duration * 60);
     const increment = (target - start) / totalFrames;
     
+    // Reset displayScore to 0 to start animation from beginning
+    setDisplayScore(0);
+    
     let current = start;
     const interval = setInterval(() => {
+      // Use the current target (in case it changed)
+      const currentTarget = targetScoreRef.current ?? target;
       current += increment;
-      if ((increment >= 0 && current >= target) || (increment < 0 && current <= target)) {
-        setDisplayScore(target);
+      if ((increment >= 0 && current >= currentTarget) || (increment < 0 && current <= currentTarget)) {
+        setDisplayScore(currentTarget);
         clearInterval(interval);
         hasAnimatedRef.current = true;
         animationIntervalRef.current = null;
