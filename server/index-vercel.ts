@@ -6,19 +6,36 @@ import { registerRoutes } from "./routes";
 
 const distPath = path.resolve(process.cwd(), "dist/public");
 
-// Initialize routes - use IIFE to handle async initialization
-let routesReady = false;
-let routesError: Error | null = null;
+// Initialize routes synchronously before export
+// This ensures routes are ready when Vercel loads the module
+let routesInitialized = false;
+let initPromise: Promise<void> | null = null;
 
-(async () => {
-  try {
-    await registerRoutes(app);
-    routesReady = true;
-  } catch (err) {
-    console.error("Failed to initialize routes:", err);
-    routesError = err instanceof Error ? err : new Error(String(err));
+function ensureRoutesInitialized(): Promise<void> {
+  if (routesInitialized) {
+    return Promise.resolve();
   }
-})();
+  
+  if (!initPromise) {
+    initPromise = (async () => {
+      try {
+        await registerRoutes(app);
+        routesInitialized = true;
+        console.log("Routes initialized successfully");
+      } catch (err) {
+        console.error("Failed to initialize routes:", err);
+        throw err;
+      }
+    })();
+  }
+  
+  return initPromise;
+}
+
+// Start initialization immediately (non-blocking)
+ensureRoutesInitialized().catch(err => {
+  console.error("Initial route initialization failed:", err);
+});
 
 // Serve static files - allow fallthrough for non-existent files
 if (fs.existsSync(distPath)) {
@@ -32,24 +49,23 @@ if (fs.existsSync(distPath)) {
 app.use("*", async (_req, res) => {
   // Handle API routes
   if (_req.path.startsWith("/api/")) {
+    // Ensure routes are initialized before handling API requests
+    try {
+      await ensureRoutesInitialized();
+    } catch (err) {
+      console.error("Routes not initialized:", err);
+      return res.status(500).send("Internal server error");
+    }
     // Let the API routes handle it (they're already registered)
     return;
   }
   
-  // Wait for routes to be ready
-  let attempts = 0;
-  while (!routesReady && !routesError && attempts < 500) {
-    await new Promise(resolve => setTimeout(resolve, 10));
-    attempts++;
-  }
-  
-  if (routesError) {
-    console.error("Routes initialization error:", routesError);
+  // Ensure routes are initialized
+  try {
+    await ensureRoutesInitialized();
+  } catch (err) {
+    console.error("Routes initialization error:", err);
     return res.status(500).send("Internal server error");
-  }
-  
-  if (!routesReady) {
-    return res.status(503).send("Service initializing, please try again");
   }
   
   try {

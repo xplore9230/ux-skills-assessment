@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { Sparkle, ShareNetwork, ChartBar, Briefcase, Brain } from "phosphor-react";
+import { Sparkle, ShareNetwork, ChartBar, Briefcase, Brain } from "@phosphor-icons/react";
 import illustrationImage from "@assets/Gemini_Generated_Image_x6n1ydx6n1ydx6n1_1763725243475.jpeg";
 
 interface LandingPageProps {
