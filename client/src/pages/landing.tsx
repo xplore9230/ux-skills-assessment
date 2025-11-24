@@ -12,12 +12,12 @@ interface LandingPageProps {
 const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-6 py-14 md:py-12">
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex justify-center mb-6"
+          className="flex justify-center mb-8 md:mb-6"
         >
           <img 
             src={illustrationImage} 
@@ -33,20 +33,20 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="max-w-2xl mx-auto space-y-4"
+          className="max-w-2xl mx-auto space-y-5 md:space-y-4"
         >
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-4 text-center"
+            className="space-y-5 md:space-y-4 text-center"
           >
             {/* Powered by Ollama Badge */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex items-center justify-center gap-2 mb-4"
+              className="flex items-center justify-center gap-2 mb-5 md:mb-4"
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm">
                 <Brain weight="duotone" className="w-4 h-4 text-primary" />
@@ -54,7 +54,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
               </div>
             </motion.div>
             
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight" data-testid="text-hero-title">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-none md:leading-tight" data-testid="text-hero-title">
               <>Find Your <motion.span 
                 className="font-playfair font-bold italic relative inline-block"
               >
@@ -77,7 +77,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
                 />
               </motion.span> Stage</>
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
+            <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-normal md:leading-relaxed">
               Take a comprehensive skills assessment to discover where you stand and what to focus on next in your UX career journey.
             </p>
           </motion.div>
@@ -86,11 +86,11 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.4 }}
-            className="flex justify-center pt-2"
+            className="flex justify-center pt-4 md:pt-2"
           >
             <Button
               size="lg"
-              className="text-lg px-10 py-7 rounded-xl group shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+              className="text-base md:text-lg px-8 md:px-10 py-6 md:py-7 rounded-xl group shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                 onClick={() => onStart()}
               data-testid="button-start-quiz"
             >
