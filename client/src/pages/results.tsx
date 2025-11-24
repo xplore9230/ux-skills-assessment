@@ -170,11 +170,10 @@ const ResultsPage = memo(function ResultsPage({
           - hidden md:block = hides on mobile, shows on medium screens and up
         */}
         <div 
-          className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[30%] pointer-events-none hidden md:block w-full"
+          className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[30%] pointer-events-none hidden md:block"
           style={{
-            width: '100%',
+            width: '100vw',
             maxWidth: '1356px',
-            minWidth: '100%',
             height: '403px',
             background: '#54FF51',
             opacity: 0.05,
