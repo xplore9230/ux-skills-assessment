@@ -12,13 +12,14 @@ if (fs.existsSync(distPath)) {
 }
 
 // Create a handler that ensures routes are initialized
-let routesPromise: Promise<void> | null = null;
+let routesPromise: Promise<any> | null = null;
 
-const getRoutesPromise = (): Promise<void> => {
+const getRoutesPromise = (): Promise<any> => {
   if (!routesPromise) {
     routesPromise = registerRoutes(app)
-      .then(() => {
-        // Routes initialized successfully
+      .then((server) => {
+        // Routes initialized successfully, server is created but not used in serverless
+        return server;
       })
       .catch((err) => {
         console.error("Failed to initialize routes:", err);
