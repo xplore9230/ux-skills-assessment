@@ -1,5 +1,4 @@
-import { useState, useMemo, useCallback, memo, useEffect, useRef } from "react";
-import { Card } from "@/components/ui/card";
+import { useState, useMemo, useCallback, memo, useEffect, useRef, useLayoutEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -17,8 +16,10 @@ interface QuizPageProps {
 const QuizPage = memo(function QuizPage({ questions, onComplete, onBack, onHalfwayComplete }: QuizPageProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [direction, setDirection] = useState(0);
+  const [skipAnimation, setSkipAnimation] = useState(false);
   const halfwayTriggeredRef = useRef(false);
+  const cardContainerRef = useRef<HTMLDivElement>(null);
+  const cardContentRef = useRef<HTMLDivElement>(null);
 
   // Guard against empty or invalid questions array
   if (!questions || questions.length === 0) {
@@ -83,36 +84,55 @@ const QuizPage = memo(function QuizPage({ questions, onComplete, onBack, onHalfw
     }
   }, [progressPercentage, answeredCount, questions.length, answers, onHalfwayComplete]);
 
+  // Lock container height to prevent vertical movement - use useLayoutEffect for immediate DOM measurement
+  useLayoutEffect(() => {
+    if (cardContentRef.current && cardContainerRef.current) {
+      const height = cardContentRef.current.offsetHeight;
+      cardContainerRef.current.style.height = `${height}px`;
+    }
+  }, [currentQuestion.id]);
+
+  // Simple animation: first card (index 0) appears instantly, all others exit left with fade
+  // No animation when going backward - cards appear/disappear instantly
+  const isFirstCard = currentIndex === 0;
+  const shouldAnimate = !skipAnimation; // Only skip when explicitly navigating backward
+
   const handleAnswer = useCallback((value: number) => {
     const updatedAnswers = { ...answers, [currentQuestion.id]: value };
     setAnswers(updatedAnswers);
     
-    // Immediately advance to next question
+    // Auto-advance to next question after a short delay
     if (isLastQuestion) {
-      // Auto-complete on last question
-      // Add a small delay to let the user see their selection
+      // Auto-submit on last question
       setTimeout(() => {
         onComplete(updatedAnswers);
-      }, 300);
+      }, 500);
       return;
     }
-    setDirection(1);
-    setCurrentIndex((prev) => prev + 1);
+    // Advance to next question
+    setTimeout(() => {
+      setCurrentIndex((prev) => prev + 1);
+    }, 300);
   }, [answers, currentQuestion.id, isLastQuestion, onComplete]);
 
   const handleNext = useCallback(() => {
     if (isLastQuestion && canGoNext) {
       onComplete(answers);
     } else if (canGoNext) {
-      setDirection(1);
       setCurrentIndex((prev) => prev + 1);
     }
   }, [isLastQuestion, canGoNext, onComplete, answers]);
 
   const handlePrevious = useCallback(() => {
     if (canGoPrevious) {
-      setDirection(-1);
+      // Disable animations before changing index
+      setSkipAnimation(true);
+      // Change index - will trigger re-render with skipAnimation=true
       setCurrentIndex((prev) => prev - 1);
+      // Re-enable animations after a brief moment
+      setTimeout(() => {
+        setSkipAnimation(false);
+      }, 100);
     } else {
       onBack();
     }
@@ -124,21 +144,84 @@ const QuizPage = memo(function QuizPage({ questions, onComplete, onBack, onHalfw
         <div className="max-w-3xl mx-auto space-y-8">
           <ProgressBar current={currentIndex + 1} total={questions.length} />
 
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={currentQuestion.id}
-              custom={direction}
-              initial={{ opacity: 0, x: direction * 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction * -50 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Card className="p-3 md:p-6 lg:p-12 space-y-4 md:space-y-6 lg:space-y-8 bg-card border">
-                <div className="space-y-4">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          {/* Card Container */}
+          <div ref={cardContainerRef} className="relative" style={{ minHeight: "400px" }}>
+
+            {/* Main card with question content */}
+            {shouldAnimate ? (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  ref={cardContentRef}
+                  key={currentQuestion.id}
+                  layout={false}
+                  initial={isFirstCard ? false : { x: 0, opacity: 1 }}
+                  animate={{ x: 0, opacity: 1, zIndex: 10 }}
+                  exit={{ x: "-100%", opacity: 0, zIndex: 0 }}
+                  transition={{
+                    x: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
+                    opacity: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    borderRadius: "24px", // Mobile-friendly radius
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid rgba(0, 0, 0, 0.04)",
+                    boxShadow: "0px 1px 164px 0px rgba(0, 0, 0, 0.1)",
+                    willChange: "transform",
+                  }}
+                  className="md:rounded-[50px] p-4 md:p-6 lg:p-12 space-y-3 md:space-y-6 lg:space-y-8"
+                >
+                  <div className="space-y-3 md:space-y-4">
+                    <p className="text-xs md:text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                      {currentQuestion.category}
+                    </p>
+                    <h2 id="question-text" className="text-xl md:text-2xl lg:text-3xl font-bold leading-tight" data-testid="text-question">
+                      {currentQuestion.text}
+                    </h2>
+                  </div>
+
+                  <div 
+                    role="radiogroup" 
+                    aria-labelledby="question-text"
+                    className="space-y-2 md:space-y-3 lg:space-y-4"
+                  >
+                    {currentQuestion.options.map((option) => (
+                      <AnswerOption
+                        key={option.value}
+                        value={option.value}
+                        label={option.label}
+                        isSelected={answers[currentQuestion.id] === option.value}
+                        onClick={() => handleAnswer(option.value)}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            ) : (
+              <div
+                ref={cardContentRef}
+                key={currentQuestion.id}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  borderRadius: "24px", // Mobile-friendly radius
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid rgba(0, 0, 0, 0.04)",
+                  boxShadow: "0px 1px 164px 0px rgba(0, 0, 0, 0.1)",
+                  zIndex: 10,
+                }}
+                className="md:rounded-[50px] p-4 md:p-6 lg:p-12 space-y-3 md:space-y-6 lg:space-y-8"
+              >
+                <div className="space-y-3 md:space-y-4">
+                  <p className="text-xs md:text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                     {currentQuestion.category}
                   </p>
-                  <h2 id="question-text" className="text-2xl md:text-3xl font-bold leading-tight" data-testid="text-question">
+                  <h2 id="question-text" className="text-xl md:text-2xl lg:text-3xl font-bold leading-tight" data-testid="text-question">
                     {currentQuestion.text}
                   </h2>
                 </div>
@@ -158,9 +241,9 @@ const QuizPage = memo(function QuizPage({ questions, onComplete, onBack, onHalfw
                     />
                   ))}
                 </div>
-              </Card>
-            </motion.div>
-          </AnimatePresence>
+              </div>
+            )}
+          </div>
 
           <div className="flex items-center justify-between pt-4">
             <Button
@@ -173,15 +256,9 @@ const QuizPage = memo(function QuizPage({ questions, onComplete, onBack, onHalfw
               {currentIndex === 0 ? "Back to Home" : "Previous"}
             </Button>
 
-            <Button
-              onClick={handleNext}
-              disabled={!canGoNext}
-              className="gap-2"
-              data-testid="button-next"
-            >
-              {isLastQuestion ? "View Results" : "Next"}
-              <ChevronRight className="w-4 h-4" />
-            </Button>
+            <div className="text-sm text-muted-foreground">
+              {canGoNext ? "✓ Answer saved" : "Select an answer to continue"}
+            </div>
           </div>
         </div>
       </div>
