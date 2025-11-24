@@ -20,19 +20,20 @@ let routesError: Error | null = null;
   }
 })();
 
-// Serve static files FIRST (before catch-all)
+// Serve static files - allow fallthrough for non-existent files
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath, { 
     index: false, // Don't auto-serve index.html
-    fallthrough: false // Don't continue to next middleware if file found
+    fallthrough: true // Continue to next middleware if file not found
   }));
 }
 
-// Serve index.html for all non-API, non-static routes (SPA fallback)
-app.get("*", async (_req, res) => {
-  // Skip API routes
-  if (_req.path.startsWith("/api")) {
-    return res.status(404).send("API route not found");
+// Serve index.html for all non-API routes (SPA fallback)
+app.use("*", async (_req, res) => {
+  // Handle API routes
+  if (_req.path.startsWith("/api/")) {
+    // Let the API routes handle it (they're already registered)
+    return;
   }
   
   // Wait for routes to be ready
@@ -54,6 +55,7 @@ app.get("*", async (_req, res) => {
   try {
     const indexPath = path.resolve(distPath, "index.html");
     if (fs.existsSync(indexPath)) {
+      res.setHeader("Content-Type", "text/html");
       res.sendFile(indexPath);
     } else {
       console.error("index.html not found at:", indexPath);
