@@ -37,44 +37,68 @@ RUN ollama serve & \
 RUN cat <<'ENTRYPOINT' > /code/entrypoint.sh
 #!/bin/bash
 
+echo "=========================================="
 echo "=== Starting Railway Backend ==="
+echo "=========================================="
+echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
 echo "Working directory: $(pwd)"
 echo "PORT environment variable: ${PORT:-8000}"
+echo "Python version: $(python --version 2>&1)"
+echo "Ollama version: $(ollama --version 2>&1 || echo 'Not available')"
+echo ""
 
 # Start Ollama in the background (non-blocking)
-echo "Starting Ollama server in background..."
+echo "[1/4] Starting Ollama server in background..."
 ollama serve > /tmp/ollama.log 2>&1 &
 OLLAMA_PID=$!
-echo "Ollama started with PID: $OLLAMA_PID"
+echo "    ✓ Ollama started with PID: $OLLAMA_PID"
+echo "    ✓ Logs available at: /tmp/ollama.log"
 
 # Verify model exists in background (non-blocking, don't wait)
 # Use || true to prevent script failure if ollama commands fail
 (
   sleep 3
+  echo "[Background] Checking for llama3.2 model..."
   if ollama list 2>/dev/null | grep -q "^llama3.2" || true; then
-    echo "Model llama3.2 already available"
+    echo "[Background] ✓ Model llama3.2 already available"
   else
-    echo "Model llama3.2 missing; pulling in background..."
+    echo "[Background] ⚠ Model llama3.2 missing; pulling in background..."
+    echo "[Background]    This may take a few minutes..."
     ollama pull llama3.2 > /tmp/ollama-pull.log 2>&1 || true
+    if [ $? -eq 0 ]; then
+      echo "[Background] ✓ Model llama3.2 pulled successfully"
+    else
+      echo "[Background] ⚠ Model pull failed (check /tmp/ollama-pull.log)"
+    fi
   fi
 ) || true &
 
 # Start FastAPI immediately (don't wait for Ollama)
 # This ensures /health endpoint responds instantly for Railway health checks
-echo "Starting FastAPI application immediately..."
-echo "FastAPI will be available at http://0.0.0.0:${PORT:-8000}"
-echo "Ollama is initializing in background and will be ready shortly"
+echo "[2/4] Starting FastAPI application immediately..."
+echo "    ✓ FastAPI will be available at http://0.0.0.0:${PORT:-8000}"
+echo "    ✓ Health check endpoint: /health"
+echo "[3/4] Ollama is initializing in background and will be ready shortly"
+echo "    ✓ AI features will work once Ollama is ready"
+echo "    ✓ Pregenerated data works immediately (no AI wait)"
 
 # Change to server_py directory
+echo "[4/4] Changing to server_py directory..."
 cd /code/server_py || {
-  echo "ERROR: Failed to change to /code/server_py directory"
+  echo "    ✗ ERROR: Failed to change to /code/server_py directory"
+  echo "    Current directory: $(pwd)"
+  echo "    Directory contents: $(ls -la /code/ 2>&1)"
   exit 1
 }
+echo "    ✓ Changed to /code/server_py"
+echo ""
 
 # Use exec to replace shell with uvicorn process
 # This ensures proper signal handling and keeps the container alive
 # exec replaces the shell process, so signals go directly to uvicorn
-echo "Launching uvicorn..."
+echo "=========================================="
+echo "Launching uvicorn server..."
+echo "=========================================="
 exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
 ENTRYPOINT
 

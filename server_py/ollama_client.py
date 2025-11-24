@@ -34,7 +34,18 @@ def check_ollama_availability():
 # Check on startup
 check_ollama_availability()
 
-def call_ollama(prompt: str, model: str = MODEL_NAME, format_json: bool = True) -> Dict[str, Any]:
+def quick_ollama_check(timeout: float = 2.0) -> bool:
+    """
+    Quick check if Ollama is available and ready (fast timeout for speed).
+    Returns True if Ollama responds within timeout, False otherwise.
+    """
+    try:
+        response = requests.get(f"{OLLAMA_HOST}/api/tags", timeout=timeout)
+        return response.status_code == 200
+    except:
+        return False
+
+def call_ollama(prompt: str, model: str = MODEL_NAME, format_json: bool = True, quick_check: bool = True) -> Dict[str, Any]:
     """
     Generic helper to call Ollama API with optional JSON format enforcement.
     Returns None if Ollama is not available.
@@ -43,7 +54,12 @@ def call_ollama(prompt: str, model: str = MODEL_NAME, format_json: bool = True) 
         prompt: The prompt to send
         model: Model name to use
         format_json: If True, expect JSON response. If False, return raw text.
+        quick_check: If True, do a quick availability check before calling (default: True)
     """
+    # Quick check if Ollama is ready (faster than waiting for full timeout)
+    if quick_check and not quick_ollama_check(timeout=2.0):
+        return None  # Signal to use fallback
+    
     if not OLLAMA_AVAILABLE:
         return None  # Signal to use fallback
         
@@ -62,7 +78,7 @@ def call_ollama(prompt: str, model: str = MODEL_NAME, format_json: bool = True) 
         if format_json:
             payload["format"] = "json"
         
-        response = requests.post(f"{OLLAMA_HOST}/api/chat", json=payload, timeout=120)
+        response = requests.post(f"{OLLAMA_HOST}/api/chat", json=payload, timeout=15)
         response.raise_for_status()
         
         result = response.json()

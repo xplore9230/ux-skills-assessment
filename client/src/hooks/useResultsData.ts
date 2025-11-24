@@ -239,6 +239,27 @@ export function useResultsData(
       }
     }
 
+    // Helper function for fetch with timeout
+    const fetchWithTimeout = async (url: string, options: RequestInit, timeoutMs: number = 10000): Promise<Response> => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      
+      try {
+        const response = await fetch(url, {
+          ...options,
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+        return response;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        if (error instanceof Error && error.name === 'AbortError') {
+          throw new Error(`Request timed out after ${timeoutMs}ms`);
+        }
+        throw error;
+      }
+    };
+
     const generateResources = async () => {
       // Skip if we already have cached resources
       if (cachedResults && (cachedResults.stageReadup || cachedResults.resources)) {
@@ -249,11 +270,15 @@ export function useResultsData(
       try {
         dispatch({ type: "SET_LOADING_RESOURCES", payload: true });
         
-        const response = await fetch(`${PYTHON_API_URL}/api/generate-resources`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ stage, categories }),
-        });
+        const response = await fetchWithTimeout(
+          `${PYTHON_API_URL}/api/generate-resources`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ stage, categories }),
+          },
+          10000 // 10 second timeout
+        );
 
         if (resourcesAborted) return;
 
@@ -282,12 +307,16 @@ export function useResultsData(
         }
       } catch (error) {
         if (!resourcesAborted) {
+          const errorMessage = error instanceof Error ? error.message : "Failed to load resources";
           console.error("Failed to generate resources:", error);
+          // On timeout, still show error but don't block UI
           dispatch({
             type: "SET_RESOURCES_ERROR",
-            payload: "Failed to load resources",
+            payload: errorMessage.includes("timeout") ? "Request timed out - please try again" : "Failed to load resources",
           });
         }
+      } finally {
+        dispatch({ type: "SET_LOADING_RESOURCES", payload: false });
       }
     };
 
@@ -296,15 +325,19 @@ export function useResultsData(
       try {
         dispatch({ type: "SET_LOADING_DEEP_DIVE", payload: true });
         
-        const response = await fetch(`${PYTHON_API_URL}/api/generate-deep-dive`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            stage, 
-            categories,
-            force_ai: true // Flag to bypass pre-generated data
-          }),
-        });
+        const response = await fetchWithTimeout(
+          `${PYTHON_API_URL}/api/generate-deep-dive`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              stage, 
+              categories,
+              force_ai: true // Flag to bypass pre-generated data
+            }),
+          },
+          10000 // 10 second timeout
+        );
 
         if (deepDiveAborted) return;
 
@@ -330,12 +363,15 @@ export function useResultsData(
         }
       } catch (error) {
         if (!deepDiveAborted) {
+          const errorMessage = error instanceof Error ? error.message : "Failed to load deep dive topics";
           console.error("Failed to generate deep dive:", error);
           dispatch({
             type: "SET_DEEP_DIVE_ERROR",
-            payload: "Failed to load deep dive topics",
+            payload: errorMessage.includes("timeout") ? "Request timed out - please try again" : "Failed to load deep dive topics",
           });
         }
+      } finally {
+        dispatch({ type: "SET_LOADING_DEEP_DIVE", payload: false });
       }
     };
 
@@ -349,7 +385,11 @@ export function useResultsData(
       try {
         dispatch({ type: "SET_LOADING_JOBS", payload: true });
         
-        const response = await fetch(`${PYTHON_API_URL}/api/job-search-links?stage=${encodeURIComponent(stage)}&location=Remote`);
+        const response = await fetchWithTimeout(
+          `${PYTHON_API_URL}/api/job-search-links?stage=${encodeURIComponent(stage)}&location=Remote`,
+          { method: "GET" },
+          10000 // 10 second timeout
+        );
 
         if (jobsAborted) return;
 
@@ -375,12 +415,15 @@ export function useResultsData(
         }
       } catch (error) {
         if (!jobsAborted) {
+          const errorMessage = error instanceof Error ? error.message : "Failed to load job recommendations";
           console.error("Failed to fetch jobs:", error);
           dispatch({
             type: "SET_JOBS_ERROR",
-            payload: "Failed to load job recommendations",
+            payload: errorMessage.includes("timeout") ? "Request timed out - please try again" : "Failed to load job recommendations",
           });
         }
+      } finally {
+        dispatch({ type: "SET_LOADING_JOBS", payload: false });
       }
     };
 
@@ -394,11 +437,15 @@ export function useResultsData(
       try {
         dispatch({ type: "SET_LOADING_LAYOUT", payload: true });
         
-        const response = await fetch(`${PYTHON_API_URL}/api/generate-layout`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ stage, totalScore, maxScore, categories }),
-        });
+        const response = await fetchWithTimeout(
+          `${PYTHON_API_URL}/api/generate-layout`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ stage, totalScore, maxScore, categories }),
+          },
+          10000 // 10 second timeout
+        );
 
         if (layoutAborted) return;
 
@@ -423,12 +470,15 @@ export function useResultsData(
         }
       } catch (error) {
         if (!layoutAborted) {
+          const errorMessage = error instanceof Error ? error.message : "Failed to load layout strategy";
           console.error("Failed to fetch layout:", error);
           dispatch({
             type: "SET_LAYOUT_ERROR",
-            payload: "Failed to load layout strategy",
+            payload: errorMessage.includes("timeout") ? "Request timed out - please try again" : "Failed to load layout strategy",
           });
         }
+      } finally {
+        dispatch({ type: "SET_LOADING_LAYOUT", payload: false });
       }
     };
 
@@ -442,11 +492,15 @@ export function useResultsData(
       try {
         dispatch({ type: "SET_LOADING_INSIGHTS", payload: true });
         
-        const response = await fetch(`${PYTHON_API_URL}/api/generate-category-insights`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ stage, totalScore, maxScore, categories }),
-        });
+        const response = await fetchWithTimeout(
+          `${PYTHON_API_URL}/api/generate-category-insights`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ stage, totalScore, maxScore, categories }),
+          },
+          10000 // 10 second timeout
+        );
 
         if (insightsAborted) return;
 
@@ -471,12 +525,15 @@ export function useResultsData(
         }
       } catch (error) {
         if (!insightsAborted) {
+          const errorMessage = error instanceof Error ? error.message : "Failed to load category insights";
           console.error("Failed to fetch insights:", error);
           dispatch({
             type: "SET_INSIGHTS_ERROR",
-            payload: "Failed to load category insights",
+            payload: errorMessage.includes("timeout") ? "Request timed out - please try again" : "Failed to load category insights",
           });
         }
+      } finally {
+        dispatch({ type: "SET_LOADING_INSIGHTS", payload: false });
       }
     };
 

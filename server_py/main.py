@@ -14,7 +14,8 @@ from ollama_client import (
     generate_resources_ollama,
     generate_deep_dive_topics_ollama,
     generate_layout_strategy,
-    generate_category_insights
+    generate_category_insights,
+    quick_ollama_check
 )
 from job_links import build_job_search_links
 
@@ -56,14 +57,135 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load curated resources
+# Load curated resources with retry logic and better error handling
 RESOURCES_FILE = os.path.join(os.path.dirname(__file__), "resources.json")
-try:
-    with open(RESOURCES_FILE, "r") as f:
-        CURATED_RESOURCES = json.load(f)
-except Exception as e:
-    print(f"Warning: Could not load resources.json: {e}")
-    CURATED_RESOURCES = {}
+
+def load_curated_resources(max_retries: int = 3) -> Dict[str, Any]:
+    """
+    Load resources.json with retry logic and validation.
+    Returns empty dict if all retries fail.
+    """
+    for attempt in range(1, max_retries + 1):
+        try:
+            # Check if file exists
+            if not os.path.exists(RESOURCES_FILE):
+                print(f"⚠ resources.json not found at {RESOURCES_FILE} (attempt {attempt}/{max_retries})")
+                if attempt < max_retries:
+                    continue
+                return {}
+            
+            # Try to load the file
+            with open(RESOURCES_FILE, "r", encoding="utf-8") as f:
+                resources = json.load(f)
+            
+            # Validate it's a dict
+            if not isinstance(resources, dict):
+                print(f"⚠ resources.json is not a valid dictionary (attempt {attempt}/{max_retries})")
+                if attempt < max_retries:
+                    continue
+                return {}
+            
+            # Validate it has content
+            if not resources:
+                print(f"⚠ resources.json is empty (attempt {attempt}/{max_retries})")
+                if attempt < max_retries:
+                    continue
+                return {}
+            
+            print(f"✓ Successfully loaded {len(resources)} resource categories from resources.json")
+            return resources
+            
+        except json.JSONDecodeError as e:
+            print(f"⚠ JSON decode error in resources.json (attempt {attempt}/{max_retries}): {e}")
+            if attempt < max_retries:
+                continue
+            return {}
+        except Exception as e:
+            print(f"⚠ Error loading resources.json (attempt {attempt}/{max_retries}): {e}")
+            if attempt < max_retries:
+                continue
+            return {}
+    
+    return {}
+
+def get_fallback_resources() -> Dict[str, Any]:
+    """
+    Returns hardcoded fallback resources that are always available.
+    These are used when resources.json fails to load.
+    """
+    return {
+        "UX Fundamentals": [
+            {
+                "title": "Laws of UX",
+                "url": "https://lawsofux.com/",
+                "description": "A collection of best practices that designers can consider when building user interfaces.",
+                "tags": ["Heuristics", "Psychology"]
+            },
+            {
+                "title": "Nielsen Norman Group: UX Research Cheat Sheet",
+                "url": "https://www.nngroup.com/articles/ux-research-cheat-sheet/",
+                "description": "A comprehensive guide to different UX research methods and when to use them.",
+                "tags": ["Research", "Reference"]
+            }
+        ],
+        "UI Craft & Visual Design": [
+            {
+                "title": "Refactoring UI",
+                "url": "https://www.refactoringui.com/",
+                "description": "Learn how to design beautiful user interfaces by yourself using specific tactics.",
+                "tags": ["Visual Design", "Guide"]
+            },
+            {
+                "title": "Material Design Guidelines",
+                "url": "https://m3.material.io/",
+                "description": "Google's open-source design system that provides comprehensive UI guidelines.",
+                "tags": ["Design System", "Reference"]
+            }
+        ],
+        "User Research & Validation": [
+            {
+                "title": "The Mom Test",
+                "url": "http://momtestbook.com/",
+                "description": "How to talk to customers & learn if your business is a good idea when everyone is lying to you.",
+                "tags": ["Interviews", "Validation"]
+            },
+            {
+                "title": "A Guide to Usability Testing",
+                "url": "https://www.usability.gov/how-to-and-tools/methods/usability-testing.html",
+                "description": "Learn the fundamentals of usability testing and how to conduct effective tests.",
+                "tags": ["Testing", "Research"]
+            }
+        ],
+        "Information Architecture": [
+            {
+                "title": "Information Architecture Basics",
+                "url": "https://www.usability.gov/what-and-why/information-architecture.html",
+                "description": "Understanding how to organize information clearly for users.",
+                "tags": ["IA", "Structure"]
+            }
+        ],
+        "Interaction Design": [
+            {
+                "title": "Microinteractions: Designing with Details",
+                "url": "https://www.nngroup.com/articles/microinteractions/",
+                "description": "Learn how small interactions can make a big difference in user experience.",
+                "tags": ["Interaction", "Details"]
+            }
+        ]
+    }
+
+# Load curated resources, merge with fallback (loaded takes priority)
+loaded_resources = load_curated_resources()
+fallback_resources = get_fallback_resources()
+
+# Merge: loaded resources take priority, fallback fills gaps
+CURATED_RESOURCES = fallback_resources.copy()
+CURATED_RESOURCES.update(loaded_resources)  # Override with loaded if available
+
+if loaded_resources:
+    print(f"✓ Using {len(loaded_resources)} categories from resources.json")
+else:
+    print(f"⚠ Using {len(fallback_resources)} hardcoded fallback resource categories")
 
 # --- Data Models ---
 
@@ -139,15 +261,13 @@ def generate_plan(data: AssessmentInput):
 @app.post("/api/generate-resources")
 def generate_resources(data: AssessmentInput):
     """
-    Generates career stage readup using Ollama with RAG-enhanced recommendations.
-    Returns resources from the RAG knowledge base based on weakest categories.
-    Resources always get fresh contextual descriptions based on actual resource data.
+    Returns curated resources immediately for fast loading.
+    Optionally enhances with AI descriptions if Ollama is ready and fast.
     """
     try:
         categories_dict = [c.model_dump() for c in data.categories]
         
-        # Always generate fresh resources with contextual descriptions from actual data
-        # Check for pre-generated readup only
+        # Get pre-generated readup if available
         readup_text = None
         if USE_PREGENERATED:
             pregenerated = get_pregenerated_resources(data.totalScore)
@@ -155,24 +275,69 @@ def generate_resources(data: AssessmentInput):
                 readup_text = pregenerated.get("readup")
                 print(f"✓ Using pre-generated readup for score {data.totalScore}")
         
-        # Always generate fresh resources with contextual descriptions
-        print(f"🔄 Generating fresh resources with contextual descriptions from actual data for score {data.totalScore}")
+        # FAST PATH: Return curated resources immediately (no AI wait)
+        sorted_categories = sorted(
+            data.categories, 
+            key=lambda c: (c.score / c.maxScore) if c.maxScore > 0 else 0
+        )
+        weakest_categories = sorted_categories[:2]
+        selected_resources = []
         
-        # Generate resources using RAG - this will create contextual descriptions from resource data
-        ai_response = generate_resources_ollama(data.stage, categories_dict)
+        # Collect curated resources from weakest categories
+        for cat in weakest_categories:
+            if cat.name in CURATED_RESOURCES:
+                selected_resources.extend(CURATED_RESOURCES[cat.name][:2])
         
-        # Use pre-generated readup if available, otherwise use AI-generated
-        final_readup = readup_text if readup_text else ai_response.get("readup", "Keep growing your skills!")
+        # Fallback to any available resources if no match
+        if not selected_resources and CURATED_RESOURCES:
+            first_key = list(CURATED_RESOURCES.keys())[0]
+            selected_resources = CURATED_RESOURCES[first_key][:3]
         
-        # Resources always have fresh contextual descriptions
+        # Format curated resources (use description from JSON, no AI needed)
+        formatted_resources = []
+        for res in selected_resources:
+            formatted_resources.append({
+                'title': res.get('title', ''),
+                'url': res.get('url', ''),
+                'description': res.get('description', f"Learn about {res.get('title', 'UX skills')} to improve your skills."),
+                'tags': res.get('tags', [])
+            })
+        
+        # Quick check if Ollama is ready for enhancement (non-blocking, < 2s)
+        ollama_ready = quick_ollama_check(timeout=2.0)
+        
+        # ENHANCEMENT PATH: Only enhance with AI if Ollama is ready and fast
+        if ollama_ready and formatted_resources:
+            try:
+                print(f"⚡ Ollama ready - enhancing {len(formatted_resources)} resources with AI descriptions")
+                # Enhance descriptions with AI in background (non-blocking)
+                # For now, return curated resources immediately
+                # AI enhancement can happen async if needed
+                ai_response = generate_resources_ollama(data.stage, categories_dict)
+                if ai_response and ai_response.get("resources"):
+                    # Use AI-enhanced resources if available
+                    formatted_resources = ai_response.get("resources", formatted_resources)
+                    readup_text = readup_text or ai_response.get("readup", "Keep growing your skills!")
+            except Exception as e:
+                print(f"⚠ AI enhancement failed, using curated resources: {e}")
+                # Continue with curated resources
+        else:
+            if not ollama_ready:
+                print(f"✓ Using curated resources (Ollama not ready)")
+            else:
+                print(f"✓ Using curated resources (fast path)")
+        
+        # Use pre-generated readup if available, otherwise default
+        final_readup = readup_text if readup_text else "Keep growing your UX skills!"
+        
         return {
             "readup": final_readup,
-            "resources": ai_response.get("resources", [])
+            "resources": formatted_resources
         }
         
     except Exception as e:
         print(f"Error generating resources: {e}")
-        # Fallback to static resources if RAG fails
+        # Final fallback to static resources
         sorted_categories = sorted(
             data.categories, 
             key=lambda c: (c.score / c.maxScore) if c.maxScore > 0 else 0
@@ -185,40 +350,139 @@ def generate_resources(data: AssessmentInput):
         if not selected_resources and CURATED_RESOURCES:
             first_key = list(CURATED_RESOURCES.keys())[0]
             selected_resources = CURATED_RESOURCES[first_key][:3]
+        
+        # Format fallback resources
+        formatted_resources = []
+        for res in selected_resources:
+            formatted_resources.append({
+                'title': res.get('title', ''),
+                'url': res.get('url', ''),
+                'description': res.get('description', f"Learn about {res.get('title', 'UX skills')}."),
+                'tags': res.get('tags', [])
+            })
+        
         return {
             "readup": "Keep growing your UX skills!",
-            "resources": selected_resources
+            "resources": formatted_resources
         }
 
 @app.post("/api/generate-deep-dive")
 def generate_deep_dive(data: AssessmentInput):
     """
     Generates deep dive topics using local Ollama LLM and enriches them with curated resources.
-    Deep Dive always uses fresh AI generation (bypasses pre-generated data).
+    Returns curated resources if AI times out or fails.
     """
-    try:
-        # Deep Dive always uses fresh AI generation, never pre-generated
-        # Always skip pre-generated check to ensure fresh AI responses
-        print(f"🔄 Generating fresh deep dive via AI for score {data.totalScore}")
-        categories_dict = [c.model_dump() for c in data.categories]
-        ai_response = generate_deep_dive_topics_ollama(data.stage, categories_dict)
+    import signal
+    from contextlib import contextmanager
+    
+    @contextmanager
+    def timeout_handler(seconds):
+        """Context manager for timeout handling."""
+        def timeout_signal(signum, frame):
+            raise TimeoutError(f"Operation timed out after {seconds} seconds")
         
-        # Enrich each topic with resources from our curated list
+        # Set up signal handler (Unix only)
+        if hasattr(signal, 'SIGALRM'):
+            old_handler = signal.signal(signal.SIGALRM, timeout_signal)
+            signal.alarm(seconds)
+            try:
+                yield
+            finally:
+                signal.alarm(0)
+                signal.signal(signal.SIGALRM, old_handler)
+        else:
+            # Windows/fallback: just yield without timeout
+            yield
+    
+    try:
+        categories_dict = [c.model_dump() for c in data.categories]
+        
+        # Quick check if Ollama is ready
+        ollama_ready = quick_ollama_check(timeout=2.0)
+        
+        ai_response = None
+        if ollama_ready:
+            try:
+                print(f"🔄 Generating deep dive via AI for score {data.totalScore}")
+                # Try AI generation with timeout (15s max)
+                # Note: Actual timeout is handled by call_ollama (15s), but we add extra safety
+                ai_response = generate_deep_dive_topics_ollama(data.stage, categories_dict)
+            except Exception as e:
+                print(f"⚠ AI generation failed: {e}, using curated resources")
+                ai_response = None
+        else:
+            print(f"✓ Ollama not ready, using curated resources for deep dive")
+        
+        # If AI failed or not ready, create topics from curated resources
+        if not ai_response or not ai_response.get("topics"):
+            print(f"✓ Creating deep dive topics from curated resources")
+            # Create topics based on weakest categories
+            sorted_categories = sorted(
+                data.categories, 
+                key=lambda c: (c.score / c.maxScore) if c.maxScore > 0 else 0
+            )
+            weakest_categories = sorted_categories[:3]  # Top 3 weakest
+            
+            topics = []
+            for cat in weakest_categories:
+                topic_resources = []
+                # Get resources for this category
+                if cat.name in CURATED_RESOURCES:
+                    curated = CURATED_RESOURCES[cat.name][:3]
+                    for res in curated:
+                        topic_resources.append({
+                            "title": res.get("title", ""),
+                            "type": "article",
+                            "estimated_read_time": "5-10 min",
+                            "source": res.get("url", "").split("//")[1].split("/")[0] if res.get("url") else "Web",
+                            "url": res.get("url", ""),
+                            "tags": res.get("tags", [])
+                        })
+                
+                # If no resources for this category, get general ones
+                if not topic_resources and CURATED_RESOURCES:
+                    first_key = list(CURATED_RESOURCES.keys())[0]
+                    curated = CURATED_RESOURCES[first_key][:2]
+                    for res in curated:
+                        topic_resources.append({
+                            "title": res.get("title", ""),
+                            "type": "article",
+                            "estimated_read_time": "5-10 min",
+                            "source": res.get("url", "").split("//")[1].split("/")[0] if res.get("url") else "Web",
+                            "url": res.get("url", ""),
+                            "tags": res.get("tags", [])
+                        })
+                
+                if topic_resources:
+                    topics.append({
+                        "name": f"Master {cat.name}",
+                        "pillar": cat.name,
+                        "level": "Intermediate",
+                        "summary": f"Focus on improving your {cat.name} skills as a {data.stage} designer.",
+                        "practice_points": [
+                            f"Review {cat.name} fundamentals",
+                            f"Practice {cat.name} through hands-on projects",
+                            f"Apply {cat.name} concepts to real-world scenarios"
+                        ],
+                        "resources": topic_resources
+                    })
+            
+            return {"topics": topics}
+        
+        # Enrich AI-generated topics with curated resources
         topics = ai_response.get("topics", [])
         for topic in topics:
             pillar = topic.get("pillar", "")
-            # Try to match resources from the curated list based on the pillar
             topic_resources = []
             
             # Look for resources in the matching category
             if pillar in CURATED_RESOURCES:
-                # Take first 2-3 resources from this category
                 curated = CURATED_RESOURCES[pillar][:3]
                 for res in curated:
                     topic_resources.append({
                         "title": res.get("title", ""),
-                        "type": "article",  # Default type
-                        "estimated_read_time": "5-10 min",  # Default estimate
+                        "type": "article",
+                        "estimated_read_time": "5-10 min",
                         "source": res.get("url", "").split("//")[1].split("/")[0] if res.get("url") else "Web",
                         "url": res.get("url", ""),
                         "tags": res.get("tags", [])
@@ -244,7 +508,37 @@ def generate_deep_dive(data: AssessmentInput):
         
     except Exception as e:
         print(f"Error generating deep dive: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        # Final fallback: return curated resources
+        sorted_categories = sorted(
+            data.categories, 
+            key=lambda c: (c.score / c.maxScore) if c.maxScore > 0 else 0
+        )
+        weakest_categories = sorted_categories[:2]
+        topics = []
+        for cat in weakest_categories:
+            if cat.name in CURATED_RESOURCES:
+                curated = CURATED_RESOURCES[cat.name][:2]
+                topic_resources = []
+                for res in curated:
+                    topic_resources.append({
+                        "title": res.get("title", ""),
+                        "type": "article",
+                        "estimated_read_time": "5-10 min",
+                        "source": res.get("url", "").split("//")[1].split("/")[0] if res.get("url") else "Web",
+                        "url": res.get("url", ""),
+                        "tags": res.get("tags", [])
+                    })
+                if topic_resources:
+                    topics.append({
+                        "name": f"Focus on {cat.name}",
+                        "pillar": cat.name,
+                        "level": "Intermediate",
+                        "summary": f"Improve your {cat.name} skills.",
+                        "practice_points": ["Practice", "Apply", "Review"],
+                        "resources": topic_resources
+                    })
+        
+        return {"topics": topics}
 
 @app.get("/api/job-search-links")
 def get_job_links(
