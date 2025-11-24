@@ -94,78 +94,63 @@ const ResultsPage = memo(function ResultsPage({
   } = useResultsData(stage, categories, totalScore, maxScore, cachedResults);
 
   // Animated score counter
+  // Use a ref to track if this is the first render with a valid score
+  const isFirstRenderRef = useRef(true);
   const [displayScore, setDisplayScore] = useState(0);
   const hasAnimatedRef = useRef(false);
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const targetScoreRef = useRef<number | null>(null);
+  const initialScoreRef = useRef<number | null>(null);
   
   useEffect(() => {
-    // If totalScore is invalid, don't animate
+    // On first render with valid score, capture it and start animation
+    if (isFirstRenderRef.current && totalScore > 0) {
+      initialScoreRef.current = totalScore;
+      isFirstRenderRef.current = false;
+      
+      // Start animation from 0 to target
+      const duration = 1.2; // seconds
+      const start = 0;
+      const target = totalScore;
+      const totalFrames = Math.max(1, duration * 60);
+      const increment = (target - start) / totalFrames;
+      
+      setDisplayScore(0);
+      
+      let current = start;
+      const interval = setInterval(() => {
+        current += increment;
+        if ((increment >= 0 && current >= target) || (increment < 0 && current <= target)) {
+          setDisplayScore(target);
+          clearInterval(interval);
+          hasAnimatedRef.current = true;
+          animationIntervalRef.current = null;
+        } else {
+          setDisplayScore(Math.max(0, Math.floor(current)));
+        }
+      }, 1000 / 60);
+
+      animationIntervalRef.current = interval;
+      
+      return () => {
+        if (animationIntervalRef.current) {
+          clearInterval(animationIntervalRef.current);
+          animationIntervalRef.current = null;
+        }
+      };
+    }
+    
+    // If totalScore changes after initial animation, update directly without animating
+    if (hasAnimatedRef.current && totalScore !== initialScoreRef.current && totalScore > 0) {
+      setDisplayScore(totalScore);
+      initialScoreRef.current = totalScore;
+      return;
+    }
+    
+    // If totalScore is invalid, set to 0
     if (totalScore <= 0) {
       setDisplayScore(0);
-      targetScoreRef.current = null;
       return;
     }
-
-    // If we've already animated to this exact score, don't restart
-    if (hasAnimatedRef.current && targetScoreRef.current === totalScore) {
-      return;
-    }
-
-    // If animation is in progress and totalScore changes, update target but don't restart
-    if (animationIntervalRef.current && targetScoreRef.current !== null) {
-      // Just update the target - let current animation continue
-      targetScoreRef.current = totalScore;
-      return;
-    }
-
-    // If animation has already completed but score changed, update directly without animating
-    if (hasAnimatedRef.current) {
-      setDisplayScore(totalScore);
-      targetScoreRef.current = totalScore;
-      return;
-    }
-
-    // Clear any existing interval
-    if (animationIntervalRef.current) {
-      clearInterval(animationIntervalRef.current);
-      animationIntervalRef.current = null;
-    }
-
-    // Start animation only once from 0 to target
-    const duration = 1.2; // seconds
-    const start = 0;
-    const target = totalScore;
-    targetScoreRef.current = target;
-    const totalFrames = Math.max(1, duration * 60);
-    const increment = (target - start) / totalFrames;
-    
-    // Reset displayScore to 0 to start animation from beginning
-    setDisplayScore(0);
-    
-    let current = start;
-    const interval = setInterval(() => {
-      // Use the current target (in case it changed)
-      const currentTarget = targetScoreRef.current ?? target;
-      current += increment;
-      if ((increment >= 0 && current >= currentTarget) || (increment < 0 && current <= currentTarget)) {
-        setDisplayScore(currentTarget);
-        clearInterval(interval);
-        hasAnimatedRef.current = true;
-        animationIntervalRef.current = null;
-      } else {
-        setDisplayScore(Math.max(0, Math.floor(current)));
-      }
-    }, 1000 / 60);
-
-    animationIntervalRef.current = interval;
-
-    return () => {
-      if (animationIntervalRef.current) {
-        clearInterval(animationIntervalRef.current);
-        animationIntervalRef.current = null;
-      }
-    };
   }, [totalScore]);
 
   // Map category insights by category name for easy lookup
