@@ -6,9 +6,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import LandingPage from "@/pages/landing";
-import BlogPage from "@/pages/blog";
-import { QuizFlow } from "@/components/QuizFlow";
-import { DesignSystemsQuizFlow } from "@/components/DesignSystemsQuizFlow";
 
 // Conditionally load Analytics component
 function ConditionalAnalytics() {
@@ -38,12 +35,8 @@ function ConditionalAnalytics() {
 function LandingPageWrapper() {
   const navigate = useNavigate();
   
-  const handleStartQuiz = (quizType: 'ux' | 'design-systems') => {
-    if (quizType === 'design-systems') {
-      navigate("/quiz-design-systems");
-    } else {
-      navigate("/quiz");
-    }
+  const handleStartQuiz = () => {
+    navigate("/quiz");
   };
 
   return <LandingPage onStart={handleStartQuiz} />;
@@ -66,9 +59,6 @@ function App() {
             <main id="main-content">
               <Routes>
                 <Route path="/" element={<LandingPageWrapper />} />
-                <Route path="/quiz" element={<QuizFlow />} />
-                <Route path="/quiz-design-systems" element={<DesignSystemsQuizFlow />} />
-                <Route path="/blog" element={<BlogPage />} />
               </Routes>
             </main>
           </TooltipProvider>
