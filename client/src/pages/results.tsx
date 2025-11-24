@@ -172,8 +172,7 @@ const ResultsPage = memo(function ResultsPage({
         <div 
           className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[30%] pointer-events-none hidden md:block"
           style={{
-            width: 'min(1356px, 200vw)',
-            maxWidth: '200%',
+            width: 'min(1356px, 100vw)',
             height: '403px',
             background: '#54FF51',
             opacity: 0.1,
