@@ -355,7 +355,11 @@ def generate_resources_ollama(stage: str, categories: List[Dict[str, Any]]) -> O
         
         prompt = f"""Brief inspiring readup for {stage} UX designer (2 sentences).
 
+CRITICAL: You MUST use the exact stage "{stage}" in your response. Do NOT use "Explorer", "Practitioner", "Emerging Senior", or "Strategic Lead" unless the stage is exactly that.
+
 Skills: {category_details}
+
+Start your readup with "As a {stage} UX designer" or "As a {stage}" to ensure consistency.
 
 JSON: {{"readup": "Your message"}}"""
         
@@ -367,8 +371,24 @@ JSON: {{"readup": "Your message"}}"""
             return None
         
         # Combine AI readup with RAG resources
+        readup_text = ai_response.get('readup', 'Keep growing your skills!') if isinstance(ai_response, dict) else 'Keep growing your skills!'
+        
+        # Validate that readup text matches the stage (basic check)
+        # If it doesn't contain the stage, prepend it
+        if stage.lower() not in readup_text.lower():
+            # Try to fix common mismatches
+            readup_lower = readup_text.lower()
+            if 'explorer' in readup_lower and stage.lower() != 'explorer':
+                readup_text = readup_text.replace('Explorer', stage).replace('explorer', stage.lower())
+            elif 'practitioner' in readup_lower and stage.lower() != 'practitioner':
+                readup_text = readup_text.replace('Practitioner', stage).replace('practitioner', stage.lower())
+            elif 'emerging senior' in readup_lower and stage.lower() != 'emerging senior':
+                readup_text = readup_text.replace('Emerging Senior', stage).replace('emerging senior', stage.lower())
+            elif 'strategic lead' in readup_lower and stage.lower() != 'strategic lead':
+                readup_text = readup_text.replace('Strategic Lead', stage).replace('strategic lead', stage.lower())
+        
         return {
-            'readup': ai_response.get('readup', 'Keep growing your skills!') if isinstance(ai_response, dict) else 'Keep growing your skills!',
+            'readup': readup_text,
             'resources': formatted_resources
         }
     except Exception as e:
@@ -485,11 +505,17 @@ def generate_category_insights(stage: str, categories: List[Dict[str, Any]]) -> 
     Generates personalized insights for each skill category.
     Returns brief, detailed, and actionable insights per category.
     """
-    category_details = "\n".join([f"{c['name']}: {c['score']}/{c['maxScore']}" for c in categories])
+    # Format categories with explicit percentages since score is already 0-100
+    category_details = "\n".join([
+        f"{c['name']}: {c['score']}% (score is already a percentage, maxScore is 100)" 
+        for c in categories
+    ])
     
     prompt = f"""Insights for {stage} designer.
 
 Skills: {category_details}
+
+IMPORTANT: The scores shown are already percentages (0-100). When mentioning scores in your response, use the exact percentage shown.
 
 For each category: brief (1 sentence), detailed (2 sentences), actionable (3 items).
 
@@ -498,8 +524,8 @@ JSON:
   "insights": [
     {{
       "category": "Category Name",
-      "brief": "Score meaning for {stage}",
-      "detailed": "Performance vs {stage} expectations",
+      "brief": "Score meaning for {stage} - use the exact percentage from above",
+      "detailed": "Performance vs {stage} expectations - use the exact percentage from above",
       "actionable": ["step1", "step2", "step3"]
     }}
   ]

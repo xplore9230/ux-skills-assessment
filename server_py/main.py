@@ -346,7 +346,7 @@ def generate_resources(data: AssessmentInput):
                 if ai_response and isinstance(ai_response, dict) and ai_response.get("resources") and len(ai_response.get("resources", [])) > 0:
                     # Use AI-enhanced resources if available
                     formatted_resources = ai_response.get("resources", formatted_resources)
-                    readup_text = readup_text or ai_response.get("readup", "Keep growing your skills!")
+                    readup_text = readup_text or ai_response.get("readup", f"As a {data.stage} UX designer, keep growing your skills!")
                     source = "ollama"
                     print(f"Final source: ollama")
                 else:
@@ -362,8 +362,11 @@ def generate_resources(data: AssessmentInput):
             if source != "pregenerated":
                 source = "curated"
         
-        # Use pre-generated readup if available, otherwise default
-        final_readup = readup_text if readup_text else "Keep growing your UX skills!"
+        # Use pre-generated readup if available, otherwise default with stage-specific message
+        if not readup_text:
+            final_readup = f"As a {data.stage} UX designer, keep growing your skills and building on your strengths!"
+        else:
+            final_readup = readup_text
         
         return {
             "readup": final_readup,
@@ -417,7 +420,7 @@ def generate_resources(data: AssessmentInput):
             ]
         
         return {
-            "readup": "Keep growing your UX skills!",
+            "readup": f"As a {data.stage} UX designer, keep growing your skills and building on your strengths!",
             "resources": formatted_resources,
             "source": "fallback",
             "ollama_available": False,
@@ -811,7 +814,8 @@ def generate_insights(data: AssessmentInput):
             source = "curated"
             insights = []
             for cat in data.categories:
-                percentage = round((cat.score / cat.maxScore * 100)) if cat.maxScore > 0 else 0
+                # cat.score is already a percentage (0-100), use it directly
+                percentage = round(cat.score) if cat.score >= 0 else 0
                 insights.append({
                     "category": cat.name,
                     "brief": f"You scored {percentage}% in {cat.name}.",
@@ -836,7 +840,8 @@ def generate_insights(data: AssessmentInput):
         # Return fallback insights
         insights = []
         for cat in data.categories:
-            percentage = round((cat.score / cat.maxScore * 100)) if cat.maxScore > 0 else 0
+            # cat.score is already a percentage (0-100), use it directly
+            percentage = round(cat.score) if cat.score >= 0 else 0
             insights.append({
                 "category": cat.name,
                 "brief": f"You scored {percentage}% in {cat.name}.",
