@@ -15,10 +15,10 @@ WORKDIR /code
 COPY server_py/ /code/server_py/
 
 # Install numpy first with pinned version to prevent upgrades
-# Then install other dependencies
+# Then install other dependencies with increased timeout and retries for large packages
 # Verify numpy version after installation
-RUN pip install --no-cache-dir numpy==1.26.4 && \
-    pip install --no-cache-dir -r /code/server_py/requirements.txt && \
+RUN pip install --no-cache-dir --default-timeout=300 numpy==1.26.4 && \
+    pip install --no-cache-dir --default-timeout=300 --retries 5 -r /code/server_py/requirements.txt && \
     python -c "import numpy; assert numpy.__version__.startswith('1.26'), f'Wrong numpy version: {numpy.__version__}'"
 
 # Switch into the backend directory for runtime so the start command doesn't rely on `cd`
