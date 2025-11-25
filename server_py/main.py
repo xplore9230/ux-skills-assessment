@@ -15,11 +15,8 @@ from ollama_client import (
     generate_deep_dive_topics_ollama,
     generate_layout_strategy,
     generate_category_insights,
-    quick_ollama_check,
-    generate_design_system_improvement_plan,
-    generate_design_system_insights
+    quick_ollama_check
 )
-from generate_design_system_questions import generate_all_design_system_questions
 from job_links import build_job_search_links
 
 # Import RAG components
@@ -251,38 +248,6 @@ def ollama_status():
         "use_pregenerated": USE_PREGENERATED,
         "model_status": "ready" if ollama_ready else ("not_available" if not OLLAMA_AVAIL else "checking")
     }
-
-@app.post("/api/generate-design-system-questions")
-def generate_design_system_questions():
-    """
-    Generate 30 design system questions using Llama.
-    Returns questions across 6 categories (5 questions per category).
-    """
-    try:
-        print("Generating design system questions...")
-        questions = generate_all_design_system_questions()
-        print(f"✓ Generated {len(questions)} design system questions")
-        return {"questions": questions}
-    except Exception as e:
-        print(f"Error generating design system questions: {e}")
-        # Return fallback questions
-        return {
-            "questions": [
-                {
-                    "id": f"DS-Fallback-{i}",
-                    "text": f"Design system question {i+1}",
-                    "category": "Foundations",
-                    "options": [
-                        {"value": 1, "label": "Not familiar"},
-                        {"value": 2, "label": "Basic understanding"},
-                        {"value": 3, "label": "Good understanding"},
-                        {"value": 4, "label": "Strong understanding"},
-                        {"value": 5, "label": "Expert level"}
-                    ]
-                }
-                for i in range(30)
-            ]
-        }
 
 @app.post("/api/generate-improvement-plan")
 def generate_plan(data: AssessmentInput):
@@ -782,71 +747,6 @@ def generate_layout(data: AssessmentInput):
             },
             "priority_message": "Let's review your UX skills assessment results."
         }
-
-@app.post("/api/generate-design-system-improvement-plan")
-def generate_ds_improvement_plan(data: AssessmentInput):
-    """
-    Generates a 4-week improvement plan specifically for Design Systems knowledge.
-    """
-    try:
-        print(f"Generating design system improvement plan for {data.stage} level")
-        categories_dict = [c.model_dump() for c in data.categories]
-        return generate_design_system_improvement_plan(
-            data.stage,
-            data.totalScore,
-            data.maxScore,
-            categories_dict
-        )
-    except Exception as e:
-        print(f"Error generating design system improvement plan: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/api/generate-design-system-insights")
-def generate_ds_insights(data: AssessmentInput):
-    """
-    Generates personalized insights for Design Systems categories.
-    """
-    try:
-        print(f"Generating design system insights for {data.stage} level")
-        categories_dict = [c.model_dump() for c in data.categories]
-        ai_response = generate_design_system_insights(data.stage, categories_dict)
-        
-        insights = ai_response.get("insights", [])
-        
-        # Ensure we have insights for all categories
-        if not insights or len(insights) == 0:
-            insights = []
-            for cat in data.categories:
-                percentage = round((cat.score / cat.maxScore * 100)) if cat.maxScore > 0 else 0
-                insights.append({
-                    "category": cat.name,
-                    "brief": f"You scored {percentage}% in {cat.name}.",
-                    "detailed": f"Your Design Systems knowledge in {cat.name} shows room for growth.",
-                    "actionable": [
-                        f"Review {cat.name} concepts in the Design Systems guide",
-                        f"Practice applying {cat.name} in your work",
-                        f"Build a project focusing on {cat.name}"
-                    ]
-                })
-        
-        return {"insights": insights}
-    except Exception as e:
-        print(f"Error generating design system insights: {e}")
-        # Return fallback insights
-        insights = []
-        for cat in data.categories:
-            percentage = round((cat.score / cat.maxScore * 100)) if cat.maxScore > 0 else 0
-            insights.append({
-                "category": cat.name,
-                "brief": f"You scored {percentage}% in {cat.name}.",
-                "detailed": f"Your Design Systems knowledge in {cat.name} can be improved.",
-                "actionable": [
-                    f"Study {cat.name} in design systems",
-                    f"Practice {cat.name} concepts",
-                    f"Apply {cat.name} to projects"
-                ]
-            })
-        return {"insights": insights}
 
 @app.post("/api/generate-category-insights")
 def generate_insights(data: AssessmentInput):
