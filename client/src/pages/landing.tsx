@@ -22,12 +22,24 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
           <div className="relative w-full max-w-2xl flex items-center justify-center">
             <div className="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px] flex items-center justify-center">
               {/* Rotating Orb */}
-              <img 
-                src="/orb.webp" 
-                alt="" 
-                className="absolute inset-0 w-full h-full object-contain opacity-100"
-                style={{ animation: "spin-slow 20s linear infinite" }}
-              />
+              <motion.div
+                className="absolute inset-0 w-full h-full"
+                animate={{
+                  scale: [1, 1.04, 1, 1.04, 1]
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <img 
+                  src="/orb.webp" 
+                  alt="" 
+                  className="w-full h-full object-contain opacity-100"
+                  style={{ animation: "spin-slow 30s linear infinite" }}
+                />
+              </motion.div>
               
               {/* White transparency gradient in center */}
               <div className="absolute inset-0 rounded-full bg-radial-gradient from-background via-transparent to-transparent w-full h-full scale-75" />
