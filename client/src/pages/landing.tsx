@@ -32,10 +32,9 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
               {/* White transparency gradient in center */}
               <div className="absolute inset-0 rounded-full bg-radial-gradient from-background via-transparent to-transparent w-full h-full scale-75" />
               
-              {/* UX Text at center */}
+              {/* Brain Icon at center */}
               <div className="relative z-10 flex items-center justify-center">
-                <motion.span 
-                  className="text-[100px] md:text-[100px] font-black text-blue-500 opacity-50 blur-sm"
+                <motion.div
                   animate={{ 
                     y: [0, -2, 0, 2, 0]
                   }}
@@ -45,8 +44,12 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
                     ease: "easeInOut"
                   }}
                 >
-                  UX
-                </motion.span>
+                  <Brain 
+                    weight="fill" 
+                    className="w-[100px] h-[100px] md:w-[100px] md:h-[100px] opacity-100 blur-lg"
+                    style={{ color: '#A5A4F4' }}
+                  />
+                </motion.div>
               </div>
             </div>
           </div>
@@ -71,9 +74,9 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="flex items-center justify-center gap-2 mb-5 md:mb-4"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm">
-                <Brain weight="duotone" className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-muted-foreground">AI + RAG enhanced recommendations</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 backdrop-blur-sm">
+                <Brain weight="duotone" className="w-4 h-4 text-blue-500" />
+                <span className="text-sm font-medium text-blue-500">AI + RAG enhanced recommendations</span>
               </div>
             </motion.div>
             
