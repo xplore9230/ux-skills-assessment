@@ -19,27 +19,29 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
     let lastTimestamp: number = 0;
 
     const reversePlayback = (timestamp: number) => {
+      if (!video) return; // Safety check
+      
       if (!lastTimestamp) lastTimestamp = timestamp;
       
-      const deltaTime = (timestamp - lastTimestamp) / 1000; // Convert ms to seconds
+      const deltaTime = (timestamp - lastTimestamp) / 1000;
       lastTimestamp = timestamp;
 
-      // Decrement current time
-      // We can adjust the multiplier to control reverse speed if needed (e.g., * 1.0)
+      // Rewind video
       video.currentTime = Math.max(0, video.currentTime - deltaTime);
 
       if (video.currentTime > 0) {
         animationFrameId = requestAnimationFrame(reversePlayback);
       } else {
-        // Reached the start, play forward again
-        video.play().catch(console.error); // catch play errors
+        // Reached the start, stop.
+        // "play once forward and then backward"
+        video.pause();
+        lastTimestamp = 0;
       }
     };
 
     const handleEnded = () => {
-      // Video finished playing forward
       video.pause();
-      lastTimestamp = 0; // Reset timestamp for the new animation loop
+      lastTimestamp = 0;
       animationFrameId = requestAnimationFrame(reversePlayback);
     };
 
@@ -66,7 +68,9 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
             className="w-full max-w-2xl rounded-lg"
             autoPlay
             muted
+            loop={false}
             playsInline
+            preload="auto"
             data-testid="landing-video"
           />
         </motion.div>
