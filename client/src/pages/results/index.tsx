@@ -25,7 +25,7 @@ import {
   useImprovementPlan,
   useJobSearchLinks,
 } from "@/hooks/results";
-import { getTitleForStage, getAIInsightTeaserData } from "@/lib/results/stage-config";
+import { getTitleForStage } from "@/lib/results/stage-config";
 import { getTopPodcastsData } from "@/data/podcasts";
 import type { QuizAnswers, QuizResults } from "@/lib/results/types";
 import ResultsPage from "./ResultsPage";
@@ -192,7 +192,6 @@ export default function ResultsEntry() {
   
   // Get static data
   const titleData = getTitleForStage(results.stage);
-  const aiInsightTeaserData = getAIInsightTeaserData();
   const topPodcastsData = getTopPodcastsData();
   
   return (
@@ -234,9 +233,6 @@ export default function ResultsEntry() {
       
       // Section 7: Next Role
       nextRole={jobSearchHook.data}
-      
-      // Section 8: AI Insight Teaser
-      aiInsightTeaser={aiInsightTeaserData}
     />
   );
 }

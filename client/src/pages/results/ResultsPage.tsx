@@ -19,7 +19,6 @@ import type {
   ImprovementPlanData,
   TopPodcastsData,
   NextRoleData,
-  AIInsightTeaserData,
   LoadingState,
 } from "@/lib/results/types";
 
@@ -33,7 +32,6 @@ import DeepInsights from "./sections/DeepInsights";
 import ImprovementPlan from "./sections/ImprovementPlan";
 import TopPodcasts from "./sections/TopPodcasts";
 import NextRole from "./sections/NextRole";
-import AIInsightTeaser from "./sections/AIInsightTeaser";
 
 /**
  * Results page props
@@ -74,8 +72,6 @@ interface ResultsPageProps {
   // Section 7
   nextRole: NextRoleData;
   
-  // Section 8
-  aiInsightTeaser: AIInsightTeaserData;
 }
 
 /**
@@ -122,7 +118,6 @@ export default function ResultsPage({
   improvementPlanStatus,
   topPodcasts,
   nextRole,
-  aiInsightTeaser,
 }: ResultsPageProps) {
   const navigate = useNavigate();
   
@@ -202,10 +197,6 @@ export default function ResultsPage({
           <NextRole data={nextRole} />
         </motion.section>
         
-        {/* Section 9: AI Insight Teaser */}
-        <motion.section variants={sectionVariants} className="mb-8">
-          <AIInsightTeaser data={aiInsightTeaser} />
-        </motion.section>
       </motion.div>
     </div>
   );
