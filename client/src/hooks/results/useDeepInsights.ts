@@ -76,10 +76,10 @@ function getFallbackDeepInsights(
 ): DeepInsightsData {
   const resources = getAdvancedResources(
     stage,
-    strongCategories,
-    weakCategories,
+    Array.isArray(strongCategories) ? strongCategories : [],
+    Array.isArray(weakCategories) ? weakCategories : [],
     6
-  );
+  ) || [];
   
   // Convert to DeepInsight with generic reason
   const insights: DeepInsight[] = resources.map(r => ({

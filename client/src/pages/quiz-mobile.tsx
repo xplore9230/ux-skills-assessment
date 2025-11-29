@@ -60,12 +60,20 @@ const QuizMobile = memo(function QuizMobile({ questions, onComplete, onBack, onH
     );
   }
 
+  const questionOptions = Array.isArray(currentQuestion.options) ? currentQuestion.options : [];
+  const missingOptions = questionOptions.length === 0;
+
   const isLastQuestion = useMemo(() => {
     const safeIndex = Math.max(0, Math.min(currentIndex, questions.length - 1));
     return safeIndex === questions.length - 1;
   }, [currentIndex, questions.length]);
   
-  const canGoNext = useMemo(() => currentQuestion?.id && answers[currentQuestion.id] !== undefined, [answers, currentQuestion?.id]);
+  const canGoNext = useMemo(() => {
+    if (missingOptions) {
+      return false;
+    }
+    return Boolean(currentQuestion?.id && answers[currentQuestion.id] !== undefined);
+  }, [answers, currentQuestion?.id, missingOptions]);
   const canGoPrevious = useMemo(() => currentIndex > 0, [currentIndex]);
   
   // Calculate progress percentage
@@ -87,6 +95,11 @@ const QuizMobile = memo(function QuizMobile({ questions, onComplete, onBack, onH
   }, [progressPercentage, answeredCount, questions.length, answers, onHalfwayComplete]);
 
   const handleAnswer = useCallback((value: number) => {
+    if (missingOptions) {
+      console.error(`Question "${currentQuestion.id}" is missing answer options. Skipping answer handler.`);
+      return;
+    }
+
     const updatedAnswers = { ...answers, [currentQuestion.id]: value };
     setAnswers(updatedAnswers);
     
@@ -114,7 +127,7 @@ const QuizMobile = memo(function QuizMobile({ questions, onComplete, onBack, onH
         });
       });
     }, 300);
-  }, [answers, currentQuestion.id, isLastQuestion, onComplete]);
+  }, [answers, currentQuestion.id, isLastQuestion, onComplete, missingOptions]);
 
   const handleNext = useCallback(() => {
     if (isLastQuestion && canGoNext) {
@@ -221,15 +234,21 @@ const QuizMobile = memo(function QuizMobile({ questions, onComplete, onBack, onH
                   aria-labelledby="question-text"
                   className="px-4 space-y-2 w-full"
                 >
-                  {currentQuestion.options.map((option) => (
-                    <AnswerOption
-                      key={option.value}
-                      value={option.value}
-                      label={option.label}
-                      isSelected={answers[currentQuestion.id] === option.value}
-                      onClick={() => handleAnswer(option.value)}
-                    />
-                  ))}
+                  {missingOptions ? (
+                    <div className="rounded-xl border border-dashed border-border/60 bg-muted/40 p-4 text-center text-sm text-muted-foreground">
+                      We couldn&apos;t load the answer options for this question. Please go back and restart the quiz.
+                    </div>
+                  ) : (
+                    questionOptions.map((option) => (
+                      <AnswerOption
+                        key={option.value}
+                        value={option.value}
+                        label={option.label}
+                        isSelected={answers[currentQuestion.id] === option.value}
+                        onClick={() => handleAnswer(option.value)}
+                      />
+                    ))
+                  )}
                 </div>
               </motion.div>
             </AnimatePresence>

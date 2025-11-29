@@ -164,6 +164,9 @@ export default function SkillAnalysis({
     });
   }
   
+  // Ensure categories is an array
+  const safeCategories = Array.isArray(categories) ? categories : [];
+  
   return (
     <div>
       <div className="mb-8 text-center">
@@ -176,7 +179,7 @@ export default function SkillAnalysis({
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        {categories.map((category, index) => (
+        {safeCategories.map((category, index) => (
           <div
             key={category.id}
             className={index === 4 ? "md:col-span-2" : ""}

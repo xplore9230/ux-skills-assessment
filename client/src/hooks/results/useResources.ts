@@ -70,7 +70,8 @@ async function fetchResourcesWithRanking(
 function getFallbackResources(
   weakCategories: Category[]
 ): CuratedResourcesData {
-  const resources = getBeginnerResources(weakCategories, 5);
+  const safeWeakCategories = Array.isArray(weakCategories) ? weakCategories : [];
+  const resources = getBeginnerResources(safeWeakCategories, 5) || [];
   
   // Convert to CuratedResource with generic reason
   const curatedResources: CuratedResource[] = resources.map(r => ({

@@ -112,7 +112,8 @@ export function useSkillAnalysis(
       console.warn("API failed, using fallback skill analysis:", err);
       
       // Fallback to client-side generation
-      const insights = categories.map(cat => generateCategoryInsight(cat, stage));
+      const safeCategories = Array.isArray(categories) ? categories : [];
+      const insights = safeCategories.map(cat => generateCategoryInsight(cat, stage));
       
       const fallbackData: SkillAnalysisData = { insights };
       
