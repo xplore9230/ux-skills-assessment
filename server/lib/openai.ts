@@ -1,6 +1,17 @@
 import OpenAI from "openai";
 
-// Lazy-initialize OpenAI client to avoid crash when API key is missing
+// ============================================================================
+// OpenAI Client - Lazy Initialization
+// ============================================================================
+// IMPORTANT: The client is lazy-initialized to prevent server crashes when
+// OPENAI_API_KEY is not set. This allows the server to start and serve
+// fallback content from the knowledge bank even without AI.
+//
+// DO NOT change this to eager initialization like:
+//   export const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// This will crash the server if the API key is missing.
+// ============================================================================
+
 let _openai: OpenAI | null = null;
 
 function getOpenAIClient(): OpenAI | null {
@@ -20,7 +31,7 @@ export function isOpenAIConfigured(): boolean {
   return !!process.env.OPENAI_API_KEY;
 }
 
-// Export for backward compatibility (may be null)
+// Export for backward compatibility (may be null if API key not set)
 export const openai = getOpenAIClient();
 
 // Interfaces for AI responses

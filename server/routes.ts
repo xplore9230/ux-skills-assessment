@@ -3,11 +3,12 @@ import { createServer, type Server } from "http";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
 import { storage } from "./storage";
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
 // Path to pre-generated JSON data from the Python backend
 // Try multiple possible locations for Vercel serverless and local dev
@@ -218,6 +219,343 @@ function getMockJobs(query: string): any[] {
     if (isSenior) return job.title.toLowerCase().includes("senior") || job.title.toLowerCase().includes("lead");
     return !job.title.toLowerCase().includes("senior") && !job.title.toLowerCase().includes("lead");
   });
+}
+
+// ========================================
+// V2 HELPER FUNCTIONS
+// ========================================
+
+// Band thresholds
+type Band = "Strong" | "Needs Work" | "Learn the Basics";
+
+function deriveBand(score: number): Band {
+  if (score >= 80) return "Strong";
+  if (score >= 40) return "Needs Work";
+  return "Learn the Basics";
+}
+
+// Generate meaning text based on stage and performance
+function generateMeaningText(
+  stage: string,
+  totalScore: number,
+  strongCategories: string[],
+  weakCategories: string[]
+): string {
+  const strongText = strongCategories?.length > 0 
+    ? `You excel in ${strongCategories.slice(0, 2).join(" and ")}.` 
+    : "";
+  const weakText = weakCategories?.length > 0 
+    ? `Focus on strengthening ${weakCategories.slice(0, 2).join(" and ")} to advance.` 
+    : "";
+  
+  const stageMeanings: Record<string, string> = {
+    "Explorer": `As an Explorer with a score of ${totalScore}, you're building your UX foundation. ${strongText} ${weakText} Keep learning and practicing to develop your skills.`,
+    "Practitioner": `As a Practitioner scoring ${totalScore}, you have solid fundamentals. ${strongText} ${weakText} Focus on deepening your expertise and taking ownership of projects.`,
+    "Emerging Senior": `At ${totalScore} as an Emerging Senior, you're transitioning to strategic impact. ${strongText} ${weakText} Develop your leadership skills and mentor others.`,
+    "Strategic Lead": `With a score of ${totalScore} as a Strategic Lead, you're operating at a high level. ${strongText} ${weakText} Focus on organizational influence and driving design culture.`,
+  };
+  
+  return stageMeanings[stage] || stageMeanings["Practitioner"];
+}
+
+// Generate category insight
+function generateCategoryInsight(category: any, stage: string): any {
+  const score = typeof category.score === "number" ? category.score : 50;
+  const band = deriveBand(score);
+  const categoryName = category.name || "Unknown Category";
+  const categoryId = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  
+  // Template descriptions based on band
+  const descriptions: Record<Band, string> = {
+    "Strong": `Your ${categoryName} skills are well-developed. You demonstrate strong competency and can handle complex challenges in this area. Continue refining your expertise to mentor others.`,
+    "Needs Work": `Your ${categoryName} foundation is solid but has room for growth. Focus on practicing intermediate concepts and applying them in real projects to strengthen this skill area.`,
+    "Learn the Basics": `Your ${categoryName} skills need foundational development. Start with core principles and gradually build up through structured learning and hands-on practice.`,
+  };
+  
+  // Template checklists based on category and band
+  const checklists: Record<Band, { id: string; text: string; priority?: string }[]> = {
+    "Strong": [
+      { id: `${categoryId}-1`, text: `Mentor a junior on ${categoryName} best practices`, priority: "medium" },
+      { id: `${categoryId}-2`, text: `Document your ${categoryName} process for the team`, priority: "medium" },
+      { id: `${categoryId}-3`, text: `Lead a workshop on advanced ${categoryName} techniques`, priority: "low" },
+      { id: `${categoryId}-4`, text: `Explore cutting-edge trends in ${categoryName}`, priority: "low" },
+      { id: `${categoryId}-5`, text: `Create a case study showcasing your ${categoryName} expertise`, priority: "medium" },
+    ],
+    "Needs Work": [
+      { id: `${categoryId}-1`, text: `Complete 2 hands-on projects focused on ${categoryName}`, priority: "high" },
+      { id: `${categoryId}-2`, text: `Read 3 articles on ${categoryName} best practices`, priority: "medium" },
+      { id: `${categoryId}-3`, text: `Seek feedback on your ${categoryName} work from peers`, priority: "high" },
+      { id: `${categoryId}-4`, text: `Practice ${categoryName} skills for 30 minutes daily`, priority: "medium" },
+      { id: `${categoryId}-5`, text: `Join a community focused on ${categoryName}`, priority: "low" },
+    ],
+    "Learn the Basics": [
+      { id: `${categoryId}-1`, text: `Study fundamental principles of ${categoryName}`, priority: "high" },
+      { id: `${categoryId}-2`, text: `Take an introductory course on ${categoryName}`, priority: "high" },
+      { id: `${categoryId}-3`, text: `Follow 3 experts in ${categoryName} on social media`, priority: "low" },
+      { id: `${categoryId}-4`, text: `Complete beginner exercises in ${categoryName}`, priority: "high" },
+      { id: `${categoryId}-5`, text: `Review examples of good ${categoryName} work`, priority: "medium" },
+      { id: `${categoryId}-6`, text: `Set a 30-day learning goal for ${categoryName}`, priority: "medium" },
+    ],
+  };
+  
+  return {
+    categoryId,
+    categoryName,
+    score,
+    band,
+    description: descriptions[band],
+    checklist: checklists[band],
+  };
+}
+
+// ============================================================================
+// IMPORTANT: DO NOT ADD PLACEHOLDER GENERATORS HERE
+// ============================================================================
+// All resources MUST come from the curated knowledgeBank in:
+//   client/src/data/knowledge-bank.ts
+//
+// The knowledge bank contains 43+ real resources with:
+// - Unique IDs (e.g., "ux-fund-001", "research-003")
+// - Real URLs to actual articles/videos/podcasts
+// - Proper categorization and difficulty levels
+//
+// NEVER create functions like:
+// - generatePlaceholderResources()
+// - generatePlaceholderDeepInsights()
+// - Any function that creates fake IDs like "resource-1" or "insight-1"
+// - Any function that uses generic URLs like "https://www.nngroup.com/articles/"
+//
+// If you need to add resources, add them to knowledge-bank.ts with real URLs.
+// ============================================================================
+
+// Generate improvement plan
+function generateImprovementPlan(
+  stage: string,
+  strongCategories: string[] = [],
+  weakCategories: string[] = []
+): any[] {
+  const normalizedWeak = normalizeCategories(weakCategories);
+  const normalizedStrong = normalizeCategories(strongCategories);
+  const focusAreas =
+    normalizedWeak.length > 0 ? normalizedWeak : getFallbackFocusCategories(stage);
+  const stageLevel = getLevelForStage(stage);
+  const stretchLevels = getStretchLevelsForStage(stage);
+
+  const week1Resources = pickResourcesByLevel(
+    [stageLevel],
+    focusAreas,
+    2
+  );
+  const week2Resources = pickResourcesByLevel(
+    [stageLevel, ...stretchLevels],
+    focusAreas,
+    2,
+    week1Resources.map(r => r.id)
+  );
+  const week3Resources = pickResourcesByLevel(
+    stretchLevels.length > 0 ? stretchLevels : [stageLevel],
+    focusAreas,
+    2,
+    [...week1Resources, ...week2Resources].map(r => r.id)
+  );
+
+  return [
+    buildWeekPlan({
+      weekNumber: 1,
+      theme: "Foundation Fix",
+      focusAreas: focusAreas.slice(0, 2),
+      resources: week1Resources,
+      practiceLabel: "Apply fundamentals",
+      practiceDescription: (category) =>
+        `Create a quick sketch, wireframe, or heuristic checklist focused on ${category} and capture notes in your journal.`,
+      deepWork: [
+        {
+          title: "Mini project sprint",
+          description: "Translate today's readings into a simple redesign or flow walkthrough.",
+        },
+        {
+          title: "Portfolio reflection",
+          description: "Document one clear before/after improvement you can add to a case study.",
+        },
+      ],
+    }),
+    buildWeekPlan({
+      weekNumber: 2,
+      theme: "Depth & Ownership",
+      focusAreas,
+      resources: week2Resources,
+      practiceLabel: "Critique & iterate",
+      practiceDescription: (category) =>
+        `Run a quick critique of an existing experience in ${category}. Capture 3 insights and 1 experiment you could ship.`,
+      deepWork: [
+        {
+          title: "End-to-end flow audit",
+          description: "Audit a real journey and capture opportunities tied to your focus areas.",
+        },
+        {
+          title: "Research or testing session",
+          description: "Host a short user session or synthesize prior research into actionable chunks.",
+        },
+      ],
+    }),
+    buildWeekPlan({
+      weekNumber: 3,
+      theme: "Strategy & Visibility",
+      focusAreas,
+      resources: week3Resources,
+      practiceLabel: "Share and mentor",
+      practiceDescription: (category) =>
+        `Record a Loom or host a brown-bag to teach one ${category} insight to your team.`,
+      deepWork: [
+        {
+          title: "Strategic narrative",
+          description: "Create a 2-slide story or doc that ties your UX work to business goals.",
+        },
+        {
+          title: "Knowledge share",
+          description: "Package learnings into a blog post, internal doc, or playbook for peers.",
+        },
+      ],
+    }),
+  ];
+}
+
+function buildWeekPlan({
+  weekNumber,
+  theme,
+  focusAreas,
+  resources,
+  practiceLabel,
+  practiceDescription,
+  deepWork,
+}: {
+  weekNumber: number;
+  theme: string;
+  focusAreas: Category[];
+  resources: Resource[];
+  practiceLabel: string;
+  practiceDescription: (category: Category) => string;
+  deepWork: Array<{ title: string; description: string }>;
+}) {
+  const dailyTasks = [
+    ...resources.map((resource, idx) => ({
+      id: `w${weekNumber}-res-${idx}`,
+      title: `Study: ${resource.title}`,
+      description: `${resource.summary} — ${resource.url}`,
+      duration: resource.duration || "45 min",
+      category: resource.category,
+      type: "daily",
+    })),
+  ];
+
+  const primaryCategory = focusAreas[0] || "UX Fundamentals";
+  while (dailyTasks.length < 3) {
+    dailyTasks.push({
+      id: `w${weekNumber}-practice-${dailyTasks.length}`,
+      title: practiceLabel,
+      description: practiceDescription(primaryCategory),
+      duration: "45 min",
+      category: primaryCategory,
+      type: "daily",
+    });
+  }
+
+  const deepWorkTasks = deepWork.map((task, idx) => ({
+    id: `w${weekNumber}-dw${idx + 1}`,
+    title: task.title,
+    description: task.description,
+    duration: idx === 0 ? "120 min" : "90 min",
+    type: "deep-work",
+  }));
+
+  return {
+    weekNumber,
+    theme,
+    focusAreas,
+    dailyTasks,
+    deepWorkTasks,
+    expectedOutcome:
+      weekNumber === 1
+        ? "Solid understanding of foundational concepts and initial practice experience."
+        : weekNumber === 2
+        ? "Clearer craftsmanship, improved documentation habits, and tighter stakeholder alignment."
+        : "Strategic mindset and increased visibility through documented work.",
+  };
+}
+
+
+import { generateText, generateJSON, isOpenAIConfigured } from "./lib/openai";
+import { knowledgeBank, Resource, Category, ResourceLevel, getCategories } from "../client/src/data/knowledge-bank";
+
+// Log knowledge bank status at startup
+console.log("=== KNOWLEDGE BANK LOADED ===");
+console.log("Total resources:", knowledgeBank.length);
+if (knowledgeBank.length > 0) {
+  console.log("First resource ID:", knowledgeBank[0].id);
+  console.log("First resource URL:", knowledgeBank[0].url);
+}
+console.log("==============================");
+
+const CATEGORY_WHITELIST = getCategories();
+
+const STAGE_TO_LEVEL: Record<string, ResourceLevel> = {
+  Explorer: "explorer",
+  Practitioner: "practitioner",
+  "Emerging Senior": "emerging-senior",
+  "Strategic Lead": "strategic-lead",
+};
+
+const STRETCH_LEVELS: Record<string, ResourceLevel[]> = {
+  Explorer: ["practitioner"],
+  Practitioner: ["emerging-senior"],
+  "Emerging Senior": ["strategic-lead"],
+  "Strategic Lead": ["strategic-lead"],
+};
+
+const STAGE_FOCUS_CATEGORIES: Record<string, Category[]> = {
+  Explorer: ["UX Fundamentals", "Collaboration & Communication"],
+  Practitioner: ["UI Craft & Visual Design", "Collaboration & Communication"],
+  "Emerging Senior": ["User Research & Validation", "Product Thinking & Strategy"],
+  "Strategic Lead": ["Collaboration & Communication", "Product Thinking & Strategy"],
+};
+
+function getLevelForStage(stage: string): ResourceLevel {
+  return STAGE_TO_LEVEL[stage] ?? "explorer";
+}
+
+function getStretchLevelsForStage(stage: string): ResourceLevel[] {
+  return STRETCH_LEVELS[stage] ?? ["strategic-lead"];
+}
+
+function normalizeCategories(categories?: string[]): Category[] {
+  if (!categories || categories.length === 0) {
+    return [];
+  }
+  return categories.filter((cat: string): cat is Category =>
+    CATEGORY_WHITELIST.includes(cat as Category)
+  );
+}
+
+function getFallbackFocusCategories(stage: string): Category[] {
+  return STAGE_FOCUS_CATEGORIES[stage] ?? ["UX Fundamentals", "User Research & Validation"];
+}
+
+function pickResourcesByLevel(
+  levels: ResourceLevel[],
+  categories: Category[],
+  limit: number,
+  excludeIds: string[] = []
+): Resource[] {
+  if (levels.length === 0) {
+    return [];
+  }
+
+  const exclude = new Set(excludeIds);
+  return knowledgeBank
+    .filter((resource) => levels.includes(resource.level))
+    .filter((resource) => categories.length === 0 || categories.includes(resource.category))
+    .filter((resource) => !exclude.has(resource.id))
+    .slice(0, limit);
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -503,6 +841,530 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ error: "Failed to generate job search links" });
     }
   });
+
+// ========================================
+// V2 API ENDPOINTS - New Results Page
+// ========================================
+// These endpoints support the new results page with fresh logic.
+// They utilize OpenAI if configured, or fall back to template generation.
+
+// Helper to fetch RAG context from Python backend
+async function fetchRAGContext(stage: string, categories: any[]): Promise<any[]> {
+  try {
+    // Set a short timeout (2s) to ensure RAG doesn't slow down the response
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    
+    const response = await fetch("http://localhost:8000/api/rag/retrieve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        stage,
+        categories: categories.map(c => ({
+          name: c.name,
+          score: c.finalScore || c.score,
+          maxScore: 100
+        })),
+        top_k: 5
+      }),
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data && Array.isArray(data.resources)) {
+        console.log(`✓ RAG Context: Retrieved ${data.resources.length} resources`);
+        return data.resources;
+      }
+    }
+  } catch (error) {
+    // Silent failure for RAG - fallback to pure OpenAI
+    console.warn("RAG Context Retrieval skipped:", error instanceof Error ? error.message : "Unknown error");
+  }
+  return [];
+}
+
+// Helper: Fetch Learning Paths from RAG
+async function fetchLearningPaths(categories: string[]): Promise<any> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const response = await fetch("http://localhost:8000/api/rag/learning-paths", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ categories }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    if (response.ok) return (await response.json()).paths;
+  } catch (e) { console.warn("Learning Path RAG skipped"); }
+  return {};
+}
+
+// Helper: Fetch Stage Competencies from RAG
+async function fetchStageCompetencies(stage: string): Promise<any[]> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const response = await fetch("http://localhost:8000/api/rag/stage-competencies", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stage }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    if (response.ok) return (await response.json()).competencies;
+  } catch (e) { console.warn("Stage Comp RAG skipped"); }
+  return [];
+}
+
+// Helper: Fetch Skill Relationships from RAG
+async function fetchSkillRelationships(weak: string[], strong: string[]): Promise<any[]> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const response = await fetch("http://localhost:8000/api/rag/skill-relationships", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ weak_categories: weak, strong_categories: strong }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    if (response.ok) return (await response.json()).relationships;
+  } catch (e) { console.warn("Skill Rel RAG skipped"); }
+  return [];
+}
+
+/**
+ * POST /api/v2/meaning
+ * Generate "What this means for you" AI text
+ * 
+ * Input: { stage, totalScore, strongCategories[], weakCategories[] }
+ * Output: { meaning: string }
+ */
+app.post("/api/v2/meaning", async (req, res) => {
+  try {
+    const { stage, totalScore, strongCategories, weakCategories } = req.body ?? {};
+    
+    // Check if OpenAI is configured
+    if (isOpenAIConfigured()) {
+      // Construct categories for RAG context
+      const categories = [
+        ...(strongCategories || []).map((c: string) => ({ name: c, score: 100, maxScore: 100 })),
+        ...(weakCategories || []).map((c: string) => ({ name: c, score: 50, maxScore: 100 }))
+      ];
+      // 1. Fetch RAG Context (Knowledge Base)
+      const ragResources = await fetchRAGContext(stage, categories);
+      
+      let contextString = "";
+      if (ragResources.length > 0) {
+        contextString = "\n\nRELEVANT LEARNING RESOURCES (Use these to tailor your advice):\n";
+        ragResources.forEach((res, idx) => {
+          contextString += `${idx + 1}. ${res.title} (${res.category || 'General'})\n   Summary: ${res.content_preview?.substring(0, 150) || 'N/A'}...\n`;
+        });
+      }
+
+      const systemPrompt = `You are an expert UX career mentor. Write a short, personalized "What This Means For You" summary (max 50 words) for a UX designer. 
+      Use an encouraging but professional tone. Focus on their current stage and growth potential.
+      ${contextString ? "Incorporate insights from the provided learning resources where relevant." : ""}`;
+      
+      const userPrompt = `
+      Stage: ${stage}
+      Total Score: ${totalScore}/100
+      Strongest Areas: ${strongCategories?.join(", ") || "None specific"}
+      Areas for Improvement: ${weakCategories?.join(", ") || "General fundamentals"}
+      ${contextString}
+      `;
+      
+      const response = await generateText(systemPrompt, userPrompt);
+      
+      if (response.content) {
+        return res.json({ meaning: response.content });
+      }
+    }
+    
+    // Fallback to template if OpenAI not configured or failed
+    const meaning = generateMeaningText(stage, totalScore, strongCategories, weakCategories);
+    return res.json({ meaning });
+  } catch (error) {
+    console.error("Error generating meaning:", error);
+    // Silent fallback to template
+    const { stage, totalScore, strongCategories, weakCategories } = req.body ?? {};
+    const meaning = generateMeaningText(stage, totalScore, strongCategories, weakCategories);
+    return res.json({ meaning });
+  }
+});
+
+/**
+ * POST /api/v2/skill-analysis
+ * Generate category insights with descriptions and checklists
+ * 
+ * Input: { categories[], stage }
+ * Output: { insights: [{ categoryId, categoryName, score, band, description, checklist[] }] }
+ */
+app.post("/api/v2/skill-analysis", async (req, res) => {
+  try {
+    const { categories, stage } = req.body ?? {};
+    
+    if (!Array.isArray(categories)) {
+      return res.status(400).json({ error: "Categories must be an array" });
+    }
+    
+    if (isOpenAIConfigured()) {
+      // 1. Fetch RAG Context
+      const ragResources = await fetchRAGContext(stage, categories);
+      
+      let contextString = "";
+      if (ragResources.length > 0) {
+        contextString = "\n\nRECOMMENDED RESOURCES (Reference these in checklists where applicable):\n";
+        ragResources.forEach((res, idx) => {
+          contextString += `- ${res.title}: ${res.content_preview?.substring(0, 100)}...\n`;
+        });
+      }
+
+      const systemPrompt = `You are a senior UX hiring manager. Analyze the user's skill scores and generate specific insights.
+      For each category, provide:
+      1. A 2-sentence description of their current capability level.
+      2. A checklist of 3-5 specific, actionable tasks to improve.
+      ${contextString ? "3. Suggest specific resources from the provided list if they match the category." : ""}
+      
+      Return valid JSON with an "insights" array.`;
+      
+      const userPrompt = `
+      Stage: ${stage}
+      Categories and Scores:
+      ${JSON.stringify(categories.map((c: any) => ({ name: c.name, score: c.finalScore, band: c.band })))}
+      ${contextString}
+      `;
+      
+      type InsightResponse = {
+        insights: Array<{
+          categoryName: string;
+          description: string;
+          checklist: string[];
+        }>;
+      };
+      
+      const response = await generateJSON<InsightResponse>(systemPrompt, userPrompt);
+      
+      if (response.data && response.data.insights) {
+        // Merge AI response with original category data to preserve IDs
+        const mergedInsights = categories.map((cat: any) => {
+          const aiInsight = response.data?.insights.find(i => i.categoryName === cat.name);
+          // Fallback logic for individual categories if AI missed one
+          const fallback = generateCategoryInsight(cat, stage);
+          
+          if (aiInsight) {
+            return {
+              categoryId: cat.id,
+              categoryName: cat.name,
+              score: cat.finalScore,
+              band: cat.band,
+              description: aiInsight.description,
+              checklist: aiInsight.checklist.map((text, idx) => ({ 
+                id: `${cat.id}-${idx}`, 
+                text 
+              }))
+            };
+          }
+          return fallback;
+        });
+        
+        return res.json({ insights: mergedInsights });
+      }
+    }
+    
+    // Fallback
+    const insights = categories.map((cat: any) => 
+      generateCategoryInsight(cat, stage)
+    );
+    
+    return res.json({ insights });
+  } catch (error) {
+    console.error("Error generating skill analysis:", error);
+    const { categories, stage } = req.body ?? {};
+    if (Array.isArray(categories)) {
+      const insights = categories.map((cat: any) => generateCategoryInsight(cat, stage));
+      return res.json({ insights });
+    }
+    return res.status(500).json({ error: "Failed to generate skill analysis" });
+  }
+});
+
+/**
+ * POST /api/v2/resources
+ * Select curated beginner resources with AI-powered personalization
+ */
+app.post("/api/v2/resources", async (req, res) => {
+  try {
+    const { stage, weakCategories } = req.body ?? {};
+    const normalizedWeakCategories = normalizeCategories(weakCategories);
+    const focusCategories =
+      normalizedWeakCategories.length > 0
+        ? normalizedWeakCategories
+        : getFallbackFocusCategories(stage);
+    const level = getLevelForStage(stage);
+    
+    console.log("[/api/v2/resources] Request:", { stage, focusCategories, level });
+    console.log("[/api/v2/resources] KB size:", knowledgeBank.length);
+    
+    // Get all stage-level resources from knowledge bank
+    const stageResources = knowledgeBank.filter(r => r.level === level);
+    console.log("[/api/v2/resources] Stage resources found:", stageResources.length);
+    
+    // Prioritize focus categories, then fill with other stage resources
+    let candidates: Resource[] = [];
+    
+    if (focusCategories.length > 0) {
+      const focusMatches = stageResources.filter(r => focusCategories.includes(r.category));
+      candidates.push(...focusMatches);
+    }
+    
+    const candidateIds = new Set(candidates.map(c => c.id));
+    const others = stageResources.filter(r => !candidateIds.has(r.id));
+    candidates.push(...others);
+    
+    // Limit to 15 candidates for AI selection
+    candidates = candidates.slice(0, 15);
+    console.log("[/api/v2/resources] Candidates:", candidates.map(c => c.id));
+
+    let selectedResources: any[] = [];
+
+    if (isOpenAIConfigured()) {
+      try {
+        // Fetch RAG Context
+        const learningPaths = await fetchLearningPaths(normalizedWeakCategories);
+        const stageCompetencies = await fetchStageCompetencies(stage);
+        
+        // Prompt OpenAI
+        const systemPrompt = `You are a UX learning advisor. Select the 5 BEST beginner resources for this user.
+        Explain WHY each one specifically addresses their gaps based on the learning paths and stage expectations.
+        Return JSON: { resources: [{ id, reasonSelected }] }
+        IMPORTANT: Only use IDs from the provided Candidates list.`;
+        
+        const userPrompt = `
+        Stage: ${stage}
+        Focus Categories: ${focusCategories.join(", ")}
+        Candidates: ${JSON.stringify(candidates.map(r => ({ id: r.id, title: r.title, category: r.category, summary: r.summary })))}
+        Learning Context: ${JSON.stringify(learningPaths)}
+        Stage Context: ${JSON.stringify(stageCompetencies)}
+        `;
+        
+        type ResourceResponse = { resources: { id: string, reasonSelected: string }[] };
+        const response = await generateJSON<ResourceResponse>(systemPrompt, userPrompt);
+        
+        if (response.data && response.data.resources) {
+          selectedResources = response.data.resources.map(sel => {
+            const original = knowledgeBank.find(r => r.id === sel.id);
+            if (original) {
+              return { ...original, reasonSelected: sel.reasonSelected };
+            }
+            return null;
+          }).filter(Boolean);
+          console.log("[/api/v2/resources] AI selected:", selectedResources.length, "resources");
+        }
+      } catch (aiError) {
+        console.warn("[/api/v2/resources] AI failed, using fallback:", aiError);
+      }
+    }
+
+    // Fallback: use candidates directly from knowledge bank
+    if (selectedResources.length === 0) {
+      console.log("[/api/v2/resources] Using fallback - selecting from candidates");
+      // Shuffle and select 5
+      const shuffled = [...candidates].sort(() => 0.5 - Math.random());
+      selectedResources = shuffled.slice(0, 5).map(r => ({
+        ...r,
+        reasonSelected: `Recommended to strengthen your ${r.category} skills.`
+      }));
+      console.log("[/api/v2/resources] Fallback selected:", selectedResources.map(r => r.id));
+    }
+
+    return res.json({ resources: selectedResources });
+  } catch (error) {
+    console.error("[/api/v2/resources] Error:", error);
+    return res.status(500).json({ error: "Failed to generate resources" });
+  }
+});
+
+/**
+ * POST /api/v2/deep-insights
+ * Select advanced strategic content with RAG + AI
+ */
+app.post("/api/v2/deep-insights", async (req, res) => {
+  try {
+    const { stage, strongCategories, weakCategories } = req.body ?? {};
+    const stretchLevels = getStretchLevelsForStage(stage);
+    const normalizedStrong = normalizeCategories(strongCategories);
+    const normalizedWeak = normalizeCategories(weakCategories);
+    
+    console.log("[/api/v2/deep-insights] Request:", { stage, stretchLevels, normalizedStrong, normalizedWeak });
+    console.log("[/api/v2/deep-insights] KB size:", knowledgeBank.length);
+    
+    let candidates = knowledgeBank.filter(r => stretchLevels.includes(r.level));
+    
+    const priorityCategories = [...normalizedStrong, ...normalizedWeak];
+    if (priorityCategories.length > 0) {
+      const prioritized = candidates.filter(r => priorityCategories.includes(r.category));
+      const remainder = candidates.filter(r => !priorityCategories.includes(r.category));
+      candidates = [...prioritized, ...remainder];
+    }
+    
+    candidates = candidates.sort(() => 0.5 - Math.random()).slice(0, 25);
+    console.log("[/api/v2/deep-insights] Candidates:", candidates.map(c => c.id));
+
+    let deepInsights: any[] = [];
+
+    if (isOpenAIConfigured()) {
+      const stageCompetencies = await fetchStageCompetencies(stage);
+      const skillRelationships = await fetchSkillRelationships(normalizedWeak, normalizedStrong);
+      
+      // 3. Prompt OpenAI
+      const systemPrompt = `You are a UX career strategist. Select 6 ADVANCED resources that:
+      1. Deepen expertise in strong areas
+      2. Are stage-appropriate (e.g., leadership for seniors)
+      3. Bridge weak to strong areas strategically
+      
+      Explain WHY each resource is strategically valuable.
+      Return JSON: { insights: [{ id, whyThisForYou }] }`;
+      
+      const userPrompt = `
+      Stage: ${stage}
+      Strong Categories: ${normalizedStrong.join(", ")}
+      Weak Categories: ${normalizedWeak.join(", ")}
+      Candidates: ${JSON.stringify(candidates.map(r => ({ id: r.id, title: r.title, category: r.category, level: r.level, summary: r.summary })))}
+      Stage Strategy: ${JSON.stringify(stageCompetencies)}
+      Skill Bridging: ${JSON.stringify(skillRelationships)}
+      `;
+      
+      type InsightResponse = { insights: { id: string, whyThisForYou: string }[] };
+      const response = await generateJSON<InsightResponse>(systemPrompt, userPrompt);
+      
+      if (response.data && response.data.insights) {
+        deepInsights = response.data.insights.map(sel => {
+          const original = knowledgeBank.find(r => r.id === sel.id);
+          if (original) {
+            return { ...original, whyThisForYou: sel.whyThisForYou };
+          }
+          return null;
+        }).filter(Boolean);
+      }
+    }
+
+    // Fallback: use candidates directly from knowledge bank
+    if (deepInsights.length === 0) {
+      console.log("[/api/v2/deep-insights] Using fallback - selecting from candidates");
+      
+      const strongOnly = candidates.filter(r => normalizedStrong.includes(r.category));
+      const otherCandidates = candidates.filter(r => !normalizedStrong.includes(r.category));
+      
+      const selection = [
+        ...strongOnly.slice(0, 3),
+        ...otherCandidates
+      ].slice(0, 6);
+
+      deepInsights = selection.map(r => ({
+        ...r,
+        whyThisForYou: `Selected to help you advance your expertise in ${r.category}.`
+      }));
+      console.log("[/api/v2/deep-insights] Fallback selected:", deepInsights.map(i => i.id));
+    }
+
+    return res.json({ insights: deepInsights });
+  } catch (error) {
+    console.error("[/api/v2/deep-insights] Error:", error);
+    return res.status(500).json({ error: "Failed to generate deep insights" });
+  }
+});
+
+/**
+ * POST /api/v2/improvement-plan
+ * Generate 3-week personalized improvement plan
+ * 
+ * Input: { stage, strongCategories[], weakCategories[] }
+ * Output: { weeks[] }
+ */
+app.post("/api/v2/improvement-plan", async (req, res) => {
+  try {
+    const { stage, strongCategories, weakCategories } = req.body ?? {};
+    
+    if (isOpenAIConfigured()) {
+      // Construct categories for RAG context
+      const categories = [
+        ...(strongCategories || []).map((c: string) => ({ name: c, score: 100, maxScore: 100 })),
+        ...(weakCategories || []).map((c: string) => ({ name: c, score: 50, maxScore: 100 }))
+      ];
+      // 1. Fetch RAG Context
+      const ragResources = await fetchRAGContext(stage, categories);
+      
+      let contextString = "";
+      if (ragResources.length > 0) {
+        contextString = "\n\nKNOWLEDGE BASE RESOURCES (Build tasks around these):\n";
+        ragResources.forEach((res, idx) => {
+          contextString += `${idx + 1}. ${res.title} (${res.category})\n   Link: ${res.url}\n`;
+        });
+      }
+
+      const systemPrompt = `You are a UX career coach. Create a 3-week improvement plan.
+      Structure:
+      - Week 1: Foundational improvements
+      - Week 2: Deepening skills
+      - Week 3: Strategic application
+      
+      For each week provide:
+      - Theme
+      - Focus areas (from their weak categories)
+      - 3 Daily tasks (short, < 1hr)
+      - 2 Deep work sessions (long, > 1.5hr)
+      - Expected outcome
+      
+      ${contextString ? "IMPORTANT: Explicitly recommend reading/watching the provided Knowledge Base Resources in the daily tasks." : ""}
+      
+      Return strictly valid JSON.`;
+      
+      const userPrompt = `
+      Stage: ${stage}
+      Weakest Categories (Focus on these): ${weakCategories?.join(", ")}
+      Strongest Categories (Leverage these): ${strongCategories?.join(", ")}
+      ${contextString}
+      `;
+      
+      type PlanResponse = {
+        weeks: Array<{
+          weekNumber: number;
+          theme: string;
+          focusAreas: string[];
+          dailyTasks: Array<{ title: string; description: string; duration: string; category?: string }>;
+          deepWorkTasks: Array<{ title: string; description: string; duration: string }>;
+          expectedOutcome: string;
+        }>;
+      };
+      
+      const response = await generateJSON<PlanResponse>(systemPrompt, userPrompt);
+      
+      if (response.data && response.data.weeks) {
+        // Map to ensure ID stability for React keys
+        const weeks = response.data.weeks.map((week, wIdx) => ({
+          ...week,
+          dailyTasks: week.dailyTasks.map((t, tIdx) => ({ ...t, id: `w${wIdx}-d${tIdx}`, type: "daily" })),
+          deepWorkTasks: week.deepWorkTasks.map((t, tIdx) => ({ ...t, id: `w${wIdx}-dw${tIdx}`, type: "deep-work" }))
+        }));
+        return res.json({ weeks });
+      }
+    }
+    
+    // Fallback
+    const weeks = generateImprovementPlan(stage, strongCategories, weakCategories);
+    return res.json({ weeks });
+  } catch (error) {
+    console.error("Error generating improvement plan:", error);
+    const { stage, strongCategories, weakCategories } = req.body ?? {};
+    const weeks = generateImprovementPlan(stage, strongCategories, weakCategories);
+    return res.json({ weeks });
+  }
+});
 
   const httpServer = createServer(app);
 

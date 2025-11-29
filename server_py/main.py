@@ -19,7 +19,7 @@ from ollama_client import (
     generate_design_system_improvement_plan,
     generate_design_system_insights
 )
-from generate_design_system_questions import generate_all_design_system_questions
+# from generate_design_system_questions import generate_all_design_system_questions
 from job_links import build_job_search_links
 
 # Import RAG components
@@ -260,9 +260,10 @@ def generate_design_system_questions():
     """
     try:
         print("Generating design system questions...")
-        questions = generate_all_design_system_questions()
-        print(f"✓ Generated {len(questions)} design system questions")
-        return {"questions": questions}
+        # questions = generate_all_design_system_questions()
+        # print(f"✓ Generated {len(questions)} design system questions")
+        # return {"questions": questions}
+        raise Exception("Generator temporarily unavailable")
     except Exception as e:
         print(f"Error generating design system questions: {e}")
         # Return fallback questions
@@ -998,31 +999,37 @@ def rag_search(data: RAGSearchInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/api/rag/learning-path")
-def rag_learning_path(data: RAGLearningPathInput):
+class RAGRetrieveInput(BaseModel):
+    stage: str
+    categories: List[CategoryScore]
+    top_k: Optional[int] = 5
+
+@app.post("/api/rag/retrieve")
+def rag_retrieve_context(data: RAGRetrieveInput):
     """
-    Generate a personalized learning path using RAG.
-    Sequences resources from beginner to advanced for weak areas.
+    Retrieve personalized resources for RAG context injection.
+    Designed to be called by the Node.js backend.
     """
     if not RAG_AVAILABLE:
-        raise HTTPException(status_code=503, detail="RAG system not available")
+        return {"resources": []}
     
     try:
-        # Sort categories to find weakest
-        sorted_cats = sorted(
-            data.categories,
-            key=lambda c: (c.score / c.maxScore) if c.maxScore > 0 else 0
-        )
-        weak_categories = [c.model_dump() for c in sorted_cats[:2]]
+        # Convert Pydantic models to dicts
+        categories_dict = [c.model_dump() for c in data.categories]
         
         rag = get_rag_retriever()
-        learning_path = rag.generate_learning_path(weak_categories, data.stage)
+        resources = rag.retrieve_resources_for_user(
+            stage=data.stage, 
+            categories=categories_dict, 
+            top_k=data.top_k
+        )
         
-        return learning_path
+        return {"resources": resources}
         
     except Exception as e:
-        print(f"Error generating learning path: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error in RAG retrieval: {e}")
+        # Fail gracefully by returning empty list (prevents blocking)
+        return {"resources": []}
 
 
 @app.get("/api/rag/stats")
@@ -1115,6 +1122,56 @@ def get_resources_by_category(
     except Exception as e:
         print(f"Error getting resources: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+class RAGMultiCatInput(BaseModel):
+    categories: List[str]
+
+@app.post("/api/rag/learning-paths")
+def rag_learning_paths(data: RAGMultiCatInput):
+    """Retrieve learning paths for categories."""
+    if not RAG_AVAILABLE:
+        return {"paths": {}}
+    try:
+        rag = get_rag_retriever()
+        paths = rag.retrieve_learning_paths(data.categories)
+        return {"paths": paths}
+    except Exception as e:
+        print(f"Error in learning paths: {e}")
+        return {"paths": {}}
+
+class RAGStageInput(BaseModel):
+    stage: str
+
+@app.post("/api/rag/stage-competencies")
+def rag_stage_competencies(data: RAGStageInput):
+    """Retrieve stage competencies."""
+    if not RAG_AVAILABLE:
+        return {"competencies": []}
+    try:
+        rag = get_rag_retriever()
+        competencies = rag.retrieve_stage_competencies(data.stage)
+        return {"competencies": competencies}
+    except Exception as e:
+        print(f"Error in stage competencies: {e}")
+        return {"competencies": []}
+
+class RAGSkillRelInput(BaseModel):
+    weak_categories: List[str]
+    strong_categories: List[str]
+
+@app.post("/api/rag/skill-relationships")
+def rag_skill_relationships(data: RAGSkillRelInput):
+    """Retrieve skill relationships."""
+    if not RAG_AVAILABLE:
+        return {"relationships": []}
+    try:
+        rag = get_rag_retriever()
+        rels = rag.retrieve_skill_relationships(data.weak_categories, data.strong_categories)
+        return {"relationships": rels}
+    except Exception as e:
+        print(f"Error in skill relationships: {e}")
+        return {"relationships": []}
 
 
 if __name__ == "__main__":
