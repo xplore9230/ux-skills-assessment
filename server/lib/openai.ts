@@ -28,7 +28,11 @@ function getOpenAIClient(): OpenAI | null {
 
 // Helper to check if OpenAI is configured
 export function isOpenAIConfigured(): boolean {
-  return !!process.env.OPENAI_API_KEY;
+  const configured = !!process.env.OPENAI_API_KEY;
+  if (!configured) {
+    console.log("[OpenAI] API key not configured");
+  }
+  return configured;
 }
 
 // Export for backward compatibility (may be null if API key not set)
@@ -55,10 +59,12 @@ export async function generateText(
 ): Promise<AICompletionResponse> {
   const client = getOpenAIClient();
   if (!client) {
+    console.log("[OpenAI] generateText: No client available");
     return { content: "", error: "OpenAI API key is not configured" };
   }
 
   try {
+    console.log("[OpenAI] generateText: Calling API with model:", model);
     const response = await client.chat.completions.create({
       model,
       messages: [
@@ -69,11 +75,11 @@ export async function generateText(
       max_tokens: 500,
     });
 
-    return {
-      content: response.choices[0]?.message?.content || "",
-    };
+    const content = response.choices[0]?.message?.content || "";
+    console.log("[OpenAI] generateText: Success, response length:", content.length);
+    return { content };
   } catch (error) {
-    console.error("OpenAI API Error:", error);
+    console.error("[OpenAI] generateText Error:", error);
     return {
       content: "",
       error: error instanceof Error ? error.message : "Unknown error",
@@ -91,10 +97,12 @@ export async function generateJSON<T>(
 ): Promise<AIJsonCompletionResponse<T>> {
   const client = getOpenAIClient();
   if (!client) {
+    console.log("[OpenAI] generateJSON: No client available");
     return { data: null, error: "OpenAI API key is not configured" };
   }
 
   try {
+    console.log("[OpenAI] generateJSON: Calling API with model:", model);
     const response = await client.chat.completions.create({
       model,
       messages: [
@@ -111,10 +119,12 @@ export async function generateJSON<T>(
       throw new Error("No content received from OpenAI");
     }
 
+    console.log("[OpenAI] generateJSON: Success, parsing response...");
     const data = JSON.parse(content) as T;
+    console.log("[OpenAI] generateJSON: Parsed successfully");
     return { data };
   } catch (error) {
-    console.error("OpenAI API Error (JSON):", error);
+    console.error("[OpenAI] generateJSON Error:", error);
     return {
       data: null,
       error: error instanceof Error ? error.message : "Unknown error",

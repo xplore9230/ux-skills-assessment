@@ -486,6 +486,7 @@ function buildWeekPlan({
 
 import { generateText, generateJSON, isOpenAIConfigured } from "./lib/openai";
 import { knowledgeBank, Resource, Category, ResourceLevel, getCategories } from "../client/src/data/knowledge-bank";
+import { stripe, isStripeConfigured, getStripePriceId } from "./lib/stripe";
 
 // Log knowledge bank status at startup
 console.log("=== KNOWLEDGE BANK LOADED ===");
@@ -1164,6 +1165,8 @@ app.post("/api/v2/resources", async (req, res) => {
             return null;
           }).filter(Boolean);
           console.log("[/api/v2/resources] AI selected:", selectedResources.length, "resources");
+        } else {
+          console.warn("[/api/v2/resources] AI returned no data:", response.error || "Unknown error");
         }
       } catch (aiError) {
         console.warn("[/api/v2/resources] AI failed, using fallback:", aiError);
@@ -1365,6 +1368,256 @@ app.post("/api/v2/improvement-plan", async (req, res) => {
     return res.json({ weeks });
   }
 });
+
+  // ========================================
+  // PREMIUM ACCESS API ENDPOINTS
+  // ========================================
+  // These endpoints manage device-level access tracking for premium features
+
+  /**
+   * GET /api/premium/access/status?deviceId=...
+   * Returns the current access status for a device
+   */
+  app.get("/api/premium/access/status", async (req, res) => {
+    try {
+      const deviceId = req.query.deviceId as string;
+      
+      if (!deviceId) {
+        return res.status(400).json({ error: "deviceId is required" });
+      }
+
+      let deviceAccess = await storage.getDeviceAccess(deviceId);
+      
+      // If device doesn't exist, create it with defaults
+      if (!deviceAccess) {
+        deviceAccess = await storage.createDeviceAccess({
+          deviceId,
+          attemptCount: 0,
+          premiumUnlocked: false,
+        });
+      }
+
+      return res.json({
+        attemptCount: deviceAccess.attemptCount,
+        premiumUnlocked: deviceAccess.premiumUnlocked,
+      });
+    } catch (error) {
+      console.error("Error fetching device access status:", error);
+      return res.status(500).json({ error: "Failed to fetch access status" });
+    }
+  });
+
+  /**
+   * POST /api/premium/access/increment
+   * Increments the attempt count for a device (only if not premium)
+   * Body: { deviceId }
+   */
+  app.post("/api/premium/access/increment", async (req, res) => {
+    try {
+      const { deviceId } = req.body;
+      
+      if (!deviceId) {
+        return res.status(400).json({ error: "deviceId is required" });
+      }
+
+      let deviceAccess = await storage.getDeviceAccess(deviceId);
+      
+      // Create device if it doesn't exist
+      if (!deviceAccess) {
+        deviceAccess = await storage.createDeviceAccess({
+          deviceId,
+          attemptCount: 0,
+          premiumUnlocked: false,
+        });
+      }
+
+      // Only increment if not premium
+      if (!deviceAccess.premiumUnlocked) {
+        deviceAccess = await storage.updateDeviceAccess(deviceId, {
+          attemptCount: deviceAccess.attemptCount + 1,
+        });
+      }
+
+      return res.json({
+        attemptCount: deviceAccess?.attemptCount ?? 0,
+        premiumUnlocked: deviceAccess?.premiumUnlocked ?? false,
+      });
+    } catch (error) {
+      console.error("Error incrementing attempt count:", error);
+      return res.status(500).json({ error: "Failed to increment attempt count" });
+    }
+  });
+
+  /**
+   * POST /api/premium/access/set-premium
+   * Marks a device as premium (internal use after payment verification)
+   * Body: { deviceId, premiumUnlocked }
+   */
+  app.post("/api/premium/access/set-premium", async (req, res) => {
+    try {
+      const { deviceId, premiumUnlocked } = req.body;
+      
+      if (!deviceId) {
+        return res.status(400).json({ error: "deviceId is required" });
+      }
+
+      let deviceAccess = await storage.getDeviceAccess(deviceId);
+      
+      // Create device if it doesn't exist
+      if (!deviceAccess) {
+        deviceAccess = await storage.createDeviceAccess({
+          deviceId,
+          attemptCount: 0,
+          premiumUnlocked: premiumUnlocked ?? true,
+        });
+      } else {
+        deviceAccess = await storage.updateDeviceAccess(deviceId, {
+          premiumUnlocked: premiumUnlocked ?? true,
+        });
+      }
+
+      return res.json({
+        attemptCount: deviceAccess?.attemptCount ?? 0,
+        premiumUnlocked: deviceAccess?.premiumUnlocked ?? false,
+      });
+    } catch (error) {
+      console.error("Error setting premium status:", error);
+      return res.status(500).json({ error: "Failed to set premium status" });
+    }
+  });
+
+  // ========================================
+  // PREMIUM PAYMENT API ENDPOINTS (STRIPE)
+  // ========================================
+
+  /**
+   * POST /api/premium/payments/create-checkout-session
+   * Creates a Stripe Checkout session for premium purchase
+   * Body: { deviceId, redirectTo? }
+   */
+  app.post("/api/premium/payments/create-checkout-session", async (req, res) => {
+    try {
+      if (!isStripeConfigured()) {
+        return res.status(503).json({ 
+          error: "Payment system not configured. Please contact support." 
+        });
+      }
+
+      const { deviceId, redirectTo } = req.body;
+      
+      if (!deviceId) {
+        return res.status(400).json({ error: "deviceId is required" });
+      }
+
+      const priceId = getStripePriceId();
+      if (!priceId) {
+        return res.status(503).json({ 
+          error: "Payment pricing not configured. Please contact support." 
+        });
+      }
+
+      // Determine the base URL for redirects
+      const protocol = req.headers["x-forwarded-proto"] || req.protocol || "http";
+      const host = req.headers.host || "localhost:3001";
+      const baseUrl = `${protocol}://${host}`;
+
+      // Build success and cancel URLs
+      const successUrl = `${baseUrl}/premium/payment-success?session_id={CHECKOUT_SESSION_ID}&deviceId=${encodeURIComponent(deviceId)}${redirectTo ? `&redirectTo=${encodeURIComponent(redirectTo)}` : ""}`;
+      const cancelUrl = `${baseUrl}/premium/quiz`;
+
+      // Create Stripe Checkout Session
+      const session = await stripe!.checkout.sessions.create({
+        mode: "payment",
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: {
+          deviceId,
+        },
+      });
+
+      return res.json({ url: session.url });
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+      return res.status(500).json({ 
+        error: "Failed to create checkout session",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  /**
+   * GET /api/premium/payments/confirm?session_id=...&deviceId=...
+   * Confirms a payment and unlocks premium for the device
+   */
+  app.get("/api/premium/payments/confirm", async (req, res) => {
+    try {
+      if (!isStripeConfigured()) {
+        return res.status(503).json({ 
+          error: "Payment system not configured" 
+        });
+      }
+
+      const sessionId = req.query.session_id as string;
+      const deviceId = req.query.deviceId as string;
+      
+      if (!sessionId || !deviceId) {
+        return res.status(400).json({ 
+          error: "session_id and deviceId are required" 
+        });
+      }
+
+      // Retrieve the Checkout Session from Stripe
+      const session = await stripe!.checkout.sessions.retrieve(sessionId);
+
+      // Verify the payment was successful
+      if (session.payment_status !== "paid") {
+        return res.status(400).json({ 
+          error: "Payment not completed",
+          paymentStatus: session.payment_status 
+        });
+      }
+
+      // Verify the deviceId matches (security check)
+      if (session.metadata?.deviceId !== deviceId) {
+        return res.status(400).json({ 
+          error: "Device ID mismatch" 
+        });
+      }
+
+      // Mark the device as premium
+      let deviceAccess = await storage.getDeviceAccess(deviceId);
+      
+      if (!deviceAccess) {
+        deviceAccess = await storage.createDeviceAccess({
+          deviceId,
+          attemptCount: 0,
+          premiumUnlocked: true,
+        });
+      } else {
+        deviceAccess = await storage.updateDeviceAccess(deviceId, {
+          premiumUnlocked: true,
+        });
+      }
+
+      return res.json({
+        success: true,
+        premiumUnlocked: true,
+        attemptCount: deviceAccess?.attemptCount ?? 0,
+      });
+    } catch (error) {
+      console.error("Error confirming payment:", error);
+      return res.status(500).json({ 
+        error: "Failed to confirm payment",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
 
   const httpServer = createServer(app);
 
