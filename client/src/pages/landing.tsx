@@ -15,41 +15,15 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
     const video = videoRef.current;
     if (!video) return;
 
-    let animationFrameId: number;
-    let lastTimestamp: number = 0;
-
-    const reversePlayback = (timestamp: number) => {
-      if (!video) return; // Safety check
-      
-      if (!lastTimestamp) lastTimestamp = timestamp;
-      
-      const deltaTime = (timestamp - lastTimestamp) / 1000;
-      lastTimestamp = timestamp;
-
-      // Rewind video
-      video.currentTime = Math.max(0, video.currentTime - deltaTime);
-
-      if (video.currentTime > 0) {
-        animationFrameId = requestAnimationFrame(reversePlayback);
-      } else {
-        // Reached the start, stop.
-        // "play once forward and then backward"
-        video.pause();
-        lastTimestamp = 0;
-      }
-    };
-
     const handleEnded = () => {
       video.pause();
-      lastTimestamp = 0;
-      animationFrameId = requestAnimationFrame(reversePlayback);
+      video.currentTime = 0;
     };
 
-    video.addEventListener('ended', handleEnded);
+    video.addEventListener("ended", handleEnded);
 
     return () => {
-      video.removeEventListener('ended', handleEnded);
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      video.removeEventListener("ended", handleEnded);
     };
   }, []);
 
