@@ -13,9 +13,15 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-6 py-14 md:py-12">
         <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0, scale: 1.8 }}
+          animate={{ 
+            opacity: 1, 
+            scale: 1
+          }}
+          transition={{ 
+            duration: 1.2,
+            ease: [0.25, 0.1, 0.25, 1]
+          }}
           className="flex justify-center mb-8 md:mb-6"
         >
           {/* ORB Animation */}
@@ -24,13 +30,19 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
               {/* Rotating Orb */}
               <motion.div
                 className="absolute inset-0 w-full h-full"
+                initial={{ opacity: 0 }}
                 animate={{
+                  opacity: 1,
                   scale: [1, 1.04, 1, 1.04, 1]
                 }}
                 transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
+                  opacity: { duration: 0.8, delay: 0.4 },
+                  scale: {
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1.2
+                  }
                 }}
               >
                 <img 
@@ -42,18 +54,31 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
               </motion.div>
               
               {/* White transparency gradient in center */}
-              <div className="absolute inset-0 rounded-full bg-radial-gradient from-background via-transparent to-transparent w-full h-full scale-75" />
+              <motion.div 
+                className="absolute inset-0 rounded-full bg-radial-gradient from-background via-transparent to-transparent w-full h-full scale-75"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              />
               
               {/* Brain Icon at center */}
               <div className="relative z-10 flex items-center justify-center">
                 <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ 
+                    opacity: 1,
+                    scale: 1,
                     y: [0, -2, 0, 2, 0]
                   }}
                   transition={{ 
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut"
+                    opacity: { duration: 0.6, delay: 0.6 },
+                    scale: { duration: 0.6, delay: 0.6, ease: "easeOut" },
+                    y: {
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1.2
+                    }
                   }}
                 >
                   <Brain 
@@ -70,20 +95,20 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 0.1, 0.25, 1] }}
           className="max-w-2xl mx-auto space-y-5 md:space-y-4"
         >
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6, delay: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
             className="space-y-5 md:space-y-4 text-center"
           >
             {/* Powered by Ollama Badge */}
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              initial={{ opacity: 0, y: -10, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 1.4, ease: "easeOut" }}
               className="flex items-center justify-center gap-2 mb-5 md:mb-4"
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 backdrop-blur-sm">
@@ -108,7 +133,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
                     }}
                     transition={{
                       duration: 0.5,
-                      delay: 0.3 + index * 0.1,
+                      delay: 1.5 + index * 0.05,
                       ease: "easeInOut"
                     }}
                   >
@@ -118,14 +143,14 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
               </motion.span> Stage</>
             </h1>
             <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-normal md:leading-relaxed">
-              Take a comprehensive skills assessment to discover where you stand and what to focus on next in your UX career journey.
+              Take a comprehensive skills assessment to see where you stand and what to focus on next in your UX career, with the help of AI and RAG.
             </p>
           </motion.div>
 
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.4 }}
+            transition={{ duration: 0.5, delay: 1.8, ease: [0.25, 0.1, 0.25, 1] }}
             className="flex justify-center pt-4 md:pt-2"
           >
             <Button
@@ -142,13 +167,13 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: 0.6, delay: 2.0, ease: [0.25, 0.1, 0.25, 1] }}
             className="pt-8 md:pt-12 max-w-4xl mx-auto"
           >
             <motion.h2 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.7 }}
+              transition={{ duration: 0.5, delay: 2.2, ease: "easeOut" }}
               className="text-2xl md:text-3xl font-bold text-foreground text-center mb-4 md:mb-6"
             >
               What You'll Learn
@@ -157,7 +182,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
+              transition={{ duration: 0.6, delay: 2.4, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
                 {[
@@ -165,25 +190,25 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
                     icon: Sparkle,
                     title: "AI Feedback",
                     description: "Personalized AI feedback on your UX skills and performance",
-                    delay: 0.9,
+                    delay: 2.5,
                   },
                   {
                     icon: ShareNetwork,
                     title: "Learning Graph",
                     description: "Curated learning graph with tailored resources and recommendations",
-                    delay: 1.0,
+                    delay: 2.6,
                   },
                   {
                     icon: ChartBar,
                     title: "Score Assessment",
                     description: "AI-powered score level assessment across key skill areas",
-                    delay: 1.1,
+                    delay: 2.7,
                   },
                   {
                     icon: Briefcase,
                     title: "Job Opportunities",
                     description: "Job opportunity insights matched to your skill level",
-                    delay: 1.2,
+                    delay: 2.8,
                   }
                 ].map((feature, index) => {
                   const Icon = feature.icon;
