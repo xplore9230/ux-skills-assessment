@@ -11,7 +11,7 @@ interface LandingPageProps {
 const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-6 py-14 md:py-12">
+      <div className="container mx-auto px-6 pt-7 pb-14 md:pt-6 md:pb-12">
         <motion.div
           initial={{ opacity: 0, scale: 1.8 }}
           animate={{ 
@@ -22,11 +22,11 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
             duration: 1.2,
             ease: [0.25, 0.1, 0.25, 1]
           }}
-          className="flex justify-center mb-8 md:mb-6"
+          className="flex justify-center mb-5 md:mb-4"
         >
           {/* ORB Animation */}
           <div className="relative w-full max-w-2xl flex items-center justify-center">
-            <div className="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px] flex items-center justify-center">
+            <div className="relative w-[250px] h-[250px] md:w-[500px] md:h-[500px] lg:w-[320px] lg:h-[320px] flex items-center justify-center">
               {/* Rotating Orb */}
               <motion.div
                 className="absolute inset-0 w-full h-full"
@@ -83,7 +83,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
                 >
                   <Brain 
                     weight="fill" 
-                    className="w-[100px] h-[100px] md:w-[100px] md:h-[100px] opacity-100 blur-lg"
+                    className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] opacity-100 blur-lg"
                     style={{ color: '#A5A4F4' }}
                   />
                 </motion.div>
@@ -96,20 +96,20 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 0.1, 0.25, 1] }}
-          className="max-w-2xl mx-auto space-y-5 md:space-y-4"
+          className="max-w-2xl mx-auto space-y-3 md:space-y-3"
         >
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-            className="space-y-5 md:space-y-4 text-center"
+            className="space-y-3 md:space-y-3 text-center"
           >
             {/* Powered by Ollama Badge */}
             <motion.div
               initial={{ opacity: 0, y: -10, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.5, delay: 1.4, ease: "easeOut" }}
-              className="flex items-center justify-center gap-2 mb-5 md:mb-4"
+              className="flex items-center justify-center gap-2 mb-2 md:mb-3"
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 backdrop-blur-sm">
                 <Brain weight="duotone" className="w-4 h-4 text-blue-500" />
@@ -117,7 +117,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
               </div>
             </motion.div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-none md:leading-tight" data-testid="text-hero-title">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight md:leading-tight" data-testid="text-hero-title">
               <>Find Your <motion.span 
                 className="font-playfair font-black italic relative inline-block"
               >
@@ -142,7 +142,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
                 ))}
               </motion.span> Stage</>
             </h1>
-            <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-normal md:leading-relaxed">
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-normal md:leading-relaxed">
               Take a comprehensive skills assessment to see where you stand and what to focus on next in your UX career, with the help of AI and RAG.
             </p>
           </motion.div>
@@ -151,7 +151,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 1.8, ease: [0.25, 0.1, 0.25, 1] }}
-            className="flex justify-center pt-4 md:pt-2"
+            className="flex justify-center pt-2 md:pt-3"
           >
             <Button
               size="lg"
