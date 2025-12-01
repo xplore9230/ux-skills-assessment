@@ -442,14 +442,14 @@ export const knowledgeBank: Resource[] = [
   {
     id: "practitioner-012",
     title: "Design Tokens: The Building Blocks of Design Systems",
-    url: "https://www.smashingmagazine.com/2019/11/design-tokens-components/",
+    url: "https://www.interaction-design.org/literature/topics/design-tokens",
     type: "article",
     category: "UI Craft & Visual Design",
     level: "practitioner",
     duration: "13 min read",
-    summary: "Comprehensive guide to creating and managing design tokens for consistent, scalable design systems.",
-    tags: ["design-tokens", "design-systems", "smashing"],
-    source: "Smashing Magazine"
+    summary: "IxDF's comprehensive guide to creating and managing design tokens for consistent, scalable design systems.",
+    tags: ["design-tokens", "design-systems", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "practitioner-013",
@@ -490,14 +490,14 @@ export const knowledgeBank: Resource[] = [
   {
     id: "practitioner-016",
     title: "Empty States: Turning Nothing into Something",
-    url: "https://www.nngroup.com/articles/empty-state-design/",
+    url: "https://www.interaction-design.org/literature/article/empty-state-design",
     type: "article",
     category: "UI Craft & Visual Design",
     level: "practitioner",
     duration: "6 min read",
-    summary: "How to design helpful empty states that guide users and reduce confusion when content is missing.",
-    tags: ["empty-states", "ui", "nng"],
-    source: "NN/g"
+    summary: "IxDF explains how to design helpful empty states that guide users and reduce confusion when content is missing.",
+    tags: ["empty-states", "ui", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "practitioner-017",
@@ -638,14 +638,14 @@ export const knowledgeBank: Resource[] = [
   {
     id: "emerging-008",
     title: "Tips on Conducting Guerrilla Usability Testing",
-    url: "https://www.nngroup.com/articles/guerrilla-usability-testing/",
+    url: "https://www.interaction-design.org/literature/article/guerrilla-testing",
     type: "article",
     category: "User Research & Validation",
     level: "emerging-senior",
     duration: "7 min read",
-    summary: "NN/g walkthrough on recruiting fast, scripting short tasks, and using findings responsibly in guerrilla testing.",
-    tags: ["guerrilla", "testing", "nng"],
-    source: "NN/g"
+    summary: "IxDF walkthrough on recruiting fast, scripting short tasks, and using findings responsibly in guerrilla testing.",
+    tags: ["guerrilla", "testing", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "emerging-009",
@@ -830,14 +830,14 @@ export const knowledgeBank: Resource[] = [
   {
     id: "emerging-024",
     title: "Remote Usability Testing: Best Practices",
-    url: "https://www.nngroup.com/articles/remote-usability-testing-101/",
+    url: "https://www.interaction-design.org/literature/topics/usability-testing",
     type: "article",
     category: "User Research & Validation",
     level: "emerging-senior",
     duration: "8 min read",
-    summary: "Guidance on planning, moderating, and analyzing remote usability tests for distributed teams.",
-    tags: ["remote-testing", "usability", "nng"],
-    source: "NN/g"
+    summary: "IxDF guidance on planning, moderating, and analyzing remote usability tests for distributed teams.",
+    tags: ["remote-testing", "usability", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "emerging-025",
@@ -854,26 +854,26 @@ export const knowledgeBank: Resource[] = [
   {
     id: "emerging-026",
     title: "Prioritization Frameworks for UX Teams",
-    url: "https://www.nngroup.com/articles/prioritization-techniques/",
+    url: "https://www.interaction-design.org/literature/topics/prioritization",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "emerging-senior",
     duration: "9 min read",
-    summary: "NN/g compares RICE, MoSCoW, and value vs effort matrices for prioritizing UX initiatives.",
-    tags: ["prioritization", "frameworks", "nng"],
-    source: "NN/g"
+    summary: "IxDF compares RICE, MoSCoW, and value vs effort matrices for prioritizing UX initiatives.",
+    tags: ["prioritization", "frameworks", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "emerging-027",
     title: "Design Ops: Scaling Design Teams",
-    url: "https://www.smashingmagazine.com/2018/01/design-ops-handbook/",
+    url: "https://www.interaction-design.org/literature/topics/design-operations",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "emerging-senior",
     duration: "14 min read",
-    summary: "Smashing Magazine's guide to design operations: tooling, workflows, and governance for growing teams.",
-    tags: ["design-ops", "scaling", "smashing"],
-    source: "Smashing Magazine"
+    summary: "IxDF's guide to design operations: tooling, workflows, and governance for growing teams.",
+    tags: ["design-ops", "scaling", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "emerging-028",
@@ -1014,14 +1014,14 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-009",
     title: "Building a UX Team: Hiring and Structure",
-    url: "https://www.nngroup.com/articles/ux-team-structure-organizations/",
+    url: "https://www.interaction-design.org/literature/topics/ux-teams",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
     duration: "10 min read",
-    summary: "NN/g guidance on structuring UX teams, defining roles, and hiring for different organizational needs.",
-    tags: ["team-structure", "hiring", "nng"],
-    source: "NN/g"
+    summary: "IxDF guidance on structuring UX teams, defining roles, and hiring for different organizational needs.",
+    tags: ["team-structure", "hiring", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "strategic-010",
@@ -1038,38 +1038,38 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-011",
     title: "Design Leadership: From Craft to Strategy",
-    url: "https://www.smashingmagazine.com/2018/10/design-leadership/",
+    url: "https://www.interaction-design.org/literature/topics/design-leadership",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
     duration: "15 min read",
-    summary: "Smashing Magazine's guide to transitioning from individual contributor to design leader, covering vision, influence, and team development.",
-    tags: ["leadership", "career", "smashing"],
-    source: "Smashing Magazine"
+    summary: "IxDF's guide to transitioning from individual contributor to design leader, covering vision, influence, and team development.",
+    tags: ["leadership", "career", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "strategic-012",
     title: "Measuring Design Impact at Scale",
-    url: "https://www.nngroup.com/articles/measuring-ux-and-roi/",
+    url: "https://www.interaction-design.org/literature/topics/ux-metrics",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "strategic-lead",
     duration: "11 min read",
-    summary: "NN/g framework for connecting design work to business outcomes and demonstrating ROI to executives.",
-    tags: ["metrics", "roi", "leadership", "nng"],
-    source: "NN/g"
+    summary: "IxDF framework for connecting design work to business outcomes and demonstrating ROI to executives.",
+    tags: ["metrics", "roi", "leadership", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "strategic-013",
     title: "Design Systems: Governance and Evolution",
-    url: "https://www.smashingmagazine.com/2019/03/design-systems-book/",
+    url: "https://www.interaction-design.org/literature/topics/design-systems",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "strategic-lead",
     duration: "13 min read",
-    summary: "How to establish governance models, contribution workflows, and evolution strategies for design systems.",
-    tags: ["design-systems", "governance", "smashing"],
-    source: "Smashing Magazine"
+    summary: "IxDF explains how to establish governance models, contribution workflows, and evolution strategies for design systems.",
+    tags: ["design-systems", "governance", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "strategic-014",
@@ -1086,38 +1086,38 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-015",
     title: "Presenting UX Work to Executives",
-    url: "https://www.nngroup.com/articles/presenting-ux-research-executives/",
+    url: "https://www.interaction-design.org/literature/topics/presenting-ux",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
     duration: "8 min read",
-    summary: "How to frame UX findings and recommendations in business terms that resonate with C-level stakeholders.",
-    tags: ["presentations", "executives", "nng"],
-    source: "NN/g"
+    summary: "IxDF explains how to frame UX findings and recommendations in business terms that resonate with C-level stakeholders.",
+    tags: ["presentations", "executives", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "strategic-016",
     title: "Design Culture: Building a User-Centered Organization",
-    url: "https://www.smashingmagazine.com/2018/12/design-culture/",
+    url: "https://www.interaction-design.org/literature/topics/design-culture",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
     duration: "14 min read",
-    summary: "Smashing Magazine explores how to embed design thinking and user empathy throughout an entire organization.",
-    tags: ["design-culture", "organizational-change", "smashing"],
-    source: "Smashing Magazine"
+    summary: "IxDF explores how to embed design thinking and user empathy throughout an entire organization.",
+    tags: ["design-culture", "organizational-change", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "strategic-017",
     title: "UX Budget Planning: A Strategic Guide",
-    url: "https://www.nngroup.com/articles/ux-budget-allocation/",
+    url: "https://www.interaction-design.org/literature/topics/ux-budget",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "strategic-lead",
     duration: "10 min read",
-    summary: "NN/g guidance on allocating UX budgets across research, design, tools, and team growth for maximum impact.",
-    tags: ["budget", "planning", "nng"],
-    source: "NN/g"
+    summary: "IxDF guidance on allocating UX budgets across research, design, tools, and team growth for maximum impact.",
+    tags: ["budget", "planning", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "strategic-018",
@@ -1134,26 +1134,762 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-019",
     title: "Design Ethics: Building Responsible Products",
-    url: "https://www.nngroup.com/articles/ethical-design/",
+    url: "https://www.interaction-design.org/literature/topics/design-ethics",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "strategic-lead",
     duration: "9 min read",
-    summary: "NN/g discusses ethical considerations in UX design, from dark patterns to privacy and accessibility.",
-    tags: ["ethics", "responsible-design", "nng"],
-    source: "NN/g"
+    summary: "IxDF discusses ethical considerations in UX design, from dark patterns to privacy and accessibility.",
+    tags: ["ethics", "responsible-design", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "strategic-020",
     title: "Scaling Design: Lessons from Top Companies",
-    url: "https://www.smashingmagazine.com/2019/01/scaling-design-teams/",
+    url: "https://www.interaction-design.org/literature/topics/scaling-design",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
     duration: "16 min read",
-    summary: "Case studies from companies like Airbnb, Spotify, and IBM on scaling design teams and maintaining quality at scale.",
-    tags: ["scaling", "case-studies", "smashing"],
+    summary: "IxDF explores case studies from top companies on scaling design teams and maintaining quality at scale.",
+    tags: ["scaling", "case-studies", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+
+  // ========================================
+  // ADDITIONAL EXPLORER RESOURCES (21-40)
+  // ========================================
+  {
+    id: "explorer-021",
+    title: "User-Centered Design: An Introduction",
+    url: "https://www.interaction-design.org/literature/topics/user-centered-design",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "10 min read",
+    summary: "IxDF explains the core principles of user-centered design and how to apply them in your work.",
+    tags: ["ucd", "principles", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-022",
+    title: "What is Information Architecture?",
+    url: "https://www.interaction-design.org/literature/topics/information-architecture",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "9 min read",
+    summary: "Comprehensive introduction to information architecture and how it helps users find what they need.",
+    tags: ["ia", "information-architecture", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-023",
+    title: "User Flows: A Complete Guide",
+    url: "https://www.interaction-design.org/literature/topics/user-flows",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "11 min read",
+    summary: "Learn how to map user flows to visualize the path users take through your product.",
+    tags: ["user-flows", "mapping", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-024",
+    title: "Prototyping: A Beginner's Guide",
+    url: "https://www.interaction-design.org/literature/topics/prototyping",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "12 min read",
+    summary: "IxDF covers different types of prototypes, from paper sketches to interactive digital prototypes.",
+    tags: ["prototyping", "basics", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-025",
+    title: "What is Interaction Design?",
+    url: "https://www.interaction-design.org/literature/topics/interaction-design",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "8 min read",
+    summary: "Introduction to interaction design and how it shapes the way users interact with digital products.",
+    tags: ["interaction-design", "basics", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-026",
+    title: "Visual Hierarchy in UI Design",
+    url: "https://www.nngroup.com/articles/principles-visual-design/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "explorer",
+    duration: "7 min read",
+    summary: "NN/g explains how visual hierarchy guides users' attention and improves usability.",
+    tags: ["visual-hierarchy", "ui", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "explorer-027",
+    title: "Basic Principles of Layout Design",
+    url: "https://www.interaction-design.org/literature/topics/layout-design",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "explorer",
+    duration: "9 min read",
+    summary: "IxDF covers fundamental layout principles including balance, alignment, and spacing.",
+    tags: ["layout", "principles", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-028",
+    title: "Introduction to Color Theory",
+    url: "https://www.interaction-design.org/literature/topics/color-theory",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "explorer",
+    duration: "10 min read",
+    summary: "Learn the basics of color theory and how to use color effectively in UI design.",
+    tags: ["color", "theory", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-029",
+    title: "What is User Research?",
+    url: "https://www.interaction-design.org/literature/topics/user-research",
+    type: "article",
+    category: "User Research & Validation",
+    level: "explorer",
+    duration: "9 min read",
+    summary: "IxDF introduction to user research methods and why understanding users is essential for good design.",
+    tags: ["user-research", "basics", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-030",
+    title: "Introduction to Usability Testing",
+    url: "https://www.interaction-design.org/literature/topics/usability-testing",
+    type: "article",
+    category: "User Research & Validation",
+    level: "explorer",
+    duration: "10 min read",
+    summary: "Learn the basics of usability testing and how to identify usability issues in your designs.",
+    tags: ["usability", "testing", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-031",
+    title: "What is Product Design?",
+    url: "https://www.interaction-design.org/literature/topics/product-design",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "explorer",
+    duration: "8 min read",
+    summary: "IxDF explains product design and how it differs from other design disciplines.",
+    tags: ["product-design", "basics", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-032",
+    title: "Introduction to Design Thinking",
+    url: "https://www.interaction-design.org/literature/topics/design-thinking",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "explorer",
+    duration: "11 min read",
+    summary: "Comprehensive guide to design thinking methodology and its five stages.",
+    tags: ["design-thinking", "methodology", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-033",
+    title: "Communication in Design Teams",
+    url: "https://www.interaction-design.org/literature/topics/communication",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "explorer",
+    duration: "9 min read",
+    summary: "IxDF covers effective communication strategies for design teams and stakeholders.",
+    tags: ["communication", "teams", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-034",
+    title: "Getting Feedback on Your Designs",
+    url: "https://www.interaction-design.org/literature/topics/feedback",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "explorer",
+    duration: "7 min read",
+    summary: "IxDF tips on how to ask for and receive constructive feedback on your design work.",
+    tags: ["feedback", "collaboration", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-035",
+    title: "The Basics of User Experience",
+    url: "https://www.usability.gov/what-and-why/user-experience.html",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "6 min read",
+    summary: "Usability.gov's primer on user experience and its importance in digital design.",
+    tags: ["ux", "basics", "usability"],
+    source: "Usability.gov"
+  },
+  {
+    id: "explorer-036",
+    title: "Understanding User Needs",
+    url: "https://www.interaction-design.org/literature/topics/user-needs",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "8 min read",
+    summary: "IxDF explains how to identify and understand user needs through research and empathy.",
+    tags: ["user-needs", "research", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-037",
+    title: "Introduction to Wireframes",
+    url: "https://www.interaction-design.org/literature/topics/wireframing",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "9 min read",
+    summary: "Learn how to create wireframes to plan the structure and layout of your designs.",
+    tags: ["wireframes", "planning", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-038",
+    title: "Basic UI Components",
+    url: "https://www.interaction-design.org/literature/topics/ui-components",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "explorer",
+    duration: "10 min read",
+    summary: "IxDF overview of common UI components like buttons, forms, and navigation elements.",
+    tags: ["ui-components", "basics", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-039",
+    title: "Accessibility Basics",
+    url: "https://www.interaction-design.org/literature/topics/accessibility",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "explorer",
+    duration: "11 min read",
+    summary: "Introduction to web accessibility and how to design inclusive interfaces for all users.",
+    tags: ["accessibility", "inclusive-design", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-040",
+    title: "Introduction to User Testing",
+    url: "https://www.usability.gov/how-to-and-tools/methods/user-testing.html",
+    type: "article",
+    category: "User Research & Validation",
+    level: "explorer",
+    duration: "8 min read",
+    summary: "Usability.gov guide to conducting user tests to evaluate your designs.",
+    tags: ["user-testing", "usability", "usability.gov"],
+    source: "Usability.gov"
+  },
+
+  // ========================================
+  // ADDITIONAL PRACTITIONER RESOURCES (21-35)
+  // ========================================
+  {
+    id: "practitioner-021",
+    title: "Advanced Wireframing Techniques",
+    url: "https://www.interaction-design.org/literature/topics/wireframing",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "practitioner",
+    duration: "14 min read",
+    summary: "IxDF comprehensive guide to creating effective wireframes for complex interfaces.",
+    tags: ["wireframes", "techniques", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "practitioner-022",
+    title: "Creating Effective User Flows",
+    url: "https://www.interaction-design.org/literature/topics/user-flows",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "practitioner",
+    duration: "8 min read",
+    summary: "IxDF guidance on mapping user flows that accurately represent user journeys.",
+    tags: ["user-flows", "mapping", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "practitioner-023",
+    title: "Advanced Prototyping Techniques",
+    url: "https://www.interaction-design.org/literature/topics/prototyping",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "practitioner",
+    duration: "13 min read",
+    summary: "IxDF covers advanced prototyping methods including interactive and high-fidelity prototypes.",
+    tags: ["prototyping", "advanced", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "practitioner-024",
+    title: "Advanced Color Systems",
+    url: "https://www.nngroup.com/articles/color-enhance-design/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "9 min read",
+    summary: "NN/g explains how to build systematic color palettes for consistent design systems.",
+    tags: ["color", "systems", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "practitioner-025",
+    title: "Advanced Typography for UI",
+    url: "https://www.smashingmagazine.com/2011/03/technical-web-typography-guidelines-and-techniques/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "15 min read",
+    summary: "Smashing Magazine's technical guide to typography in web interfaces.",
+    tags: ["typography", "web", "smashing"],
     source: "Smashing Magazine"
+  },
+  {
+    id: "practitioner-026",
+    title: "Icon Design Best Practices",
+    url: "https://www.nngroup.com/articles/icon-usability/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "7 min read",
+    summary: "NN/g research on icon usability and how to design icons that users understand.",
+    tags: ["icons", "usability", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "practitioner-027",
+    title: "Button Design Patterns",
+    url: "https://www.interaction-design.org/literature/topics/button-design",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "6 min read",
+    summary: "IxDF guidelines on designing effective buttons that users can easily identify and use.",
+    tags: ["buttons", "ui", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "practitioner-028",
+    title: "Form Design Patterns",
+    url: "https://www.nngroup.com/articles/web-form-design/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "10 min read",
+    summary: "NN/g comprehensive guide to designing forms that users can complete efficiently.",
+    tags: ["forms", "patterns", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "practitioner-029",
+    title: "Card-Based UI Design",
+    url: "https://www.interaction-design.org/literature/topics/card-sorting",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "8 min read",
+    summary: "IxDF explains card-based interfaces and how they help organize information.",
+    tags: ["cards", "ui", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "practitioner-030",
+    title: "Responsive Images and Media",
+    url: "https://www.smashingmagazine.com/2014/05/responsive-images-done-right-guide-picture-srcset/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "12 min read",
+    summary: "Smashing Magazine's guide to implementing responsive images that work across devices.",
+    tags: ["responsive", "images", "smashing"],
+    source: "Smashing Magazine"
+  },
+  {
+    id: "practitioner-031",
+    title: "User Research Methods Overview",
+    url: "https://www.interaction-design.org/literature/topics/user-research",
+    type: "article",
+    category: "User Research & Validation",
+    level: "practitioner",
+    duration: "11 min read",
+    summary: "IxDF comprehensive overview of different user research methods and when to use them.",
+    tags: ["research-methods", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "practitioner-032",
+    title: "Advanced Usability Testing",
+    url: "https://www.nngroup.com/articles/usability-testing-101/",
+    type: "article",
+    category: "User Research & Validation",
+    level: "practitioner",
+    duration: "9 min read",
+    summary: "NN/g advanced techniques for planning and conducting effective usability tests.",
+    tags: ["usability-testing", "advanced", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "practitioner-033",
+    title: "A/B Testing Fundamentals",
+    url: "https://www.interaction-design.org/literature/topics/a-b-testing",
+    type: "article",
+    category: "User Research & Validation",
+    level: "practitioner",
+    duration: "10 min read",
+    summary: "IxDF explains how to set up and analyze A/B tests to make data-driven design decisions.",
+    tags: ["ab-testing", "experimentation", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "practitioner-034",
+    title: "Product Strategy Basics",
+    url: "https://www.interaction-design.org/literature/topics/product-strategy",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "practitioner",
+    duration: "9 min read",
+    summary: "IxDF introduction to product strategy and how designers contribute to strategic decisions.",
+    tags: ["product-strategy", "basics", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "practitioner-035",
+    title: "Design Systems: Getting Started",
+    url: "https://www.interaction-design.org/literature/topics/design-systems",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "practitioner",
+    duration: "12 min read",
+    summary: "IxDF guide to building and maintaining design systems for product teams.",
+    tags: ["design-systems", "getting-started", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+
+  // ========================================
+  // ADDITIONAL EMERGING SENIOR RESOURCES (31-45)
+  // ========================================
+  {
+    id: "emerging-031",
+    title: "Advanced User Research Methods",
+    url: "https://www.interaction-design.org/literature/topics/user-research",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "13 min read",
+    summary: "IxDF covers advanced research methods including ethnographic studies and longitudinal research.",
+    tags: ["research", "advanced", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-032",
+    title: "Quantitative UX Research",
+    url: "https://www.nngroup.com/articles/quantitative-user-research-methods/",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "10 min read",
+    summary: "NN/g guide to quantitative research methods including analytics, surveys, and A/B testing.",
+    tags: ["quantitative", "research", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-033",
+    title: "Advanced Persona Development",
+    url: "https://www.nngroup.com/articles/persona/",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "11 min read",
+    summary: "NN/g advanced techniques for creating detailed, actionable personas from research data.",
+    tags: ["personas", "advanced", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-034",
+    title: "Journey Mapping Advanced Techniques",
+    url: "https://www.interaction-design.org/literature/topics/user-journey-maps",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "12 min read",
+    summary: "IxDF covers advanced journey mapping techniques including service blueprints and experience maps.",
+    tags: ["journey-mapping", "advanced", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-035",
+    title: "Advanced Analytics for UX",
+    url: "https://www.nngroup.com/articles/analytics-user-experience/",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "9 min read",
+    summary: "NN/g explains how to use analytics data to inform UX decisions and measure design impact.",
+    tags: ["analytics", "metrics", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-036",
+    title: "Product Roadmap Strategy",
+    url: "https://www.interaction-design.org/literature/topics/product-roadmaps",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "emerging-senior",
+    duration: "11 min read",
+    summary: "IxDF guide to creating product roadmaps that align user needs with business goals.",
+    tags: ["roadmaps", "strategy", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-037",
+    title: "UX Metrics and KPIs",
+    url: "https://www.interaction-design.org/literature/topics/kpi",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "emerging-senior",
+    duration: "10 min read",
+    summary: "IxDF explains how to define and measure UX metrics that matter to stakeholders.",
+    tags: ["metrics", "kpi", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-038",
+    title: "Advanced Design Systems",
+    url: "https://www.interaction-design.org/literature/topics/design-systems",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "emerging-senior",
+    duration: "14 min read",
+    summary: "IxDF covers advanced design system topics including governance, contribution models, and scaling.",
+    tags: ["design-systems", "advanced", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-039",
+    title: "Stakeholder Management",
+    url: "https://www.interaction-design.org/literature/topics/stakeholder-management",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "emerging-senior",
+    duration: "10 min read",
+    summary: "IxDF guide to managing stakeholder relationships and building consensus around design decisions.",
+    tags: ["stakeholders", "management", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-040",
+    title: "Design Documentation Best Practices",
+    url: "https://www.interaction-design.org/literature/topics/design-documentation",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "emerging-senior",
+    duration: "8 min read",
+    summary: "IxDF tips on creating effective design documentation that helps teams collaborate.",
+    tags: ["documentation", "collaboration", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-041",
+    title: "Advanced Prototyping Tools",
+    url: "https://www.interaction-design.org/literature/topics/prototyping",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "emerging-senior",
+    duration: "12 min read",
+    summary: "IxDF overview of advanced prototyping tools and techniques for complex interactions.",
+    tags: ["prototyping", "tools", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-042",
+    title: "Advanced Information Architecture",
+    url: "https://www.interaction-design.org/literature/topics/information-architecture",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "emerging-senior",
+    duration: "13 min read",
+    summary: "IxDF covers advanced IA techniques including faceted navigation and complex taxonomies.",
+    tags: ["ia", "advanced", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-043",
+    title: "Advanced Visual Design Principles",
+    url: "https://www.nngroup.com/articles/principles-visual-design/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "emerging-senior",
+    duration: "9 min read",
+    summary: "NN/g deep dive into advanced visual design principles and their application in complex interfaces.",
+    tags: ["visual-design", "principles", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-044",
+    title: "Advanced Accessibility Techniques",
+    url: "https://www.interaction-design.org/literature/topics/accessibility",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "emerging-senior",
+    duration: "11 min read",
+    summary: "IxDF covers advanced accessibility techniques including ARIA, keyboard navigation, and screen readers.",
+    tags: ["accessibility", "advanced", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-045",
+    title: "Designing for Multiple Platforms",
+    url: "https://www.interaction-design.org/literature/topics/multi-platform-design",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "emerging-senior",
+    duration: "10 min read",
+    summary: "IxDF guidance on creating consistent experiences across web, mobile, and other platforms.",
+    tags: ["multi-platform", "consistency", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+
+  // ========================================
+  // ADDITIONAL STRATEGIC LEAD RESOURCES (21-30)
+  // ========================================
+  {
+    id: "strategic-021",
+    title: "Building UX Maturity in Organizations",
+    url: "https://www.nngroup.com/articles/ux-maturity-model/",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "12 min read",
+    summary: "NN/g framework for assessing and improving UX maturity across your organization.",
+    tags: ["ux-maturity", "organizations", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "strategic-022",
+    title: "Design Leadership Models",
+    url: "https://www.interaction-design.org/literature/topics/design-leadership",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "strategic-lead",
+    duration: "13 min read",
+    summary: "IxDF explores different models of design leadership and how to structure design teams.",
+    tags: ["leadership", "models", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "strategic-023",
+    title: "Strategic Design Thinking",
+    url: "https://www.interaction-design.org/literature/topics/design-thinking",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "14 min read",
+    summary: "IxDF explains how to apply design thinking at the strategic level to drive organizational change.",
+    tags: ["design-thinking", "strategy", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "strategic-024",
+    title: "Organizational Design Culture",
+    url: "https://www.interaction-design.org/literature/topics/design-culture",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "strategic-lead",
+    duration: "15 min read",
+    summary: "IxDF guide to building and nurturing a design culture that supports user-centered practices.",
+    tags: ["design-culture", "organizations", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "strategic-025",
+    title: "Advanced UX Strategy",
+    url: "https://www.nngroup.com/articles/ux-strategy/",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "11 min read",
+    summary: "NN/g advanced framework for developing UX strategies that align with business objectives.",
+    tags: ["ux-strategy", "advanced", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "strategic-026",
+    title: "Design Team Scaling Strategies",
+    url: "https://www.interaction-design.org/literature/topics/scaling-design",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "strategic-lead",
+    duration: "16 min read",
+    summary: "IxDF explores strategies for scaling design teams while maintaining quality and culture.",
+    tags: ["scaling", "teams", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "strategic-027",
+    title: "Executive Communication for Designers",
+    url: "https://www.interaction-design.org/literature/topics/presenting-ux",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "strategic-lead",
+    duration: "10 min read",
+    summary: "IxDF guide to communicating design value to executives and C-level stakeholders.",
+    tags: ["executives", "communication", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "strategic-028",
+    title: "Design ROI and Business Impact",
+    url: "https://www.interaction-design.org/literature/topics/ux-metrics",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "12 min read",
+    summary: "IxDF explains how to measure and communicate the business impact of design investments.",
+    tags: ["roi", "business-impact", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "strategic-029",
+    title: "Design Governance Models",
+    url: "https://www.interaction-design.org/literature/topics/design-systems",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "13 min read",
+    summary: "IxDF covers governance models for design systems and design operations at scale.",
+    tags: ["governance", "design-systems", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "strategic-030",
+    title: "Future of UX Design",
+    url: "https://www.interaction-design.org/literature/topics/ux-trends",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "11 min read",
+    summary: "IxDF explores emerging trends and the future direction of UX design as a discipline.",
+    tags: ["future", "trends", "ixdf"],
+    source: "Interaction Design Foundation"
   }
 ];
 

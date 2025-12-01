@@ -15,6 +15,10 @@ import UnlockCardsDemo from "@/pages/premium/unlock-cards-demo";
 import PaywallModal from "@/components/premium/PaywallModal";
 import { PremiumAccessProvider, usePremiumAccess } from "@/context/PremiumAccessContext";
 import UXLevelProPricing from "@/pages/pricing/uxlevel-pro";
+import AdminDashboard from "@/pages/admin/Dashboard";
+import ContentReviewPage from "@/pages/admin/ContentReview";
+import ContentDetailPage from "@/pages/admin/ContentDetail";
+import PendingReviewPage from "@/pages/admin/PendingReview";
 
 // Conditionally load Analytics component
 function ConditionalAnalytics() {
@@ -81,6 +85,11 @@ function App() {
                   <Route path="/premium/unlock-cards-demo" element={<UnlockCardsDemo />} />
                   {/* Pricing */}
                   <Route path="/pricing/pro" element={<UXLevelProPricing />} />
+                  {/* Admin / knowledge bank management (no auth yet) */}
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/content" element={<ContentReviewPage />} />
+                  <Route path="/admin/content/detail" element={<ContentDetailPage />} />
+                  <Route path="/admin/pending" element={<PendingReviewPage />} />
                 </Routes>
               </main>
               <GlobalPaywallHost />
