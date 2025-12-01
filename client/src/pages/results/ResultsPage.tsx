@@ -32,6 +32,8 @@ import DeepInsights from "./sections/DeepInsights";
 import ImprovementPlan from "./sections/ImprovementPlan";
 import TopPodcasts from "./sections/TopPodcasts";
 import NextRole from "./sections/NextRole";
+import { usePremiumAccess } from "@/context/PremiumAccessContext";
+import { FrustrationDiagnosisSection } from "./sections/FrustrationDiagnosis";
 
 /**
  * Results page props
@@ -120,13 +122,37 @@ export default function ResultsPage({
   nextRole,
 }: ResultsPageProps) {
   const navigate = useNavigate();
+  const { isPremium, openPaywall } = usePremiumAccess();
   
   const handleGoHome = () => {
     navigate("/");
   };
   
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white relative overflow-x-hidden">
+      {/* Background Spheres */}
+      {/* First Sphere - Larger, positioned at top */}
+      <div 
+        className="absolute left-1/2 -translate-x-1/2 top-[-133px] w-full max-w-[1440px] h-[200px] md:h-[396px] pointer-events-none"
+        style={{
+          borderRadius: '50%',
+          background: 'rgba(203, 222, 255, 0.60)',
+          filter: 'blur(87px)',
+          aspectRatio: '1440/396',
+        }}
+      />
+      
+      {/* Second Sphere - Smaller, centered, positioned above first */}
+      <div 
+        className="absolute left-1/2 top-[-195px] -translate-x-1/2 w-[90%] max-w-[1254px] h-[180px] md:h-[433px] pointer-events-none"
+        style={{
+          borderRadius: '50%',
+          background: 'rgba(255, 255, 255, 0.90)',
+          filter: 'blur(107px)',
+          aspectRatio: '1254/433',
+        }}
+      />
+      
       {/* Home FAB Button */}
       <motion.button
         onClick={handleGoHome}
@@ -164,7 +190,7 @@ export default function ResultsPage({
         </motion.section>
         
         {/* Section 3: Skill Analysis */}
-        <motion.section variants={sectionVariants} className="mb-12 md:mb-16">
+        <motion.section id="skill-analysis" variants={sectionVariants} className="mb-12 md:mb-16">
           <SkillAnalysis 
             data={skillAnalysis} 
             status={skillAnalysisStatus}
@@ -172,18 +198,29 @@ export default function ResultsPage({
           />
         </motion.section>
         
+        {/* Frustration Diagnosis Input/Result (visible for premium) */}
+        {isPremium && (
+          <motion.section variants={sectionVariants} className="mb-12 md:mb-16">
+            <FrustrationDiagnosisSection
+              score={quizResults.totalScore}
+              stage={quizResults.stage as any}
+              categories={quizResults.categories}
+            />
+          </motion.section>
+        )}
+        
         {/* Section 4: 3-Week Improvement Plan */}
-        <motion.section variants={sectionVariants} className="mb-12 md:mb-16">
+        <motion.section id="improvement-plan" variants={sectionVariants} className="mb-12 md:mb-16">
           <ImprovementPlan data={improvementPlan} status={improvementPlanStatus} />
         </motion.section>
         
         {/* Section 5: Curated Resources */}
-        <motion.section variants={sectionVariants} className="mb-12 md:mb-16">
+        <motion.section id="resources" variants={sectionVariants} className="mb-12 md:mb-16">
           <CuratedResources data={resources} status={resourcesStatus} />
         </motion.section>
         
         {/* Section 6: Deep Insights */}
-        <motion.section variants={sectionVariants} className="mb-12 md:mb-16">
+        <motion.section id="deep-insights" variants={sectionVariants} className="mb-12 md:mb-16">
           <DeepInsights data={deepInsights} status={deepInsightsStatus} />
         </motion.section>
         

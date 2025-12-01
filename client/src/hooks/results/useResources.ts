@@ -71,7 +71,24 @@ function getFallbackResources(
   weakCategories: Category[]
 ): CuratedResourcesData {
   const safeWeakCategories = Array.isArray(weakCategories) ? weakCategories : [];
-  const resources = getBeginnerResources(safeWeakCategories, 5) || [];
+  // Preferred: beginner resources for weak categories
+  let resources = getBeginnerResources(safeWeakCategories, 5) || [];
+  // Relax filters if empty
+  if (!resources || resources.length === 0) {
+    // Any category at beginner level
+    resources = getBeginnerResources([], 5) || [];
+  }
+  if (!resources || resources.length === 0) {
+    // Absolute last resort: any resources from knowledge bank
+    // Import locally to avoid circular deps at module init
+    const { queryResources } = require("@/lib/knowledge-bank");
+    const any = queryResources({}) || [];
+    resources = any.slice(0, 5);
+  }
+  if (typeof window !== "undefined") {
+    // eslint-disable-next-line no-console
+    console.warn("[CuratedResources:fallback] Using client-side fallback. Count:", resources?.length ?? 0);
+  }
   
   // Convert to CuratedResource with generic reason
   const curatedResources: CuratedResource[] = resources.map(r => ({

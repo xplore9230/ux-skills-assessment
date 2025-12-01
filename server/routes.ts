@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { storage } from "./storage";
+import { getScoreAwareDescription } from "@shared/skill-descriptions";
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -264,14 +265,10 @@ function generateCategoryInsight(category: any, stage: string): any {
   const band = deriveBand(score);
   const categoryName = category.name || "Unknown Category";
   const categoryId = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-  
-  // Template descriptions based on band
-  const descriptions: Record<Band, string> = {
-    "Strong": `Your ${categoryName} skills are well-developed. You demonstrate strong competency and can handle complex challenges in this area. Continue refining your expertise to mentor others.`,
-    "Needs Work": `Your ${categoryName} foundation is solid but has room for growth. Focus on practicing intermediate concepts and applying them in real projects to strengthen this skill area.`,
-    "Learn the Basics": `Your ${categoryName} skills need foundational development. Start with core principles and gradually build up through structured learning and hands-on practice.`,
-  };
-  
+
+  // Score- and category-aware description shared with client fallback
+  const description = getScoreAwareDescription(categoryName, score);
+
   // Template checklists based on category and band
   const checklists: Record<Band, { id: string; text: string; priority?: string }[]> = {
     "Strong": [
@@ -303,7 +300,7 @@ function generateCategoryInsight(category: any, stage: string): any {
     categoryName,
     score,
     band,
-    description: descriptions[band],
+    description,
     checklist: checklists[band],
   };
 }
@@ -487,6 +484,7 @@ function buildWeekPlan({
 import { generateText, generateJSON, isOpenAIConfigured } from "./lib/openai";
 import { knowledgeBank, Resource, Category, ResourceLevel, getCategories } from "../client/src/data/knowledge-bank";
 import { stripe, isStripeConfigured, getStripePriceId } from "./lib/stripe";
+import { sendPremiumPurchaseEmail } from "./lib/email";
 
 // Log knowledge bank status at startup
 console.log("=== KNOWLEDGE BANK LOADED ===");
@@ -1112,11 +1110,17 @@ app.post("/api/v2/resources", async (req, res) => {
     console.log("[/api/v2/resources] KB size:", knowledgeBank.length);
     
     // Get all stage-level resources from knowledge bank
-    const stageResources = knowledgeBank.filter(r => r.level === level);
+      let stageResources = knowledgeBank.filter(r => r.level === level);
     console.log("[/api/v2/resources] Stage resources found:", stageResources.length);
     
     // Prioritize focus categories, then fill with other stage resources
-    let candidates: Resource[] = [];
+      let candidates: Resource[] = [];
+      
+      // If no stage-level resources found, relax to entire knowledge bank
+      if (!stageResources || stageResources.length === 0) {
+        console.warn("[/api/v2/resources] No stage resources; falling back to entire knowledge bank.");
+        stageResources = [...knowledgeBank];
+      }
     
     if (focusCategories.length > 0) {
       const focusMatches = stageResources.filter(r => focusCategories.includes(r.category));
@@ -1177,11 +1181,23 @@ app.post("/api/v2/resources", async (req, res) => {
     if (selectedResources.length === 0) {
       console.log("[/api/v2/resources] Using fallback - selecting from candidates");
       // Shuffle and select 5
-      const shuffled = [...candidates].sort(() => 0.5 - Math.random());
-      selectedResources = shuffled.slice(0, 5).map(r => ({
+        let pool = [...candidates];
+        if (!pool || pool.length === 0) {
+          console.warn("[/api/v2/resources] Candidates empty; topping up from knowledge bank.");
+          pool = [...knowledgeBank];
+        }
+        const shuffled = pool.sort(() => 0.5 - Math.random());
+        selectedResources = shuffled.slice(0, 5).map(r => ({
         ...r,
         reasonSelected: `Recommended to strengthen your ${r.category} skills.`
       }));
+        
+        // Ensure exactly 5 items; top up if fewer
+        if (selectedResources.length < 5) {
+          const existing = new Set(selectedResources.map(r => r.id));
+          const topUp = knowledgeBank.filter(r => !existing.has(r.id)).slice(0, 5 - selectedResources.length);
+          selectedResources = [...selectedResources, ...topUp].slice(0, 5);
+        }
       console.log("[/api/v2/resources] Fallback selected:", selectedResources.map(r => r.id));
     }
 
@@ -1260,19 +1276,38 @@ app.post("/api/v2/deep-insights", async (req, res) => {
     if (deepInsights.length === 0) {
       console.log("[/api/v2/deep-insights] Using fallback - selecting from candidates");
       
+      // If candidates somehow empty (e.g., KB filter too strict), rebuild from KB
+      if (!candidates || candidates.length === 0) {
+        console.warn("[/api/v2/deep-insights] No candidates after filtering. Rebuilding from knowledge bank.");
+        // Prefer stretch levels for stage; if still empty, use entire KB
+        const stretchLevelsOnly = knowledgeBank.filter(r => stretchLevels.includes(r.level));
+        candidates = (stretchLevelsOnly.length > 0 ? stretchLevelsOnly : knowledgeBank).slice(0, 25);
+      }
+      
       const strongOnly = candidates.filter(r => normalizedStrong.includes(r.category));
       const otherCandidates = candidates.filter(r => !normalizedStrong.includes(r.category));
       
-      const selection = [
+      // Build selection favoring strong categories, then others
+      let selection = [
         ...strongOnly.slice(0, 3),
         ...otherCandidates
-      ].slice(0, 6);
+      ];
+      
+      // Ensure at least 6 items; if not enough, top up from knowledgeBank
+      if (selection.length < 6) {
+        const existing = new Set(selection.map(r => r.id));
+        const topUpPool = knowledgeBank.filter(r => !existing.has(r.id));
+        selection = [...selection, ...topUpPool].slice(0, 6);
+      } else {
+        selection = selection.slice(0, 6);
+      }
 
       deepInsights = selection.map(r => ({
         ...r,
         whyThisForYou: `Selected to help you advance your expertise in ${r.category}.`
       }));
-      console.log("[/api/v2/deep-insights] Fallback selected:", deepInsights.map(i => i.id));
+      console.log("[/api/v2/deep-insights] Fallback selected count:", deepInsights.length);
+      console.log("[/api/v2/deep-insights] Fallback selected IDs:", deepInsights.map(i => i.id));
     }
 
     return res.json({ insights: deepInsights });
@@ -1493,7 +1528,7 @@ app.post("/api/v2/improvement-plan", async (req, res) => {
   /**
    * POST /api/premium/payments/create-checkout-session
    * Creates a Stripe Checkout session for premium purchase
-   * Body: { deviceId, redirectTo? }
+   * Body: { deviceId, redirectTo?, resultId? }
    */
   app.post("/api/premium/payments/create-checkout-session", async (req, res) => {
     try {
@@ -1503,7 +1538,7 @@ app.post("/api/v2/improvement-plan", async (req, res) => {
         });
       }
 
-      const { deviceId, redirectTo } = req.body;
+      const { deviceId, redirectTo, resultId } = req.body ?? {};
       
       if (!deviceId) {
         return res.status(400).json({ error: "deviceId is required" });
@@ -1538,6 +1573,9 @@ app.post("/api/v2/improvement-plan", async (req, res) => {
         cancel_url: cancelUrl,
         metadata: {
           deviceId,
+          ...(typeof resultId === "string" && resultId.length > 0
+            ? { resultId }
+            : {}),
         },
       });
 
@@ -1553,7 +1591,8 @@ app.post("/api/v2/improvement-plan", async (req, res) => {
 
   /**
    * GET /api/premium/payments/confirm?session_id=...&deviceId=...
-   * Confirms a payment and unlocks premium for the device
+   * Confirms a payment and unlocks premium for the device.
+   * Also sends a purchase email with a direct link to the user's results if available.
    */
   app.get("/api/premium/payments/confirm", async (req, res) => {
     try {
@@ -1605,10 +1644,50 @@ app.post("/api/v2/improvement-plan", async (req, res) => {
         });
       }
 
+      // Build a direct link to the user's results, if we have a resultId
+      const resultIdFromMetadata =
+        typeof session.metadata?.resultId === "string"
+          ? session.metadata.resultId
+          : null;
+
+      const forwardedProto = req.headers["x-forwarded-proto"];
+      const protocol =
+        (Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto) ||
+        req.protocol ||
+        "http";
+      const host = req.headers.host || "localhost:3001";
+      const baseUrlFromRequest = `${protocol}://${host}`;
+      const appBaseUrl =
+        process.env.APP_BASE_URL && process.env.APP_BASE_URL.length > 0
+          ? process.env.APP_BASE_URL
+          : baseUrlFromRequest;
+
+      const resultsUrl =
+        resultIdFromMetadata && resultIdFromMetadata.length > 0
+          ? `${appBaseUrl}/results/${encodeURIComponent(resultIdFromMetadata)}`
+          : null;
+
+      // Fire-and-forget email (do not block the response if email fails)
+      const customerEmail = session.customer_details?.email || undefined;
+      const supportEmail = process.env.SUPPORT_EMAIL || null;
+
+      if (customerEmail) {
+        sendPremiumPurchaseEmail({
+          to: customerEmail,
+          amount: session.amount_total ?? null,
+          currency: session.currency ?? null,
+          resultsUrl,
+          supportEmail,
+        }).catch((err) => {
+          console.error("Failed to send premium purchase email:", err);
+        });
+      }
+
       return res.json({
         success: true,
         premiumUnlocked: true,
         attemptCount: deviceAccess?.attemptCount ?? 0,
+        resultsUrl,
       });
     } catch (error) {
       console.error("Error confirming payment:", error);

@@ -15,7 +15,7 @@ export default function TopPodcasts({ data }: TopPodcastsProps) {
     <div>
       <div className="mb-6 flex flex-col gap-2 items-center text-center">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2 md:mb-1">
+          <h2 className="text-3xl font-bold text-foreground mb-2">
             Top Podcasts to Stay Sharp
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -31,8 +31,10 @@ export default function TopPodcasts({ data }: TopPodcastsProps) {
             href={podcast.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group rounded-xl border border-border/30 bg-card p-5 hover:border-foreground/20 transition-colors"
+            className="group relative rounded-xl border border-blue-50 bg-card p-5 hover:border-blue-400 transition-colors overflow-hidden"
           >
+            {/* Blue blurred sphere in top-right */}
+            <div className="pointer-events-none absolute -top-6 -right-6 w-24 h-24 bg-sky-300/40 blur-3xl rounded-full" />
             <div className="flex items-center gap-3 mb-3">
               <div className="h-10 w-10 rounded-full bg-muted/50 flex items-center justify-center">
                 <Radio size={20} weight="duotone" className="text-foreground" />

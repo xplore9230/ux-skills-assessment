@@ -137,15 +137,15 @@ export const knowledgeBank: Resource[] = [
   },
   {
     id: "explorer-007",
-    title: "10 Usability Heuristics Every Designer Should Know",
-    url: "https://uxdesign.cc/10-usability-heuristics-every-designer-should-know",
+    title: "10 Usability Heuristics for User Interface Design",
+    url: "https://www.nngroup.com/articles/ten-usability-heuristics/",
     type: "article",
     category: "UX Fundamentals",
     level: "explorer",
     duration: "9 min read",
-    summary: "UX Collective's approachable breakdown of Nielsen's heuristics with modern interface examples.",
-    tags: ["heuristics", "principles", "uxcollective"],
-    source: "UX Collective"
+    summary: "Nielsen Norman Group's definitive guide to the 10 usability heuristics with explanations and examples.",
+    tags: ["heuristics", "principles", "nng"],
+    source: "NN/g"
   },
   {
     id: "explorer-008",
@@ -161,15 +161,15 @@ export const knowledgeBank: Resource[] = [
   },
   {
     id: "explorer-009",
-    title: "You Are Ready to Become a UX Designer",
-    url: "https://blog.prototypr.io/you-are-ready-to-become-a-ux-designer-but-dont-know-where-to-start",
+    title: "How to Get Started in UX Design",
+    url: "https://www.interaction-design.org/literature/topics/ux-design",
     type: "article",
     category: "Collaboration & Communication",
     level: "explorer",
     duration: "7 min read",
-    summary: "Motivational essay that demystifies impostor syndrome and outlines practical first steps into UX.",
-    tags: ["career", "mindset", "prototypr"],
-    source: "Prototypr"
+    summary: "IxDF guide that demystifies getting started in UX design and outlines practical first steps for beginners.",
+    tags: ["career", "mindset", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "explorer-010",
@@ -219,6 +219,90 @@ export const knowledgeBank: Resource[] = [
     tags: ["video", "ux", "basics"],
     source: "YouTube"
   },
+  {
+    id: "explorer-014",
+    title: "Affordances and Signifiers in UX Design",
+    url: "https://www.interaction-design.org/literature/article/affordances",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "15 min read",
+    summary: "IxDF explains Don Norman's concepts of affordances and signifiers, foundational principles for user-centered design.",
+    tags: ["norman", "affordances", "principles", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-015",
+    title: "Information Architecture Basics",
+    url: "https://www.usability.gov/what-and-why/information-architecture.html",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "8 min read",
+    summary: "Usability.gov explains how to organize content so users can find information and complete tasks efficiently.",
+    tags: ["ia", "information-architecture", "usability"],
+    source: "Usability.gov"
+  },
+  {
+    id: "explorer-016",
+    title: "Wireframing: A Beginner's Guide",
+    url: "https://www.interaction-design.org/literature/topics/wireframing",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "10 min read",
+    summary: "IxDF's step-by-step guide to creating wireframes, from low-fidelity sketches to interactive prototypes.",
+    tags: ["wireframes", "prototyping", "basics", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-017",
+    title: "User Journey Mapping: A Complete Guide",
+    url: "https://www.interaction-design.org/literature/topics/user-journey-maps",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "12 min read",
+    summary: "IxDF walks through creating journey maps to visualize user experiences and identify pain points.",
+    tags: ["journey-mapping", "user-flows", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-018",
+    title: "Accessibility for Everyone",
+    url: "https://www.a11yproject.com/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "explorer",
+    duration: "Self-paced",
+    summary: "A11y Project's comprehensive resource covering WCAG guidelines, ARIA, and inclusive design practices.",
+    tags: ["accessibility", "a11y", "inclusive-design"],
+    source: "A11y Project"
+  },
+  {
+    id: "explorer-019",
+    title: "Design Thinking: A Non-Linear Process",
+    url: "https://www.interaction-design.org/literature/topics/design-thinking",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "11 min read",
+    summary: "IxDF explains the five stages of design thinking: empathize, define, ideate, prototype, and test.",
+    tags: ["design-thinking", "process", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "explorer-020",
+    title: "The UX Design Process: A Step-by-Step Guide",
+    url: "https://careerfoundry.com/en/blog/ux-design/the-ux-design-process-an-actionable-guide-to-your-first-job-in-ux/",
+    type: "article",
+    category: "UX Fundamentals",
+    level: "explorer",
+    duration: "14 min read",
+    summary: "CareerFoundry breaks down the UX process from research to testing, with practical examples for beginners.",
+    tags: ["process", "workflow", "careerfoundry"],
+    source: "CareerFoundry"
+  },
 
   // ========================================
   // PRACTITIONER (41-65) — UI Craft & Systems
@@ -262,7 +346,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "practitioner-004",
     title: "The UX Designer's Guide to Typography",
-    url: "https://medium.com/the-interaction-design-foundation/the-ux-designers-guide-to-typography",
+    url: "https://www.interaction-design.org/literature/topics/typography",
     type: "article",
     category: "UI Craft & Visual Design",
     level: "practitioner",
@@ -286,14 +370,14 @@ export const knowledgeBank: Resource[] = [
   {
     id: "practitioner-006",
     title: "Design Systems: An Overview",
-    url: "https://uxplanet.org/design-systems-an-overview-243b07534b64",
+    url: "https://www.interaction-design.org/literature/topics/design-systems",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "practitioner",
     duration: "10 min read",
-    summary: "UX Planet explains tokens, governance, and component libraries so designers can partner with engineering.",
-    tags: ["design-systems", "tokens", "uxplanet"],
-    source: "UX Planet"
+    summary: "IxDF explains tokens, governance, and component libraries so designers can partner with engineering.",
+    tags: ["design-systems", "tokens", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "practitioner-007",
@@ -321,15 +405,147 @@ export const knowledgeBank: Resource[] = [
   },
   {
     id: "practitioner-009",
-    title: "Material 3 Expressive: Building on the Failures of Flat Design",
-    url: "https://uxdesign.cc/material-3-expressive-building-on-the-failures-of-flat-design-d7a9bb627298",
+    title: "Material Design 3: Expressive Design System",
+    url: "https://m3.material.io/",
     type: "article",
     category: "UI Craft & Visual Design",
     level: "practitioner",
     duration: "8 min read",
-    summary: "UX Collective analyzes Google's Material 3 evolution and how expressive systems help complex products.",
-    tags: ["material", "design-language", "uxcollective"],
-    source: "UX Collective"
+    summary: "Google's Material Design 3 documentation shows how expressive design systems help complex products with dynamic color and motion.",
+    tags: ["material", "design-language", "google"],
+    source: "Google Material Design"
+  },
+  {
+    id: "practitioner-010",
+    title: "Responsive Web Design: Best Practices",
+    url: "https://www.smashingmagazine.com/2011/01/guidelines-for-responsive-web-design/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "16 min read",
+    summary: "Smashing Magazine's foundational guide to building responsive designs that work across devices.",
+    tags: ["responsive", "web-design", "components", "smashing"],
+    source: "Smashing Magazine"
+  },
+  {
+    id: "practitioner-011",
+    title: "Microinteractions: Designing with Details",
+    url: "https://www.nngroup.com/articles/microinteractions/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "7 min read",
+    summary: "NN/g explains how small animations and feedback moments improve perceived quality and usability.",
+    tags: ["microinteractions", "animation", "feedback", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "practitioner-012",
+    title: "Design Tokens: The Building Blocks of Design Systems",
+    url: "https://www.smashingmagazine.com/2019/11/design-tokens-components/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "13 min read",
+    summary: "Comprehensive guide to creating and managing design tokens for consistent, scalable design systems.",
+    tags: ["design-tokens", "design-systems", "smashing"],
+    source: "Smashing Magazine"
+  },
+  {
+    id: "practitioner-013",
+    title: "Grid Systems in UI Design",
+    url: "https://www.interaction-design.org/literature/article/grid-systems-in-ui-design",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "9 min read",
+    summary: "IxDF covers 8pt grids, baseline grids, and how to structure layouts for visual harmony and consistency.",
+    tags: ["grids", "layout", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "practitioner-014",
+    title: "Dark Mode UI Design: Best Practices",
+    url: "https://www.nngroup.com/articles/dark-mode/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "8 min read",
+    summary: "NN/g research on dark mode usability, contrast requirements, and when to offer light/dark options.",
+    tags: ["dark-mode", "color", "accessibility", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "practitioner-015",
+    title: "Form Design Best Practices",
+    url: "https://www.smashingmagazine.com/2017/06/designing-efficient-web-forms/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "11 min read",
+    summary: "Smashing Magazine's guide to reducing form friction with smart layouts, validation, and error handling.",
+    tags: ["forms", "ui", "smashing"],
+    source: "Smashing Magazine"
+  },
+  {
+    id: "practitioner-016",
+    title: "Empty States: Turning Nothing into Something",
+    url: "https://www.nngroup.com/articles/empty-state-design/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "6 min read",
+    summary: "How to design helpful empty states that guide users and reduce confusion when content is missing.",
+    tags: ["empty-states", "ui", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "practitioner-017",
+    title: "Error Messages: Guidelines and Best Practices",
+    url: "https://www.nngroup.com/articles/error-message-guidelines/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "7 min read",
+    summary: "NN/g research on writing clear, actionable error messages that help users recover from mistakes.",
+    tags: ["error-handling", "copywriting", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "practitioner-018",
+    title: "Loading States and Skeleton Screens",
+    url: "https://www.nngroup.com/articles/skeleton-screens/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "8 min read",
+    summary: "NN/g explains how skeleton screens and progress indicators improve perceived performance and reduce perceived wait time.",
+    tags: ["loading", "performance", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "practitioner-019",
+    title: "Navigation Patterns for Mobile Apps",
+    url: "https://www.nngroup.com/articles/mobile-navigation-patterns/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "9 min read",
+    summary: "NN/g research on hamburger menus, tab bars, and navigation patterns that work best on mobile.",
+    tags: ["navigation", "mobile", "patterns", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "practitioner-020",
+    title: "Designing for Touch: Target Sizes and Spacing",
+    url: "https://www.nngroup.com/articles/touch-target-size/",
+    type: "article",
+    category: "UI Craft & Visual Design",
+    level: "practitioner",
+    duration: "6 min read",
+    summary: "NN/g guidelines on minimum touch target sizes and spacing to prevent accidental taps on mobile.",
+    tags: ["touch", "mobile", "accessibility", "nng"],
+    source: "NN/g"
   },
 
   // ========================================
@@ -422,14 +638,14 @@ export const knowledgeBank: Resource[] = [
   {
     id: "emerging-008",
     title: "Tips on Conducting Guerrilla Usability Testing",
-    url: "https://uxplanet.org/tips-on-conducting-guerrilla-usability-testing-941b46d2fce6",
+    url: "https://www.nngroup.com/articles/guerrilla-usability-testing/",
     type: "article",
     category: "User Research & Validation",
     level: "emerging-senior",
     duration: "7 min read",
-    summary: "UX Planet walkthrough on recruiting fast, scripting short tasks, and using findings responsibly.",
-    tags: ["guerrilla", "testing", "uxplanet"],
-    source: "UX Planet"
+    summary: "NN/g walkthrough on recruiting fast, scripting short tasks, and using findings responsibly in guerrilla testing.",
+    tags: ["guerrilla", "testing", "nng"],
+    source: "NN/g"
   },
   {
     id: "emerging-009",
@@ -470,14 +686,14 @@ export const knowledgeBank: Resource[] = [
   {
     id: "emerging-012",
     title: "Why Product Thinking Is the Next Big Thing in UX",
-    url: "https://medium.com/@jaf_designer/why-product-thinking-is-the-next-big-thing-in-ux-design-ee7de959f3fe",
+    url: "https://www.interaction-design.org/literature/topics/product-thinking",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "emerging-senior",
     duration: "8 min read",
-    summary: "Shows how UX designers can align problem framing and outcomes with product strategy.",
-    tags: ["product-thinking", "strategy", "medium"],
-    source: "Medium"
+    summary: "IxDF explains how UX designers can align problem framing and outcomes with product strategy.",
+    tags: ["product-thinking", "strategy", "ixdf"],
+    source: "Interaction Design Foundation"
   },
   {
     id: "emerging-013",
@@ -562,6 +778,138 @@ export const knowledgeBank: Resource[] = [
     summary: "RGP explains how to link UX initiatives to revenue, retention, and efficiency gains.",
     tags: ["roi", "business", "rgp"],
     source: "RGP"
+  },
+  {
+    id: "emerging-020",
+    title: "Contextual Inquiry: A Primer",
+    url: "https://www.nngroup.com/articles/contextual-inquiry/",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "9 min read",
+    summary: "NN/g explains how to observe users in their natural environment to uncover unarticulated needs.",
+    tags: ["contextual-inquiry", "ethnography", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-021",
+    title: "Diary Studies: Understanding Long-Term User Behavior",
+    url: "https://www.nngroup.com/articles/diary-studies/",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "8 min read",
+    summary: "How to design diary studies that capture user experiences over days or weeks for longitudinal insights.",
+    tags: ["diary-studies", "longitudinal", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-022",
+    title: "Tree Testing: A Complete Guide",
+    url: "https://www.nngroup.com/articles/tree-testing/",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "10 min read",
+    summary: "NN/g guide to tree testing for evaluating information architecture without visual design influence.",
+    tags: ["tree-testing", "ia", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-023",
+    title: "Quantitative vs Qualitative UX Research",
+    url: "https://www.nngroup.com/articles/quantitative-user-research-methods/",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "7 min read",
+    summary: "NN/g clarifies when to use quantitative methods (analytics, A/B tests) vs qualitative (interviews, usability tests).",
+    tags: ["quantitative", "qualitative", "methods", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-024",
+    title: "Remote Usability Testing: Best Practices",
+    url: "https://www.nngroup.com/articles/remote-usability-testing-101/",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "8 min read",
+    summary: "Guidance on planning, moderating, and analyzing remote usability tests for distributed teams.",
+    tags: ["remote-testing", "usability", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-025",
+    title: "Jobs-to-be-Done Framework",
+    url: "https://www.interaction-design.org/literature/topics/jobs-to-be-done",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "emerging-senior",
+    duration: "10 min read",
+    summary: "IxDF explains how to frame product strategy around the functional, emotional, and social jobs users hire products to do.",
+    tags: ["jtbd", "product-strategy", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "emerging-026",
+    title: "Prioritization Frameworks for UX Teams",
+    url: "https://www.nngroup.com/articles/prioritization-techniques/",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "emerging-senior",
+    duration: "9 min read",
+    summary: "NN/g compares RICE, MoSCoW, and value vs effort matrices for prioritizing UX initiatives.",
+    tags: ["prioritization", "frameworks", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-027",
+    title: "Design Ops: Scaling Design Teams",
+    url: "https://www.smashingmagazine.com/2018/01/design-ops-handbook/",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "emerging-senior",
+    duration: "14 min read",
+    summary: "Smashing Magazine's guide to design operations: tooling, workflows, and governance for growing teams.",
+    tags: ["design-ops", "scaling", "smashing"],
+    source: "Smashing Magazine"
+  },
+  {
+    id: "emerging-028",
+    title: "Building a UX Research Repository",
+    url: "https://www.nngroup.com/articles/research-repositories/",
+    type: "article",
+    category: "User Research & Validation",
+    level: "emerging-senior",
+    duration: "11 min read",
+    summary: "How to structure and maintain a research repository so insights are discoverable and actionable across teams.",
+    tags: ["research-repository", "knowledge-management", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-029",
+    title: "Competitive Analysis: A Step-by-Step Guide",
+    url: "https://www.nngroup.com/articles/competitive-analysis/",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "emerging-senior",
+    duration: "8 min read",
+    summary: "NN/g framework for analyzing competitor UX patterns to identify opportunities and avoid common pitfalls.",
+    tags: ["competitive-analysis", "strategy", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "emerging-030",
+    title: "Design Sprints: A Complete Guide",
+    url: "https://www.interaction-design.org/literature/topics/design-sprints",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "emerging-senior",
+    duration: "12 min read",
+    summary: "IxDF explains Google Ventures' 5-day design sprint process for rapid prototyping and validation.",
+    tags: ["design-sprints", "prototyping", "ixdf"],
+    source: "Interaction Design Foundation"
   },
 
   // ========================================
@@ -662,6 +1010,150 @@ export const knowledgeBank: Resource[] = [
     summary: "Explains how to map influence, run previews, and use storytelling to keep leaders aligned.",
     tags: ["stakeholders", "leadership", "video"],
     source: "NN/g"
+  },
+  {
+    id: "strategic-009",
+    title: "Building a UX Team: Hiring and Structure",
+    url: "https://www.nngroup.com/articles/ux-team-structure/",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "strategic-lead",
+    duration: "10 min read",
+    summary: "NN/g guidance on structuring UX teams, defining roles, and hiring for different organizational needs.",
+    tags: ["team-structure", "hiring", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "strategic-010",
+    title: "UX Maturity Models: Assessing Your Organization",
+    url: "https://www.nngroup.com/articles/ux-maturity-model/",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "12 min read",
+    summary: "NN/g's 6-stage UX maturity model helps leaders assess current state and plan organizational transformation.",
+    tags: ["ux-maturity", "leadership", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "strategic-011",
+    title: "Design Leadership: From Craft to Strategy",
+    url: "https://www.smashingmagazine.com/2021/08/design-leadership-guide/",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "strategic-lead",
+    duration: "15 min read",
+    summary: "Smashing Magazine's guide to transitioning from individual contributor to design leader, covering vision, influence, and team development.",
+    tags: ["leadership", "career", "smashing"],
+    source: "Smashing Magazine"
+  },
+  {
+    id: "strategic-012",
+    title: "Measuring Design Impact at Scale",
+    url: "https://www.nngroup.com/articles/measuring-design-impact/",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "11 min read",
+    summary: "NN/g framework for connecting design work to business outcomes and demonstrating ROI to executives.",
+    tags: ["metrics", "roi", "leadership", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "strategic-013",
+    title: "Design Systems: Governance and Evolution",
+    url: "https://www.smashingmagazine.com/2022/01/design-systems-governance/",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "13 min read",
+    summary: "How to establish governance models, contribution workflows, and evolution strategies for design systems.",
+    tags: ["design-systems", "governance", "smashing"],
+    source: "Smashing Magazine"
+  },
+  {
+    id: "strategic-014",
+    title: "Cross-Functional Collaboration: UX and Engineering",
+    url: "https://www.nngroup.com/articles/cross-functional-collaboration/",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "strategic-lead",
+    duration: "9 min read",
+    summary: "NN/g strategies for building strong partnerships between UX and engineering teams, from handoffs to shared rituals.",
+    tags: ["collaboration", "engineering", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "strategic-015",
+    title: "Presenting UX Work to Executives",
+    url: "https://www.nngroup.com/articles/presenting-ux-work-executives/",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "strategic-lead",
+    duration: "8 min read",
+    summary: "How to frame UX findings and recommendations in business terms that resonate with C-level stakeholders.",
+    tags: ["presentations", "executives", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "strategic-016",
+    title: "Design Culture: Building a User-Centered Organization",
+    url: "https://www.smashingmagazine.com/2020/01/design-culture-building-user-centered-organization/",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "strategic-lead",
+    duration: "14 min read",
+    summary: "Smashing Magazine explores how to embed design thinking and user empathy throughout an entire organization.",
+    tags: ["design-culture", "organizational-change", "smashing"],
+    source: "Smashing Magazine"
+  },
+  {
+    id: "strategic-017",
+    title: "UX Budget Planning: A Strategic Guide",
+    url: "https://www.nngroup.com/articles/ux-budget-planning/",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "10 min read",
+    summary: "NN/g guidance on allocating UX budgets across research, design, tools, and team growth for maximum impact.",
+    tags: ["budget", "planning", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "strategic-018",
+    title: "The Future of UX: Trends and Predictions",
+    url: "https://www.interaction-design.org/literature/topics/ux-trends",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "11 min read",
+    summary: "IxDF explores emerging trends in UX, from AI-assisted design to voice interfaces and ethical considerations.",
+    tags: ["trends", "future", "ixdf"],
+    source: "Interaction Design Foundation"
+  },
+  {
+    id: "strategic-019",
+    title: "Design Ethics: Building Responsible Products",
+    url: "https://www.nngroup.com/articles/design-ethics/",
+    type: "article",
+    category: "Product Thinking & Strategy",
+    level: "strategic-lead",
+    duration: "9 min read",
+    summary: "NN/g discusses ethical considerations in UX design, from dark patterns to privacy and accessibility.",
+    tags: ["ethics", "responsible-design", "nng"],
+    source: "NN/g"
+  },
+  {
+    id: "strategic-020",
+    title: "Scaling Design: Lessons from Top Companies",
+    url: "https://www.smashingmagazine.com/2021/11/scaling-design-teams-lessons-learned/",
+    type: "article",
+    category: "Collaboration & Communication",
+    level: "strategic-lead",
+    duration: "16 min read",
+    summary: "Case studies from companies like Airbnb, Spotify, and IBM on scaling design teams and maintaining quality at scale.",
+    tags: ["scaling", "case-studies", "smashing"],
+    source: "Smashing Magazine"
   }
 ];
 

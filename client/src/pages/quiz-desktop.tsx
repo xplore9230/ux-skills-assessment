@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, memo, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProgressBar from "@/components/ProgressBar";
 import AnswerOption from "@/components/AnswerOption";
 import StackedCard from "@/components/StackedCard";
@@ -19,6 +19,7 @@ const QuizDesktop = memo(function QuizDesktop({ questions, onComplete, onBack, o
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [shouldAnimateExit, setShouldAnimateExit] = useState(false);
   const [exitingQuestionId, setExitingQuestionId] = useState<string | null>(null);
+  const [isGoingBack, setIsGoingBack] = useState(false);
   const halfwayTriggeredRef = useRef(false);
   const cardContainerRef = useRef<HTMLDivElement>(null);
   const cardContentRef = useRef<HTMLDivElement>(null);
@@ -102,6 +103,7 @@ const QuizDesktop = memo(function QuizDesktop({ questions, onComplete, onBack, o
 
     const updatedAnswers = { ...answers, [currentQuestion.id]: value };
     setAnswers(updatedAnswers);
+    setIsGoingBack(false); // Moving forward
     
     // Auto-advance to next question after a short delay
     if (isLastQuestion) {
@@ -130,6 +132,7 @@ const QuizDesktop = memo(function QuizDesktop({ questions, onComplete, onBack, o
   }, [answers, currentQuestion.id, isLastQuestion, onComplete, missingOptions]);
 
   const handleNext = useCallback(() => {
+    setIsGoingBack(false); // Moving forward
     if (isLastQuestion && canGoNext) {
       onComplete(answers);
     } else if (canGoNext) {
@@ -151,6 +154,7 @@ const QuizDesktop = memo(function QuizDesktop({ questions, onComplete, onBack, o
 
   const handlePrevious = useCallback(() => {
     if (canGoPrevious) {
+      setIsGoingBack(true); // User is going back
       setShouldAnimateExit(false); // No animation for previous
       setCurrentIndex((prev) => prev - 1);
     } else {
@@ -220,9 +224,18 @@ const QuizDesktop = memo(function QuizDesktop({ questions, onComplete, onBack, o
                   willChange: "transform",
                   overflowY: "auto",
                 }}
-                className="md:rounded-[50px] p-6 lg:p-12 block space-y-6 lg:space-y-8"
+                className="md:rounded-[50px] p-6 lg:p-12 flex flex-col items-center justify-center relative overflow-visible"
               >
-                <div className="space-y-4 text-left">
+                {/* Blurred sphere */}
+                <div 
+                  className="absolute right-[-154px] top-[-8px] w-[324px] h-[324px] pointer-events-none"
+                  style={{
+                    borderRadius: '324px',
+                    background: 'rgba(203, 222, 255, 0.30)',
+                    filter: 'blur(87px)',
+                  }}
+                />
+                <div className="space-y-4 text-center w-full max-w-2xl">
                   <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                     {currentQuestion.category}
                   </p>
@@ -234,7 +247,7 @@ const QuizDesktop = memo(function QuizDesktop({ questions, onComplete, onBack, o
                 <div 
                   role="radiogroup" 
                   aria-labelledby="question-text"
-                  className="space-y-3 lg:space-y-4 w-full"
+                  className="space-y-3 lg:space-y-4 w-full max-w-2xl mt-6 lg:mt-8"
                 >
                   {missingOptions ? (
                     <div className="rounded-xl border border-dashed border-border/60 bg-muted/40 p-6 text-center text-sm text-muted-foreground">
@@ -267,9 +280,22 @@ const QuizDesktop = memo(function QuizDesktop({ questions, onComplete, onBack, o
               {currentIndex === 0 ? "Back to Home" : "Previous"}
             </Button>
 
-            <div className="text-sm text-muted-foreground">
-              {canGoNext ? "✓ Answer saved" : "Select an answer to continue"}
-            </div>
+            {canGoNext && isGoingBack && (
+              <Button
+                onClick={handleNext}
+                className="gap-2"
+                data-testid="button-next"
+              >
+                {isLastQuestion ? "Complete" : "Next"}
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            )}
+            
+            {(!canGoNext || !isGoingBack) && (
+              <div className="text-sm text-muted-foreground">
+                {canGoNext ? "✓ Answer saved" : "Select an answer to continue"}
+              </div>
+            )}
           </div>
         </div>
       </div>

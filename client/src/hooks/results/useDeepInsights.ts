@@ -11,7 +11,7 @@ import {
   getCachedDeepInsights, 
   cacheDeepInsights 
 } from "@/lib/results/cache";
-import { getAdvancedResources } from "@/lib/knowledge-bank";
+import { getAdvancedResources, queryResources } from "@/lib/knowledge-bank";
 import type { 
   Stage, 
   Category, 
@@ -74,12 +74,30 @@ function getFallbackDeepInsights(
   strongCategories: Category[],
   weakCategories: Category[]
 ): DeepInsightsData {
-  const resources = getAdvancedResources(
+  // Try preferred mix for this stage/categories first
+  let resources = getAdvancedResources(
     stage,
     Array.isArray(strongCategories) ? strongCategories : [],
     Array.isArray(weakCategories) ? weakCategories : [],
     6
   ) || [];
+  
+  // If none found, progressively relax filters to guarantee content
+  if (!resources || resources.length === 0) {
+    // 1) Try any category at stage-appropriate levels (getAdvancedResources with empty categories already does this)
+    resources = getAdvancedResources(stage, [], [], 6) || [];
+  }
+  if (!resources || resources.length === 0) {
+    // 2) As a last resort, pick any resources from knowledge bank (no filters)
+    const anyResources = queryResources({}); // returns all
+    resources = anyResources.slice(0, 6);
+  }
+  
+  // Log when fallback path is used in production for easier debugging
+  if (typeof window !== "undefined") {
+    // eslint-disable-next-line no-console
+    console.warn("[DeepInsights:fallback] Using client-side fallback. Count:", resources?.length ?? 0);
+  }
   
   // Convert to DeepInsight with generic reason
   const insights: DeepInsight[] = resources.map(r => ({

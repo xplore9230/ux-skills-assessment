@@ -6,6 +6,7 @@
  */
 
 import { Stage, Category, Band, CategoryScore, CategoryInsight, ImprovementPlanData } from "./types";
+import { getScoreAwareDescription } from "@shared/skill-descriptions";
 
 // Generate meaning text based on stage and performance
 export function generateMeaningText(
@@ -37,14 +38,10 @@ export function generateCategoryInsight(category: CategoryScore, stage: Stage): 
   const band = category.band;
   const categoryName = category.name;
   const categoryId = category.id;
-  
-  // Template descriptions based on band
-  const descriptions: Record<Band, string> = {
-    "Strong": `Your ${categoryName} skills are well-developed. You demonstrate strong competency and can handle complex challenges in this area. Continue refining your expertise to mentor others.`,
-    "Needs Work": `Your ${categoryName} foundation is solid but has room for growth. Focus on practicing intermediate concepts and applying them in real projects to strengthen this skill area.`,
-    "Learn the Basics": `Your ${categoryName} skills need foundational development. Start with core principles and gradually build up through structured learning and hands-on practice.`,
-  };
-  
+
+  // Score- and category-aware description
+  const description = getScoreAwareDescription(categoryName, score);
+
   // Template checklists based on category and band
   const checklists: Record<Band, { id: string; text: string; priority?: "high" | "medium" | "low" }[]> = {
     "Strong": [
@@ -76,7 +73,7 @@ export function generateCategoryInsight(category: CategoryScore, stage: Stage): 
     categoryName,
     score,
     band,
-    description: descriptions[band],
+    description,
     checklist: checklists[band],
   };
 }

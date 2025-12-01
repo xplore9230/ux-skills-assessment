@@ -16,14 +16,16 @@ export default function NextRole({ data }: NextRoleProps) {
   const { suggestedTitle, googleJobsUrl, linkedInUrl } = data;
   
   return (
-    <div className="rounded-xl border border-border/30 bg-card p-6 md:p-8">
+    <div className="relative rounded-xl border border-blue-50 bg-card p-6 md:p-8 overflow-hidden">
+      {/* Blue blurred sphere in top-right */}
+      <div className="pointer-events-none absolute -top-6 -right-6 w-24 h-24 bg-sky-300/40 blur-3xl rounded-full" />
       {/* Header */}
       <div className="flex flex-col items-center gap-3 mb-4 text-center">
         <div className="h-10 w-10 rounded-full bg-muted/50 flex items-center justify-center">
           <Briefcase size={20} weight="duotone" className="text-foreground" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="text-3xl font-bold text-foreground">
             Find Your Next Role
           </h2>
           <p className="text-sm text-muted-foreground">

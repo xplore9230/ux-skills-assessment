@@ -18,6 +18,8 @@ import type {
   CategoryInsight, 
   LoadingState 
 } from "@/lib/results/types";
+import { usePremiumAccess } from "@/context/PremiumAccessContext";
+import PaywallEntryCard from "@/components/premium/PaywallEntryCard";
 
 interface SkillAnalysisProps {
   data: SkillAnalysisData | null;
@@ -36,14 +38,18 @@ function SkillCard({
   category: CategoryScore;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { isPremium, openPaywall } = usePremiumAccess();
   
   const bandColorClass = getBandColorClass(category.band);
   const bandBgClass = getBandBgClass(category.band);
   
   return (
-    <div className="rounded-xl border border-border/30 bg-card overflow-hidden">
+    <div className="relative rounded-xl border border-blue-50 bg-card overflow-hidden">
+      {/* Blue blurred sphere in top-right */}
+      <div className="pointer-events-none absolute -top-6 -right-6 w-24 h-24 bg-sky-300/40 blur-3xl rounded-full" />
+
       {/* Header */}
-      <div className="p-4 md:p-6">
+      <div className="relative p-4 md:p-6">
         <div className="flex items-start justify-between mb-3">
           <h3 className="text-lg font-semibold text-foreground">
             {category.name}
@@ -95,7 +101,59 @@ function SkillCard({
                 className="overflow-hidden"
               >
                 <div className="px-4 md:px-6 py-4 space-y-3 border-t border-border">
-                  {insight.checklist.map((item) => (
+                  {/* First action is always free */}
+                  {insight.checklist.slice(0, 1).map((item) => (
+                    <div 
+                      key={item.id} 
+                      className="flex items-start gap-3"
+                    >
+                      <div className="mt-1 h-4 w-4 rounded border border-border flex-shrink-0" />
+                      <span className="text-sm text-foreground">
+                        {item.text}
+                      </span>
+                    </div>
+                  ))}
+                  {/* Locked teaser for remaining actions */}
+                  {!isPremium && insight.checklist.length > 1 && (
+                    <div className="relative rounded-xl overflow-hidden my-2" style={{ minHeight: "140px" }}>
+                      {/* Glass overlay with entry card - always on top to prevent content flash */}
+                      <div 
+                        className="absolute inset-0 h-full w-full flex items-center justify-center p-4"
+                        style={{
+                          background: "rgba(255, 255, 255, 0.4)",
+                          backdropFilter: "blur(7px)",
+                          zIndex: 20,
+                          pointerEvents: "auto",
+                        }}
+                      >
+                        <PaywallEntryCard
+                          unlockType="todos"
+                          onClick={() => openPaywall("todos")}
+                          variant="overlay"
+                          size="compact"
+                          className="w-full max-w-[250px]"
+                        />
+                      </div>
+                      {/* Actual checklist items behind the glass - hidden during collapse */}
+                      {isExpanded && (
+                        <div className="px-4 md:px-6 py-4 space-y-3 relative" style={{ zIndex: 0 }}>
+                          {insight.checklist.slice(1, Math.min(4, insight.checklist.length)).map((item) => (
+                            <div 
+                              key={item.id} 
+                              className="flex items-start gap-3"
+                            >
+                              <div className="mt-1 h-4 w-4 rounded border border-border flex-shrink-0" />
+                              <span className="text-sm text-foreground">
+                                {item.text}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {/* Remaining actions when premium */}
+                  {isPremium && insight.checklist.slice(1).map((item) => (
                     <div 
                       key={item.id} 
                       className="flex items-start gap-3"
@@ -170,7 +228,7 @@ export default function SkillAnalysis({
   return (
     <div>
       <div className="mb-8 text-center">
-        <h2 className="text-4xl font-bold text-foreground mb-2">
+        <h2 className="text-3xl font-bold text-foreground mb-2">
           Skill Analysis
         </h2>
         <p className="text-sm text-muted-foreground">

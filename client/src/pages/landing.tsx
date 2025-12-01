@@ -1,17 +1,49 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { Sparkle, ShareNetwork, ChartBar, Briefcase, Brain } from "@phosphor-icons/react";
+import { Brain } from "@phosphor-icons/react";
 
 interface LandingPageProps {
   onStart: () => void;
 }
 
 const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
+  // Auto-scroll to first card on mobile
+  useEffect(() => {
+    const cardsContainer = document.getElementById('cards-container');
+    if (cardsContainer && window.innerWidth < 768) {
+      // Scroll to first card on mobile
+      cardsContainer.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-6 pt-7 pb-14 md:pt-6 md:pb-12">
+    <div className="min-h-screen bg-white relative overflow-x-hidden flex flex-col w-full" style={{ margin: 0, padding: 0 }}>
+      {/* Background Spheres */}
+      {/* First Sphere - Larger, positioned at top */}
+      <div 
+        className="absolute left-1/2 -translate-x-1/2 top-[-133px] w-full max-w-[1440px] h-[200px] md:h-[396px] pointer-events-none"
+        style={{
+          borderRadius: '50%',
+          background: 'rgba(203, 222, 255, 0.60)',
+          filter: 'blur(87px)',
+          aspectRatio: '1440/396',
+        }}
+      />
+      
+      {/* Second Sphere - Smaller, centered, positioned above first */}
+      <div 
+        className="absolute left-1/2 top-[-195px] -translate-x-1/2 w-[90%] max-w-[1254px] h-[180px] md:h-[433px] pointer-events-none"
+        style={{
+          borderRadius: '50%',
+          background: 'rgba(255, 255, 255, 0.90)',
+          filter: 'blur(107px)',
+          aspectRatio: '1254/433',
+        }}
+      />
+
+      <div className="w-full pt-16 pb-14 md:pt-12 md:pb-12 relative z-10" style={{ margin: 0, paddingLeft: 0, paddingRight: 0 }}>
         <motion.div
           initial={{ opacity: 0, scale: 1.8 }}
           animate={{ 
@@ -49,17 +81,9 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
                   src="/orb.webp" 
                   alt="" 
                   className="w-full h-full object-contain opacity-100"
-                  style={{ animation: "spin-slow 30s linear infinite" }}
+                  style={{ animation: "spin-slow 20s linear infinite" }}
                 />
               </motion.div>
-              
-              {/* White transparency gradient in center */}
-              <motion.div 
-                className="absolute inset-0 rounded-full bg-radial-gradient from-background via-transparent to-transparent w-full h-full scale-75"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              />
               
               {/* Brain Icon at center */}
               <div className="relative z-10 flex items-center justify-center">
@@ -96,7 +120,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 0.1, 0.25, 1] }}
-          className="max-w-2xl mx-auto space-y-3 md:space-y-3"
+          className="max-w-2xl mx-auto space-y-5 md:space-y-5 px-6 pt-10"
         >
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
@@ -104,7 +128,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
             transition={{ duration: 0.6, delay: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
             className="space-y-3 md:space-y-3 text-center"
           >
-            {/* Powered by Ollama Badge */}
+            {/* AI + RAG Badge */}
             <motion.div
               initial={{ opacity: 0, y: -10, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -117,7 +141,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
               </div>
             </motion.div>
             
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight md:leading-tight" data-testid="text-hero-title">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight md:leading-tight text-black" data-testid="text-hero-title">
               <>Find Your <motion.span 
                 className="font-playfair font-black italic relative inline-block"
               >
@@ -142,7 +166,7 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
                 ))}
               </motion.span> Stage</>
             </h1>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-normal md:leading-relaxed">
+            <p className="text-base md:text-lg lg:text-xl text-[#666666] leading-normal md:leading-relaxed">
               Take a comprehensive skills assessment to see where you stand and what to focus on next in your UX career, with the help of AI and RAG.
             </p>
           </motion.div>
@@ -155,89 +179,205 @@ const LandingPage = memo(function LandingPage({ onStart }: LandingPageProps) {
           >
             <Button
               size="lg"
-              className="text-base md:text-lg px-8 md:px-10 py-6 md:py-7 rounded-xl group shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
-                onClick={() => onStart()}
+              className="text-base md:text-lg px-8 md:px-10 py-6 md:py-7 rounded-[20px] bg-black text-white hover:bg-black/90 group shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+              onClick={() => onStart()}
               data-testid="button-start-quiz"
             >
-              Take the UX Quiz
+              Take Assessment
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true" />
             </Button>
           </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 2.0, ease: [0.25, 0.1, 0.25, 1] }}
-            className="pt-8 md:pt-12 max-w-4xl mx-auto"
-          >
-            <motion.h2 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 2.2, ease: "easeOut" }}
-              className="text-2xl md:text-3xl font-bold text-foreground text-center mb-4 md:mb-6"
-            >
-              What You'll Learn
-            </motion.h2>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 2.4, ease: [0.25, 0.1, 0.25, 1] }}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
-                {[
-                  {
-                    icon: Sparkle,
-                    title: "AI Feedback",
-                    description: "Personalized AI feedback on your UX skills and performance",
-                    delay: 2.5,
-                  },
-                  {
-                    icon: ShareNetwork,
-                    title: "Learning Graph",
-                    description: "Curated learning graph with tailored resources and recommendations",
-                    delay: 2.6,
-                  },
-                  {
-                    icon: ChartBar,
-                    title: "Score Assessment",
-                    description: "AI-powered score level assessment across key skill areas",
-                    delay: 2.7,
-                  },
-                  {
-                    icon: Briefcase,
-                    title: "Job Opportunities",
-                    description: "Job opportunity insights matched to your skill level",
-                    delay: 2.8,
-                  }
-                ].map((feature, index) => {
-                  const Icon = feature.icon;
-                  return (
-                    <motion.div
-                      key={feature.title}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: feature.delay }}
-                      className="flex items-start gap-4 group"
-                    >
-                      <div className="flex-shrink-0 flex items-center justify-center pt-1">
-                        <Icon weight="duotone" className="w-6 h-6 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-semibold text-foreground mb-2 leading-tight group-hover:text-primary transition-colors duration-300">
-                          {feature.title}
-                        </h3>
-                        <p className="text-sm md:text-base text-muted-foreground leading-normal">
-                          {feature.description}
-                        </p>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </motion.div>
         </motion.div>
+
+        {/* Card Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 2.0, ease: [0.25, 0.1, 0.25, 1] }}
+          className="pt-10 pb-24 w-full flex justify-center"
+        >
+          <div 
+            id="cards-container"
+            className="flex flex-nowrap gap-2 md:gap-[15px] px-4 md:px-4 overflow-x-auto scrollbar-hide max-w-[1710px] snap-x snap-mandatory"
+            style={{
+              scrollPaddingLeft: '1rem',
+              WebkitOverflowScrolling: 'touch',
+              scrollBehavior: 'smooth',
+            }}
+          >
+            {/* Take the assessment card */}
+            <div 
+              className="rounded-[20px] relative overflow-visible shrink-0 w-[85vw] md:w-[415px] p-[1px] transition-all duration-300 hover:scale-[1.02] snap-start"
+              style={{
+                background: 'linear-gradient(to right, rgba(213, 227, 255, 0.40), rgba(213, 227, 255, 0))',
+                transformStyle: 'preserve-3d',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+              }}
+            >
+              <div className="bg-white rounded-[20px] h-full w-full relative overflow-hidden">
+                <div className="flex gap-[10px] items-center p-[10px]">
+                  {/* Orb Effect */}
+                  <div className="relative shrink-0 w-[71px] h-[68px] flex items-center justify-center">
+                    <motion.div
+                      className="relative w-full h-full flex items-center justify-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.8, delay: 0.4 }}
+                    >
+                      <motion.img 
+                        src="/orb.webp" 
+                        alt="" 
+                        className="w-full h-full object-contain"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                      />
+                    </motion.div>
+                  </div>
+                  <div className="flex flex-col gap-[5px] items-start text-black">
+                    <p className="font-playfair font-bold text-[14px] md:text-[18px] leading-normal whitespace-nowrap">
+                      Take the assessment
+                    </p>
+                    <p className="font-sans font-normal text-[12px] md:text-[14px] leading-normal text-black line-clamp-2">
+                      A curated set of real-world UX questions that map your true skill level.
+                    </p>
+                  </div>
+                </div>
+                {/* Absolute positioned sphere */}
+                <div 
+                  className="absolute right-[-154px] top-[-8px] w-[324px] h-[324px] pointer-events-none"
+                  style={{
+                    borderRadius: '324px',
+                    background: 'rgba(203, 222, 255, 0.30)',
+                    filter: 'blur(87px)',
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* AI + RAG craft your insight card */}
+            <div 
+              className="rounded-[20px] relative overflow-visible shrink-0 w-[85vw] md:w-[415px] p-[1px] transition-all duration-300 hover:scale-[1.02] snap-start"
+              style={{
+                background: 'linear-gradient(to right, rgba(213, 227, 255, 0.40), rgba(213, 227, 255, 0))',
+                transformStyle: 'preserve-3d',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+              }}
+            >
+              <div className="bg-white rounded-[20px] h-full w-full relative overflow-hidden">
+                <div className="flex gap-[10px] items-center p-[10px]">
+                  {/* Icon */}
+                  <div className="relative shrink-0 w-[71px] h-[68px] flex items-center justify-center">
+                    <motion.div
+                      className="relative w-full h-full flex items-center justify-center"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.8, delay: 0.4 }}
+                    >
+                      <motion.img 
+                        src="/orb.webp" 
+                        alt="" 
+                        className="w-full h-full object-contain"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                      />
+                    </motion.div>
+                  </div>
+                  <div className="flex flex-col gap-[5px] items-start text-black">
+                    <p className="font-playfair font-bold text-[14px] md:text-[18px] leading-normal whitespace-nowrap">
+                      AI + RAG craft your insight
+                    </p>
+                    <p className="font-sans font-normal text-[12px] md:text-[14px] leading-normal text-black line-clamp-2">
+                      Your answers are matched with proven UX knowledge for accurate insight.
+                    </p>
+                  </div>
+                </div>
+                {/* Absolute positioned sphere */}
+                <div 
+                  className="absolute right-[-154px] top-[-8px] w-[324px] h-[324px] pointer-events-none"
+                  style={{
+                    borderRadius: '324px',
+                    background: 'rgba(203, 222, 255, 0.30)',
+                    filter: 'blur(87px)',
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Discover your UX level card */}
+            <div 
+              className="rounded-[20px] relative overflow-visible shrink-0 w-[85vw] md:w-[415px] p-[1px] transition-all duration-300 hover:scale-[1.02] snap-start"
+              style={{
+                background: 'linear-gradient(to right, rgba(213, 227, 255, 0.40), rgba(213, 227, 255, 0))',
+                transformStyle: 'preserve-3d',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+              }}
+            >
+              <div className="bg-white rounded-[20px] h-full w-full relative overflow-hidden">
+                <div className="flex gap-[10px] items-center p-[10px]">
+                  {/* Icon */}
+                  <div className="relative shrink-0 w-[71px] h-[68px] flex items-center justify-center">
+                    <motion.div
+                      className="relative w-full h-full flex items-center justify-center"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.8, delay: 0.4 }}
+                    >
+                      <motion.img 
+                        src="/orb.webp" 
+                        alt="" 
+                        className="w-full h-full object-contain"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                      />
+                    </motion.div>
+                  </div>
+                  <div className="flex flex-col gap-[5px] items-start text-black">
+                    <p className="font-playfair font-bold text-[14px] md:text-[18px] leading-normal whitespace-nowrap">
+                      Discover your UX level
+                    </p>
+                    <p className="font-sans font-normal text-[12px] md:text-[14px] leading-normal text-black line-clamp-2">
+                      Understand your gaps and improve with personalized feedback.
+                    </p>
+                  </div>
+                </div>
+                {/* Absolute positioned sphere */}
+                <div 
+                  className="absolute right-[-154px] top-[-8px] w-[324px] h-[324px] pointer-events-none"
+                  style={{
+                    borderRadius: '324px',
+                    background: 'rgba(203, 222, 255, 0.30)',
+                    filter: 'blur(87px)',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+      
+      {/* Footer - Full width, breaks out of container, sticky at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[rgba(255,255,255,0.3)] backdrop-blur-lg flex items-center justify-center py-[5px] z-50" style={{ width: '100vw' }}>
+        <p className="font-sans font-normal text-[10px] md:text-[14px] leading-[1.4] text-black opacity-66 text-center max-w-[1037px] px-4">
+          Built by designers who've walked the same path, with love in India.
+        </p>
       </div>
     </div>
   );

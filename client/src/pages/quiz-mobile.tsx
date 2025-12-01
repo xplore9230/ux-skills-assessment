@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, memo, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProgressBar from "@/components/ProgressBar";
 import AnswerOption from "@/components/AnswerOption";
 import StackedCard from "@/components/StackedCard";
@@ -19,6 +19,7 @@ const QuizMobile = memo(function QuizMobile({ questions, onComplete, onBack, onH
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [shouldAnimateExit, setShouldAnimateExit] = useState(false);
   const [exitingQuestionId, setExitingQuestionId] = useState<string | null>(null);
+  const [isGoingBack, setIsGoingBack] = useState(false);
   const halfwayTriggeredRef = useRef(false);
   const cardContainerRef = useRef<HTMLDivElement>(null);
   const cardContentRef = useRef<HTMLDivElement>(null);
@@ -102,6 +103,7 @@ const QuizMobile = memo(function QuizMobile({ questions, onComplete, onBack, onH
 
     const updatedAnswers = { ...answers, [currentQuestion.id]: value };
     setAnswers(updatedAnswers);
+    setIsGoingBack(false); // Moving forward
     
     // Auto-advance to next question after a short delay
     if (isLastQuestion) {
@@ -130,6 +132,7 @@ const QuizMobile = memo(function QuizMobile({ questions, onComplete, onBack, onH
   }, [answers, currentQuestion.id, isLastQuestion, onComplete, missingOptions]);
 
   const handleNext = useCallback(() => {
+    setIsGoingBack(false); // Moving forward
     if (isLastQuestion && canGoNext) {
       onComplete(answers);
     } else if (canGoNext) {
@@ -151,6 +154,7 @@ const QuizMobile = memo(function QuizMobile({ questions, onComplete, onBack, onH
 
   const handlePrevious = useCallback(() => {
     if (canGoPrevious) {
+      setIsGoingBack(true); // User is going back
       setShouldAnimateExit(false); // No animation for previous
       setCurrentIndex((prev) => prev - 1);
     } else {
@@ -233,8 +237,17 @@ const QuizMobile = memo(function QuizMobile({ questions, onComplete, onBack, onH
                   overflowY: "auto",
                   zIndex: 10,
                 }}
-                className="rounded-[24px] p-6 flex flex-col justify-center"
+                className="rounded-[24px] p-6 flex flex-col justify-center relative overflow-visible"
               >
+                {/* Blurred sphere */}
+                <div 
+                  className="absolute right-[-100px] top-[-8px] w-[200px] h-[200px] pointer-events-none"
+                  style={{
+                    borderRadius: '200px',
+                    background: 'rgba(203, 222, 255, 0.30)',
+                    filter: 'blur(87px)',
+                  }}
+                />
                 <div className="space-y-3 text-center">
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {currentQuestion.category}
@@ -280,9 +293,22 @@ const QuizMobile = memo(function QuizMobile({ questions, onComplete, onBack, onH
               {currentIndex === 0 ? "Back to Home" : "Previous"}
             </Button>
 
-            <div className="text-sm text-muted-foreground">
-              {canGoNext ? "✓ Answer saved" : "Select an answer to continue"}
-            </div>
+            {canGoNext && isGoingBack && (
+              <Button
+                onClick={handleNext}
+                className="gap-2"
+                data-testid="button-next"
+              >
+                {isLastQuestion ? "Complete" : "Next"}
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            )}
+            
+            {(!canGoNext || !isGoingBack) && (
+              <div className="text-sm text-muted-foreground">
+                {canGoNext ? "✓ Answer saved" : "Select an answer to continue"}
+              </div>
+            )}
           </div>
         </div>
       </div>
