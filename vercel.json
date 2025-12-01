@@ -4,6 +4,11 @@
   "outputDirectory": "dist/public",
   "installCommand": "npm install --include=dev",
   "framework": null,
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "dist/index-vercel.js"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
