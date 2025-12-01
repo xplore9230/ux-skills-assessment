@@ -1134,7 +1134,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-019",
     title: "Design Ethics: Building Responsible Products",
-    url: "https://www.nngroup.com/articles/design-ethics/",
+    url: "https://www.nngroup.com/articles/ethical-design/",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "strategic-lead",
@@ -1146,7 +1146,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-020",
     title: "Scaling Design: Lessons from Top Companies",
-    url: "https://www.smashingmagazine.com/2021/11/scaling-design-teams-lessons-learned/",
+    url: "https://www.smashingmagazine.com/2019/01/scaling-design-teams/",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
