@@ -890,7 +890,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "emerging-029",
     title: "Competitive Analysis: A Step-by-Step Guide",
-    url: "https://www.nngroup.com/articles/competitive-analysis/",
+    url: "https://www.nngroup.com/articles/competitive-usability-evaluations/",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "emerging-senior",
@@ -1014,7 +1014,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-009",
     title: "Building a UX Team: Hiring and Structure",
-    url: "https://www.nngroup.com/articles/ux-team-structure/",
+    url: "https://www.nngroup.com/articles/ux-team-structure-organizations/",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
@@ -1038,7 +1038,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-011",
     title: "Design Leadership: From Craft to Strategy",
-    url: "https://www.smashingmagazine.com/2021/08/design-leadership-guide/",
+    url: "https://www.smashingmagazine.com/2018/10/design-leadership/",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
@@ -1050,7 +1050,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-012",
     title: "Measuring Design Impact at Scale",
-    url: "https://www.nngroup.com/articles/measuring-design-impact/",
+    url: "https://www.nngroup.com/articles/measuring-ux-and-roi/",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "strategic-lead",
@@ -1062,7 +1062,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-013",
     title: "Design Systems: Governance and Evolution",
-    url: "https://www.smashingmagazine.com/2022/01/design-systems-governance/",
+    url: "https://www.smashingmagazine.com/2019/03/design-systems-book/",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "strategic-lead",
@@ -1074,7 +1074,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-014",
     title: "Cross-Functional Collaboration: UX and Engineering",
-    url: "https://www.nngroup.com/articles/cross-functional-collaboration/",
+    url: "https://www.nngroup.com/articles/developer-designer-relationship/",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
@@ -1086,7 +1086,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-015",
     title: "Presenting UX Work to Executives",
-    url: "https://www.nngroup.com/articles/presenting-ux-work-executives/",
+    url: "https://www.nngroup.com/articles/presenting-ux-research-executives/",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
@@ -1098,7 +1098,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-016",
     title: "Design Culture: Building a User-Centered Organization",
-    url: "https://www.smashingmagazine.com/2020/01/design-culture-building-user-centered-organization/",
+    url: "https://www.smashingmagazine.com/2018/12/design-culture/",
     type: "article",
     category: "Collaboration & Communication",
     level: "strategic-lead",
@@ -1110,7 +1110,7 @@ export const knowledgeBank: Resource[] = [
   {
     id: "strategic-017",
     title: "UX Budget Planning: A Strategic Guide",
-    url: "https://www.nngroup.com/articles/ux-budget-planning/",
+    url: "https://www.nngroup.com/articles/ux-budget-allocation/",
     type: "article",
     category: "Product Thinking & Strategy",
     level: "strategic-lead",
