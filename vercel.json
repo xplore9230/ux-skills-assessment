@@ -6,7 +6,7 @@
   "framework": null,
   "functions": {
     "api/index.js": {
-      "includeFiles": "dist/index-vercel.js"
+      "includeFiles": ["dist/index-vercel.js"]
     }
   },
   "rewrites": [
