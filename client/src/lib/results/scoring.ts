@@ -27,8 +27,10 @@ import type {
  * Stage thresholds (inclusive lower bound)
  */
 const STAGE_THRESHOLDS = {
-  STRATEGIC_LEAD: 86,
-  EMERGING_SENIOR: 66,
+  STRATEGIC_LEAD_C_SUITE: 96,
+  STRATEGIC_LEAD_EXECUTIVE: 91,
+  STRATEGIC_LEAD_SENIOR: 84,
+  EMERGING_LEAD: 66,
   PRACTITIONER: 41,
   EXPLORER: 0,
 } as const;
@@ -183,11 +185,17 @@ function calculateTotalScore(categories: CategoryScore[]): number {
  * Derive career stage from total score
  */
 export function deriveStage(score: number): Stage {
-  if (score >= STAGE_THRESHOLDS.STRATEGIC_LEAD) {
-    return "Strategic Lead";
+  if (score >= STAGE_THRESHOLDS.STRATEGIC_LEAD_C_SUITE) {
+    return "Strategic Lead - C-Suite";
   }
-  if (score >= STAGE_THRESHOLDS.EMERGING_SENIOR) {
-    return "Emerging Senior";
+  if (score >= STAGE_THRESHOLDS.STRATEGIC_LEAD_EXECUTIVE) {
+    return "Strategic Lead - Executive";
+  }
+  if (score >= STAGE_THRESHOLDS.STRATEGIC_LEAD_SENIOR) {
+    return "Strategic Lead - Senior";
+  }
+  if (score >= STAGE_THRESHOLDS.EMERGING_LEAD) {
+    return "Emerging Lead";
   }
   if (score >= STAGE_THRESHOLDS.PRACTITIONER) {
     return "Practitioner";
@@ -319,9 +327,13 @@ export function getBandBgClass(band: Band): string {
  */
 export function getStageColorClass(stage: Stage): string {
   switch (stage) {
-    case "Strategic Lead":
+    case "Strategic Lead - C-Suite":
+      return "text-purple-300";
+    case "Strategic Lead - Executive":
       return "text-purple-400";
-    case "Emerging Senior":
+    case "Strategic Lead - Senior":
+      return "text-purple-500";
+    case "Emerging Lead":
       return "text-green-400";
     case "Practitioner":
       return "text-blue-400";
@@ -335,9 +347,13 @@ export function getStageColorClass(stage: Stage): string {
  */
 export function getStageBgClass(stage: Stage): string {
   switch (stage) {
-    case "Strategic Lead":
+    case "Strategic Lead - C-Suite":
+      return "bg-purple-400/10 border-purple-400/30";
+    case "Strategic Lead - Executive":
       return "bg-purple-500/10 border-purple-500/30";
-    case "Emerging Senior":
+    case "Strategic Lead - Senior":
+      return "bg-purple-600/10 border-purple-600/30";
+    case "Emerging Lead":
       return "bg-green-500/10 border-green-500/30";
     case "Practitioner":
       return "bg-blue-500/10 border-blue-500/30";

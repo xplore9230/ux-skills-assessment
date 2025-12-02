@@ -116,8 +116,10 @@ export function getAdvancedResources(
   const levelsByStage: Record<string, ResourceLevel[]> = {
     Explorer: ["practitioner"],
     Practitioner: ["emerging-senior"],
-    "Emerging Senior": ["emerging-senior", "strategic-lead"],
-    "Strategic Lead": ["strategic-lead"],
+    "Emerging Lead": ["emerging-senior", "strategic-lead"],
+    "Strategic Lead - Senior": ["strategic-lead"],
+    "Strategic Lead - Executive": ["strategic-lead"],
+    "Strategic Lead - C-Suite": ["strategic-lead"],
   };
 
   const levels = levelsByStage[stage] ?? ["emerging-senior", "strategic-lead"];

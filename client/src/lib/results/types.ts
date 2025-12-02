@@ -17,15 +17,19 @@ export type { Category, Resource, ResourceLevel, ResourceType };
 /**
  * Career stages based on total score
  * - Explorer: 0-40 (beginner)
- * - Practitioner: 41-65 (developing)
- * - Emerging Senior: 66-85 (proficient)
- * - Strategic Lead: 86-100 (expert)
+ * - Practitioner: 41-65 (developing, includes Senior Product Designer)
+ * - Emerging Lead: 66-83 (proficient, transitioning to leadership)
+ * - Strategic Lead - Senior: 84-90 (senior leadership, AVP level)
+ * - Strategic Lead - Executive: 91-95 (executive leadership, VP level)
+ * - Strategic Lead - C-Suite: 96-100 (C-suite level, SVP/CDO)
  */
 export type Stage = 
   | "Explorer" 
   | "Practitioner" 
-  | "Emerging Senior" 
-  | "Strategic Lead";
+  | "Emerging Lead" 
+  | "Strategic Lead - Senior"
+  | "Strategic Lead - Executive"
+  | "Strategic Lead - C-Suite";
 
 /**
  * Skill band classification

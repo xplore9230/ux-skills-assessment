@@ -877,10 +877,14 @@ function buildJobTitle(stage) {
       return "Junior Product Designer";
     case "Practitioner":
       return "Product Designer";
-    case "Emerging Senior":
-      return "Senior Product Designer";
-    case "Strategic Lead":
+    case "Emerging Lead":
       return "Lead Product Designer";
+    case "Strategic Lead - Senior":
+      return "Design Director";
+    case "Strategic Lead - Executive":
+      return "VP of Design";
+    case "Strategic Lead - C-Suite":
+      return "SVP of Design";
     default:
       return "Product Designer";
   }
@@ -1132,20 +1136,26 @@ var CATEGORY_WHITELIST = getCategories();
 var STAGE_TO_LEVEL = {
   Explorer: "explorer",
   Practitioner: "practitioner",
-  "Emerging Senior": "emerging-senior",
-  "Strategic Lead": "strategic-lead"
+  "Emerging Lead": "emerging-senior",
+  "Strategic Lead - Senior": "strategic-lead",
+  "Strategic Lead - Executive": "strategic-lead",
+  "Strategic Lead - C-Suite": "strategic-lead"
 };
 var STRETCH_LEVELS = {
   Explorer: ["practitioner"],
   Practitioner: ["emerging-senior"],
-  "Emerging Senior": ["strategic-lead"],
-  "Strategic Lead": ["strategic-lead"]
+  "Emerging Lead": ["strategic-lead"],
+  "Strategic Lead - Senior": ["strategic-lead"],
+  "Strategic Lead - Executive": ["strategic-lead"],
+  "Strategic Lead - C-Suite": ["strategic-lead"]
 };
 var STAGE_FOCUS_CATEGORIES = {
   Explorer: ["UX Fundamentals", "Collaboration & Communication"],
   Practitioner: ["UI Craft & Visual Design", "Collaboration & Communication"],
-  "Emerging Senior": ["User Research & Validation", "Product Thinking & Strategy"],
-  "Strategic Lead": ["Collaboration & Communication", "Product Thinking & Strategy"]
+  "Emerging Lead": ["User Research & Validation", "Product Thinking & Strategy"],
+  "Strategic Lead - Senior": ["Collaboration & Communication", "Product Thinking & Strategy"],
+  "Strategic Lead - Executive": ["Collaboration & Communication", "Product Thinking & Strategy"],
+  "Strategic Lead - C-Suite": ["Collaboration & Communication", "Product Thinking & Strategy"]
 };
 function getLevelForStage(stage) {
   return STAGE_TO_LEVEL[stage] ?? "explorer";

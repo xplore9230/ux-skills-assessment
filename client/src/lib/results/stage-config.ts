@@ -24,13 +24,21 @@ export const STAGE_TITLES: Record<Stage, TitleData> = {
     title: "Practitioner – Developing Your Craft",
     shortDescription: "You have solid fundamentals and growing expertise. Now focus on deepening specializations, improving research skills, and taking ownership of end-to-end design work.",
   },
-  "Emerging Senior": {
-    title: "Emerging Senior – End-to-End Flow Owner",
-    shortDescription: "You're transitioning to senior-level impact. Strengthen your strategic thinking, mentor others, and learn to influence product decisions beyond just design.",
+  "Emerging Lead": {
+    title: "Emerging Lead – Transitioning to Leadership",
+    shortDescription: "You're transitioning to leadership impact. Strengthen your strategic thinking, mentor others, and learn to influence product decisions beyond just design.",
   },
-  "Strategic Lead": {
-    title: "Strategic Lead – Design Strategist",
-    shortDescription: "You're operating at a senior/lead level. Focus on design leadership, organizational influence, and driving design culture across teams and products.",
+  "Strategic Lead - Senior": {
+    title: "Strategic Lead – Senior Leadership",
+    shortDescription: "You're operating at a senior leadership level. Focus on design direction, team influence, and driving design excellence across products.",
+  },
+  "Strategic Lead - Executive": {
+    title: "Strategic Lead – Executive Leadership",
+    shortDescription: "You're operating at an executive level. Focus on organizational design strategy, cross-functional influence, and building design culture at scale.",
+  },
+  "Strategic Lead - C-Suite": {
+    title: "Strategic Lead – C-Suite",
+    shortDescription: "You're operating at the highest level. Focus on design vision, organizational transformation, and driving design as a strategic business function.",
   },
 };
 
@@ -45,8 +53,10 @@ export const STAGE_TITLES: Record<Stage, TitleData> = {
 export const STAGE_ROLES: Record<Stage, string> = {
   "Explorer": "Junior Product Designer",
   "Practitioner": "Product Designer",
-  "Emerging Senior": "Senior Product Designer",
-  "Strategic Lead": "Lead Product Designer / Design Manager",
+  "Emerging Lead": "Lead Product Designer",
+  "Strategic Lead - Senior": "Design Director / AVP of Design",
+  "Strategic Lead - Executive": "VP of Design",
+  "Strategic Lead - C-Suite": "SVP of Design / Chief Design Officer",
 };
 
 /**
@@ -64,18 +74,32 @@ export const ALTERNATIVE_ROLES: Record<Stage, string[]> = {
     "Interaction Designer",
     "Product Designer II",
     "Mid-level UX Designer",
+    "Senior Product Designer",
   ],
-  "Emerging Senior": [
-    "Senior UX Designer",
-    "Senior Interaction Designer",
-    "UX Design Lead",
+  "Emerging Lead": [
+    "Principal Product Designer",
+    "Design Lead",
     "Staff Product Designer",
+    "Senior UX Designer",
   ],
-  "Strategic Lead": [
+  "Strategic Lead - Senior": [
     "Principal Product Designer",
     "Design Director",
     "Head of Design",
-    "VP of Design",
+    "AVP of Design",
+    "Senior Design Director",
+  ],
+  "Strategic Lead - Executive": [
+    "VP of Product Design",
+    "VP of UX",
+    "Senior VP of Design",
+    "Head of Design",
+  ],
+  "Strategic Lead - C-Suite": [
+    "Chief Design Officer (CDO)",
+    "Head of Design",
+    "Design VP",
+    "SVP of Design",
   ],
 };
 
@@ -200,7 +224,7 @@ export const STAGE_METADATA: Record<Stage, {
       "Improving research skills",
     ],
   },
-  "Emerging Senior": {
+  "Emerging Lead": {
     level: 3,
     yearsExperience: "4-7 years",
     keyFocus: [
@@ -209,13 +233,31 @@ export const STAGE_METADATA: Record<Stage, {
       "Influencing product decisions",
     ],
   },
-  "Strategic Lead": {
+  "Strategic Lead - Senior": {
     level: 4,
-    yearsExperience: "7+ years",
+    yearsExperience: "7-10 years",
     keyFocus: [
-      "Design leadership",
-      "Organizational influence",
-      "Driving design culture",
+      "Design direction",
+      "Team leadership",
+      "Driving design excellence",
+    ],
+  },
+  "Strategic Lead - Executive": {
+    level: 5,
+    yearsExperience: "10-15 years",
+    keyFocus: [
+      "Organizational strategy",
+      "Cross-functional influence",
+      "Building design culture",
+    ],
+  },
+  "Strategic Lead - C-Suite": {
+    level: 6,
+    yearsExperience: "15+ years",
+    keyFocus: [
+      "Design vision",
+      "Organizational transformation",
+      "Strategic business function",
     ],
   },
 };
@@ -227,8 +269,10 @@ export function getNextStage(currentStage: Stage): Stage | null {
   const progression: Stage[] = [
     "Explorer",
     "Practitioner",
-    "Emerging Senior",
-    "Strategic Lead",
+    "Emerging Lead",
+    "Strategic Lead - Senior",
+    "Strategic Lead - Executive",
+    "Strategic Lead - C-Suite",
   ];
   
   const currentIndex = progression.indexOf(currentStage);
@@ -246,8 +290,10 @@ export function getPreviousStage(currentStage: Stage): Stage | null {
   const progression: Stage[] = [
     "Explorer",
     "Practitioner",
-    "Emerging Senior",
-    "Strategic Lead",
+    "Emerging Lead",
+    "Strategic Lead - Senior",
+    "Strategic Lead - Executive",
+    "Strategic Lead - C-Suite",
   ];
   
   const currentIndex = progression.indexOf(currentStage);
