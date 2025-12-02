@@ -32,8 +32,6 @@ import DeepInsights from "./sections/DeepInsights";
 import ImprovementPlan from "./sections/ImprovementPlan";
 import TopPodcasts from "./sections/TopPodcasts";
 import NextRole from "./sections/NextRole";
-import { usePremiumAccess } from "@/context/PremiumAccessContext";
-import { FrustrationDiagnosisSection } from "./sections/FrustrationDiagnosis";
 
 /**
  * Results page props
@@ -122,7 +120,6 @@ export default function ResultsPage({
   nextRole,
 }: ResultsPageProps) {
   const navigate = useNavigate();
-  const { isPremium, openPaywall } = usePremiumAccess();
   
   const handleGoHome = () => {
     navigate("/");
@@ -197,17 +194,6 @@ export default function ResultsPage({
             categories={quizResults.categories}
           />
         </motion.section>
-        
-        {/* Frustration Diagnosis Input/Result (visible for premium) */}
-        {isPremium && (
-          <motion.section variants={sectionVariants} className="mb-12 md:mb-16">
-            <FrustrationDiagnosisSection
-              score={quizResults.totalScore}
-              stage={quizResults.stage as any}
-              categories={quizResults.categories}
-            />
-          </motion.section>
-        )}
         
         {/* Section 4: 3-Week Improvement Plan */}
         <motion.section id="improvement-plan" variants={sectionVariants} className="mb-12 md:mb-16">

@@ -10,9 +10,6 @@ import { CaretDown, CaretUp, Clock, Target, Lightning } from "@phosphor-icons/re
 import { motion, AnimatePresence } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ImprovementPlanData, PlanWeek, LoadingState } from "@/lib/results/types";
-import { usePremiumAccess } from "@/context/PremiumAccessContext";
-import PremiumUnlockButton from "@/components/premium/PremiumUnlockButton";
-import PaywallEntryCard from "@/components/premium/PaywallEntryCard";
 
 interface ImprovementPlanProps {
   data: ImprovementPlanData | null;
@@ -166,7 +163,6 @@ function WeekCardSkeleton() {
 }
 
 export default function ImprovementPlan({ data, status }: ImprovementPlanProps) {
-  const { isPremium, openPaywall } = usePremiumAccess();
   // Loading state
   if (status === "loading") {
     return (
@@ -249,39 +245,7 @@ export default function ImprovementPlan({ data, status }: ImprovementPlanProps) 
       
       {/* Week cards */}
       <div className="space-y-4">
-        {/* Always render Week 1 */}
-        {data.weeks.filter(w => w.weekNumber === 1).map((week) => (
-          <WeekCard key={week.weekNumber} week={week} />
-        ))}
-        {/* If not premium, show overlay for Week 2/3 */}
-        {!isPremium && (
-          <div className="relative rounded-xl overflow-hidden border border-border/30 min-h-[200px]">
-            {/* Preview of Week 2 underneath */}
-            {data.weeks.length > 1 && (
-              <div className="absolute inset-0 pointer-events-none z-0" style={{ opacity: 0.9 }}>
-                <WeekCard week={data.weeks[1]} />
-              </div>
-            )}
-            {/* Glass overlay with entry card */}
-            <div 
-              className="relative z-10 h-full w-full flex items-center justify-center p-6"
-              style={{
-                background: "rgba(255, 255, 255, 0.3)",
-                backdropFilter: "blur(7px)",
-              }}
-            >
-              <PaywallEntryCard
-                unlockType="roadmap"
-                onClick={() => openPaywall("roadmap")}
-                variant="overlay"
-                size="compact"
-                className="w-[186px]"
-              />
-            </div>
-          </div>
-        )}
-        {/* If premium, render the remaining weeks normally */}
-        {isPremium && data.weeks.filter(w => w.weekNumber > 1).map((week) => (
+        {data.weeks.map((week) => (
           <WeekCard key={week.weekNumber} week={week} />
         ))}
       </div>

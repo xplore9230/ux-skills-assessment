@@ -7,8 +7,6 @@
 import { ArrowSquareOut, Clock, BookOpen, Video, Headphones } from "@phosphor-icons/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DeepInsightsData, DeepInsight, LoadingState } from "@/lib/results/types";
-import { usePremiumAccess } from "@/context/PremiumAccessContext";
-import PaywallEntryCard from "@/components/premium/PaywallEntryCard";
 
 interface DeepInsightsProps {
   data: DeepInsightsData | null;
@@ -125,7 +123,6 @@ function InsightCardSkeleton() {
 }
 
 export default function DeepInsights({ data, status }: DeepInsightsProps) {
-  const { isPremium, openPaywall } = usePremiumAccess();
   // Loading state
   if (status === "loading" || status === "idle") {
     return (
@@ -185,34 +182,9 @@ export default function DeepInsights({ data, status }: DeepInsightsProps) {
       
       {/* Mixed grid layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {data.insights.slice(0, isPremium ? data.insights.length : 2).map((insight) => (
+        {data.insights.map((insight) => (
           <InsightCard key={insight.id} insight={insight} />
         ))}
-        {!isPremium && (
-          <div className="relative rounded-xl overflow-hidden min-h-[300px]">
-            {/* Actual third insight behind the glass */}
-            {data.insights.length > 2 && (
-              <div className="h-full w-full">
-                <InsightCard insight={data.insights[2]} />
-              </div>
-            )}
-            {/* Glass overlay with entry card – this blurs the card underneath */}
-            <div 
-              className="absolute inset-0 z-10 h-full w-full flex items-center justify-center p-6"
-              style={{
-                background: "rgba(255, 255, 255, 0.3)",
-                backdropFilter: "blur(7px)",
-              }}
-            >
-              <PaywallEntryCard
-                unlockType="design-system"
-                onClick={() => openPaywall("design-system")}
-                variant="overlay"
-                className="w-[250px]"
-              />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

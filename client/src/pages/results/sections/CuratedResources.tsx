@@ -7,8 +7,6 @@
 import { ArrowSquareOut, Clock, BookOpen, Video, Headphones } from "@phosphor-icons/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { CuratedResourcesData, CuratedResource, LoadingState } from "@/lib/results/types";
-import { usePremiumAccess } from "@/context/PremiumAccessContext";
-import PaywallEntryCard from "@/components/premium/PaywallEntryCard";
 
 interface CuratedResourcesProps {
   data: CuratedResourcesData | null;
@@ -102,7 +100,6 @@ function ResourceCardSkeleton() {
 }
 
 export default function CuratedResources({ data, status }: CuratedResourcesProps) {
-  const { isPremium, openPaywall } = usePremiumAccess();
   // Loading state
   if (status === "loading" || status === "idle") {
     return (
@@ -162,34 +159,9 @@ export default function CuratedResources({ data, status }: CuratedResourcesProps
       
       {/* Horizontal scroll carousel */}
       <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
-        {data.resources.slice(0, isPremium ? data.resources.length : 2).map((resource) => (
+        {data.resources.map((resource) => (
           <ResourceCard key={resource.id} resource={resource} />
         ))}
-        {!isPremium && (
-          <div className="flex-shrink-0 w-72 md:w-80 relative rounded-xl overflow-hidden">
-            {/* Blurred preview of next resource */}
-            {data.resources.length > 2 && (
-              <div className="absolute inset-0 pointer-events-none z-0" style={{ opacity: 0.9 }}>
-                <ResourceCard resource={data.resources[2]} />
-              </div>
-            )}
-            {/* Glass overlay with entry card */}
-            <div 
-              className="relative z-10 h-full w-full flex items-center justify-center p-6"
-              style={{
-                background: "rgba(255, 255, 255, 0.3)",
-                backdropFilter: "blur(7px)",
-              }}
-            >
-              <PaywallEntryCard
-                unlockType="resources"
-                onClick={() => openPaywall("resources")}
-                variant="overlay"
-                className="w-[250px]"
-              />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

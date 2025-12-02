@@ -8,13 +8,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import LandingPage from "@/pages/landing";
 import QuizWrapper from "@/pages/QuizWrapper";
 import ResultsEntry from "@/pages/results";
-import PremiumQuizWrapper from "@/pages/premium/PremiumQuizWrapper";
-import PremiumResultsEntry from "@/pages/premium/PremiumResultsEntry";
-import PaymentSuccess from "@/pages/premium/payment-success";
-import UnlockCardsDemo from "@/pages/premium/unlock-cards-demo";
-import PaywallModal from "@/components/premium/PaywallModal";
-import { PremiumAccessProvider, usePremiumAccess } from "@/context/PremiumAccessContext";
-import UXLevelProPricing from "@/pages/pricing/uxlevel-pro";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import ContentReviewPage from "@/pages/admin/ContentReview";
 import ContentDetailPage from "@/pages/admin/ContentDetail";
@@ -69,31 +62,20 @@ function App() {
             </a>
             <Toaster />
             <ConditionalAnalytics />
-            <PremiumAccessProvider>
-              <main id="main-content">
-                <Routes>
-                  <Route path="/" element={<LandingPageWrapper />} />
-                  <Route path="/quiz" element={<QuizWrapper />} />
-                  <Route path="/results" element={<ResultsEntry />} />
-                  <Route path="/results/:resultId" element={<ResultsEntry />} />
-                  
-                  {/* Premium Routes (kept for now; will be deprecated) */}
-                  <Route path="/premium/quiz" element={<QuizWrapper />} />
-                  <Route path="/premium/results" element={<ResultsEntry />} />
-                  <Route path="/premium/results/:resultId" element={<ResultsEntry />} />
-                  <Route path="/premium/payment-success" element={<PaymentSuccess />} />
-                  <Route path="/premium/unlock-cards-demo" element={<UnlockCardsDemo />} />
-                  {/* Pricing */}
-                  <Route path="/pricing/pro" element={<UXLevelProPricing />} />
-                  {/* Admin / knowledge bank management (no auth yet) */}
-                  <Route path="/admin" element={<AdminDashboard />} />
-                  <Route path="/admin/content" element={<ContentReviewPage />} />
-                  <Route path="/admin/content/detail" element={<ContentDetailPage />} />
-                  <Route path="/admin/pending" element={<PendingReviewPage />} />
-                </Routes>
-              </main>
-              <GlobalPaywallHost />
-            </PremiumAccessProvider>
+            <main id="main-content">
+              <Routes>
+                <Route path="/" element={<LandingPageWrapper />} />
+                <Route path="/quiz" element={<QuizWrapper />} />
+                <Route path="/results" element={<ResultsEntry />} />
+                <Route path="/results/:resultId" element={<ResultsEntry />} />
+                
+                {/* Admin / knowledge bank management (no auth yet) */}
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/content" element={<ContentReviewPage />} />
+                <Route path="/admin/content/detail" element={<ContentDetailPage />} />
+                <Route path="/admin/pending" element={<PendingReviewPage />} />
+              </Routes>
+            </main>
           </TooltipProvider>
         </MotionConfig>
       </BrowserRouter>
@@ -102,18 +84,3 @@ function App() {
 }
 
 export default App;
-
-function GlobalPaywallHost() {
-  const { isPaywallOpen, unlockType, closePaywall, startCheckout } = usePremiumAccess();
-  return (
-    <PaywallModal
-      isOpen={isPaywallOpen}
-      unlockType={unlockType}
-      onClose={closePaywall}
-      onConfirm={(type) => {
-        // type-aware checkout; we can extend later if needed
-        startCheckout(window.location.pathname);
-      }}
-    />
-  );
-}
