@@ -1,3 +1,20 @@
+/**
+ * ✅ This file IS deployed to Vercel Production
+ * 
+ * Repository: ux-skills-assessment (Frontend repository)
+ * Deployment Target: ✅ Vercel (Production)
+ * 
+ * Changes made here WILL be deployed to production via Vercel.
+ * This file contains Node.js serverless functions that run on Vercel.
+ * 
+ * ⚠️ WARNING: Do NOT modify server/routes.ts in ux-skills-assessment-backend
+ *    (That file is NOT deployed - local dev only)
+ * 
+ * See DEPLOYMENT_MAP.md for complete file-to-deployment mapping.
+ * 
+ * Last Updated: 2025-12-04
+ */
+
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import fs from "node:fs";
@@ -1195,11 +1212,13 @@ app.get("/api/debug/rag-config", (_req, res) => {
 });
 
 // Helper to fetch RAG context from Python backend
+// OPTIMIZED: Increased timeout to 20s for parallel queries + caching
 async function fetchRAGContext(stage: string, categories: any[]): Promise<any[]> {
   try {
-    // Set timeout for cross-cloud communication (10s for Vercel → Railway)
+    // Increased timeout: 20s for parallel queries + caching (was 10s)
+    // With optimizations: First request 3-5s, cached requests <100ms
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
     
     const ragUrl = getRAGUrl();
     const response = await fetch(`${ragUrl}/api/rag/retrieve`, {
@@ -1212,7 +1231,7 @@ async function fetchRAGContext(stage: string, categories: any[]): Promise<any[]>
           score: c.finalScore || c.score,
           maxScore: 100
         })),
-        top_k: 5
+        top_k: 15  // Request more resources for better diversity
       }),
       signal: controller.signal
     });
@@ -1221,15 +1240,23 @@ async function fetchRAGContext(stage: string, categories: any[]): Promise<any[]>
     
     if (response.ok) {
       const data = await response.json();
-      if (data && Array.isArray(data.resources)) {
+      if (data && Array.isArray(data.resources) && data.resources.length > 0) {
         console.log(`✓ RAG Context: Retrieved ${data.resources.length} resources`);
         return data.resources;
+      } else {
+        console.warn(`⚠ RAG returned empty results - check Railway logs`);
       }
+    } else {
+      console.warn(`⚠ RAG request failed: ${response.status} ${response.statusText}`);
     }
   } catch (error) {
-    // Silent failure for RAG - fallback to pure OpenAI
+    // Log error - RAG is critical for ProductHunt launch
     const ragUrl = getRAGUrl();
-    console.warn(`RAG Context Retrieval skipped (URL: ${ragUrl}):`, error instanceof Error ? error.message : "Unknown error");
+    console.error(`❌ RAG Context Retrieval FAILED (URL: ${ragUrl}):`, 
+      error instanceof Error ? error.message : "Unknown error");
+    
+    // Don't throw - return empty array so OpenAI can still generate
+    // But log error so we know RAG is failing
   }
   return [];
 }
