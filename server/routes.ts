@@ -1170,14 +1170,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
 // These endpoints support the new results page with fresh logic.
 // They utilize OpenAI if configured, or fall back to template generation.
 
+// Helper: Get RAG URL from environment
+// Updated: 2025-12-04 - Increased timeout to 10s for cross-cloud communication
+function getRAGUrl(): string {
+  return process.env.PYTHON_API_URL || process.env.RAG_API_URL || "http://localhost:8000";
+}
+
+// Diagnostic endpoint to check RAG configuration
+app.get("/api/debug/rag-config", (_req, res) => {
+  const ragUrl = getRAGUrl();
+  const hasOpenAI = !!process.env.OPENAI_API_KEY;
+  const hasPythonUrl = !!process.env.PYTHON_API_URL;
+  const hasRagUrl = !!process.env.RAG_API_URL;
+  
+  return res.json({
+    ragUrl,
+    configured: {
+      OPENAI_API_KEY: hasOpenAI,
+      PYTHON_API_URL: hasPythonUrl,
+      RAG_API_URL: hasRagUrl,
+    },
+    env: process.env.NODE_ENV || "development"
+  });
+});
+
 // Helper to fetch RAG context from Python backend
 async function fetchRAGContext(stage: string, categories: any[]): Promise<any[]> {
   try {
-    // Set a short timeout (2s) to ensure RAG doesn't slow down the response
+    // Set timeout for cross-cloud communication (10s for Vercel → Railway)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     
-    const response = await fetch("http://localhost:8000/api/rag/retrieve", {
+    const ragUrl = getRAGUrl();
+    const response = await fetch(`${ragUrl}/api/rag/retrieve`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -1203,7 +1228,8 @@ async function fetchRAGContext(stage: string, categories: any[]): Promise<any[]>
     }
   } catch (error) {
     // Silent failure for RAG - fallback to pure OpenAI
-    console.warn("RAG Context Retrieval skipped:", error instanceof Error ? error.message : "Unknown error");
+    const ragUrl = getRAGUrl();
+    console.warn(`RAG Context Retrieval skipped (URL: ${ragUrl}):`, error instanceof Error ? error.message : "Unknown error");
   }
   return [];
 }
@@ -1212,8 +1238,9 @@ async function fetchRAGContext(stage: string, categories: any[]): Promise<any[]>
 async function fetchLearningPaths(categories: string[]): Promise<any> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-    const response = await fetch("http://localhost:8000/api/rag/learning-paths", {
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const ragUrl = getRAGUrl();
+    const response = await fetch(`${ragUrl}/api/rag/learning-paths`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ categories }),
@@ -1221,7 +1248,10 @@ async function fetchLearningPaths(categories: string[]): Promise<any> {
     });
     clearTimeout(timeoutId);
     if (response.ok) return (await response.json()).paths;
-  } catch (e) { console.warn("Learning Path RAG skipped"); }
+  } catch (e) {
+    const ragUrl = getRAGUrl();
+    console.warn(`Learning Path RAG skipped (URL: ${ragUrl}):`, e instanceof Error ? e.message : "Unknown error");
+  }
   return {};
 }
 
@@ -1229,8 +1259,9 @@ async function fetchLearningPaths(categories: string[]): Promise<any> {
 async function fetchStageCompetencies(stage: string): Promise<any[]> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-    const response = await fetch("http://localhost:8000/api/rag/stage-competencies", {
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const ragUrl = getRAGUrl();
+    const response = await fetch(`${ragUrl}/api/rag/stage-competencies`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ stage }),
@@ -1238,7 +1269,10 @@ async function fetchStageCompetencies(stage: string): Promise<any[]> {
     });
     clearTimeout(timeoutId);
     if (response.ok) return (await response.json()).competencies;
-  } catch (e) { console.warn("Stage Comp RAG skipped"); }
+  } catch (e) {
+    const ragUrl = getRAGUrl();
+    console.warn(`Stage Comp RAG skipped (URL: ${ragUrl}):`, e instanceof Error ? e.message : "Unknown error");
+  }
   return [];
 }
 
@@ -1246,8 +1280,9 @@ async function fetchStageCompetencies(stage: string): Promise<any[]> {
 async function fetchSkillRelationships(weak: string[], strong: string[]): Promise<any[]> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-    const response = await fetch("http://localhost:8000/api/rag/skill-relationships", {
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const ragUrl = getRAGUrl();
+    const response = await fetch(`${ragUrl}/api/rag/skill-relationships`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ weak_categories: weak, strong_categories: strong }),
@@ -1255,7 +1290,10 @@ async function fetchSkillRelationships(weak: string[], strong: string[]): Promis
     });
     clearTimeout(timeoutId);
     if (response.ok) return (await response.json()).relationships;
-  } catch (e) { console.warn("Skill Rel RAG skipped"); }
+  } catch (e) {
+    const ragUrl = getRAGUrl();
+    console.warn(`Skill Rel RAG skipped (URL: ${ragUrl}):`, e instanceof Error ? e.message : "Unknown error");
+  }
   return [];
 }
 
