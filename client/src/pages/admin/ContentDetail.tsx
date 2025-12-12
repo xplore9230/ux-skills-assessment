@@ -25,13 +25,15 @@ export default function ContentDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!id) return;
+    const idParam = id;
+    if (!idParam) return;
+    const encodedId = encodeURIComponent(idParam);
 
     let cancelled = false;
     async function load() {
       try {
         const res = await fetch(
-          `${PY_API_BASE}/api/admin/content/${encodeURIComponent(id)}`
+          `${PY_API_BASE}/api/admin/content/${encodedId}`
         );
         if (!res.ok) {
           throw new Error(`Detail error: ${res.status}`);
