@@ -47,7 +47,7 @@ export class MemStorage implements IStorage {
   }
 
   async createDeviceAccess(insertDeviceAccess: InsertDeviceAccess): Promise<DeviceAccess> {
-    const now = new Date().toISOString();
+    const now = new Date();
     const deviceAccess: DeviceAccess = {
       deviceId: insertDeviceAccess.deviceId,
       attemptCount: insertDeviceAccess.attemptCount ?? 0,
@@ -67,7 +67,7 @@ export class MemStorage implements IStorage {
     const updated: DeviceAccess = {
       ...existing,
       ...updates,
-      updatedAt: new Date().toISOString(),
+      updatedAt: new Date(),
     };
     this.deviceAccessMap.set(deviceId, updated);
     return updated;
