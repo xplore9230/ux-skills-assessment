@@ -27,10 +27,10 @@ import type {
  * Stage thresholds (inclusive lower bound)
  */
 const STAGE_THRESHOLDS = {
-  STRATEGIC_LEAD_C_SUITE: 96,
-  STRATEGIC_LEAD_EXECUTIVE: 91,
-  STRATEGIC_LEAD_SENIOR: 84,
-  EMERGING_LEAD: 66,
+  STRATEGIC_LEAD_C_SUITE: 95,
+  STRATEGIC_LEAD_EXECUTIVE: 90,
+  STRATEGIC_LEAD_SENIOR: 85,
+  EMERGING_LEAD: 81,  // Requires >80 - tightened from 66
   PRACTITIONER: 41,
   EXPLORER: 0,
 } as const;

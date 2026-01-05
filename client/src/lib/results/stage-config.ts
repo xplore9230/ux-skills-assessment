@@ -26,7 +26,7 @@ export const STAGE_TITLES: Record<Stage, TitleData> = {
   },
   "Emerging Lead": {
     title: "Emerging Lead – Transitioning to Leadership",
-    shortDescription: "You're transitioning to leadership impact. Strengthen your strategic thinking, mentor others, and learn to influence product decisions beyond just design.",
+    shortDescription: "With a score above 80, you're transitioning to leadership impact. Strengthen your strategic thinking, mentor others, and learn to influence product decisions beyond just design.",
   },
   "Strategic Lead - Senior": {
     title: "Strategic Lead – Senior Leadership",
@@ -52,8 +52,8 @@ export const STAGE_TITLES: Record<Stage, TitleData> = {
  */
 export const STAGE_ROLES: Record<Stage, string> = {
   "Explorer": "Junior Product Designer",
-  "Practitioner": "Product Designer",
-  "Emerging Lead": "Lead Product Designer",
+  "Practitioner": "Senior Product Designer",  // Now covers 41-80, includes senior level
+  "Emerging Lead": "Staff Product Designer",  // 81-84, transitioning to leadership
   "Strategic Lead - Senior": "Design Director / AVP of Design",
   "Strategic Lead - Executive": "VP of Design",
   "Strategic Lead - C-Suite": "SVP of Design / Chief Design Officer",
@@ -71,15 +71,15 @@ export const ALTERNATIVE_ROLES: Record<Stage, string[]> = {
   ],
   "Practitioner": [
     "UX Designer",
-    "Interaction Designer",
-    "Product Designer II",
-    "Mid-level UX Designer",
+    "Product Designer",
+    "Senior UX Designer", 
     "Senior Product Designer",
+    "Product Designer II",
   ],
   "Emerging Lead": [
+    "Staff Product Designer",
     "Principal Product Designer",
     "Design Lead",
-    "Staff Product Designer",
     "Senior UX Designer",
   ],
   "Strategic Lead - Senior": [

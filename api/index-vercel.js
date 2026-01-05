@@ -315,7 +315,7 @@ var knowledgeBank = [
     source: "YouTube"
   },
   // ========================================
-  // PRACTITIONER (41-65) — UI Craft & Systems
+  // PRACTITIONER (41-80) — UI Craft & Systems
   // ========================================
   {
     id: "practitioner-001",
@@ -426,7 +426,7 @@ var knowledgeBank = [
     source: "UX Collective"
   },
   // ========================================
-  // EMERGING SENIOR (66-85) — Research & Product Strategy
+  // EMERGING SENIOR (81-84) — Research & Product Strategy
   // ========================================
   {
     id: "emerging-001",

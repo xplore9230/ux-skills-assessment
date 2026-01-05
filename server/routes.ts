@@ -269,7 +269,8 @@ function generateMeaningText(
   const stageMeanings: Record<string, string> = {
     "Explorer": `As an Explorer with a score of ${totalScore}, you're building your UX foundation. ${strongText} ${weakText} Keep learning and practicing to develop your skills.`,
     "Practitioner": `As a Practitioner scoring ${totalScore}, you have solid fundamentals. ${strongText} ${weakText} Focus on deepening your expertise and taking ownership of projects.`,
-    "Emerging Senior": `At ${totalScore} as an Emerging Senior, you're transitioning to strategic impact. ${strongText} ${weakText} Develop your leadership skills and mentor others.`,
+    "Emerging Senior": `At ${totalScore} as an Emerging Senior, you've achieved a score above 80 and are transitioning to strategic impact. ${strongText} ${weakText} Develop your leadership skills and mentor others.`,
+    "Emerging Lead": `At ${totalScore} as an Emerging Lead, you've achieved a score above 80 and are transitioning to strategic impact. ${strongText} ${weakText} Develop your leadership skills and mentor others.`,
     "Strategic Lead": `With a score of ${totalScore} as a Strategic Lead, you're operating at a high level. ${strongText} ${weakText} Focus on organizational influence and driving design culture.`,
   };
   
@@ -851,8 +852,8 @@ const STAGE_FOCUS_CATEGORIES: Record<string, Category[]> = {
 
 const STAGE_DESCRIPTIONS: Record<string, string> = {
   "Explorer": "Entry-level UX designer learning fundamentals. Focus on building core skills, understanding basic UX principles, and getting hands-on experience with real projects.",
-  "Practitioner": "Mid-level UX designer (including Senior Product Designer). Focus on deepening expertise in specific areas, taking ownership of end-to-end design work, and improving research and craft skills.",
-  "Emerging Lead": "Senior individual contributor transitioning to leadership. Focus on strategic thinking, mentoring others, and learning to influence product decisions beyond just design execution.",
+  "Practitioner": "Mid-level UX designer (including Senior Product Designer). Scores 41-80. Focus on deepening expertise in specific areas, taking ownership of end-to-end design work, and improving research and craft skills.",
+  "Emerging Lead": "Senior individual contributor transitioning to leadership. Requires score above 80 (81-84). Focus on strategic thinking, mentoring others, and learning to influence product decisions beyond just design execution.",
   "Strategic Lead - Senior": "Design Director/AVP level. Focus on design direction, team leadership, driving design excellence across products, and establishing design processes and standards.",
   "Strategic Lead - Executive": "VP of Design level. Focus on organizational design strategy, cross-functional influence at the executive level, building design culture at scale, and connecting design to business outcomes.",
   "Strategic Lead - C-Suite": "SVP/CDO/Chief Design Officer level. Focus on design vision and organizational transformation, board-level presentations, driving design as a strategic business function, and shaping company-wide design strategy.",

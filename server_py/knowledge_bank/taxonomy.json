@@ -11,24 +11,24 @@
     {
       "id": "practitioner",
       "label": "Practitioner",
-      "description": "Can handle features with guidance, focusing on depth.",
-      "range": { "min": 41, "max": 65 },
+      "description": "Can handle features with guidance, focusing on depth. Scores 41-80.",
+      "range": { "min": 41, "max": 80 },
       "colorToken": "level.practitioner",
       "order": 2
     },
     {
       "id": "emerging_senior",
       "label": "Emerging Senior",
-      "description": "Driving flows end-to-end, sharpening strategy and systems thinking.",
-      "range": { "min": 66, "max": 85 },
+      "description": "Driving flows end-to-end, sharpening strategy and systems thinking. Requires score above 80 (81-84).",
+      "range": { "min": 81, "max": 84 },
       "colorToken": "level.emerging_senior",
       "order": 3
     },
     {
       "id": "strategic_lead",
       "label": "Strategic Lead",
-      "description": "High-level, focusing on strategy, org influence, and systems.",
-      "range": { "min": 86, "max": 100 },
+      "description": "High-level, focusing on strategy, org influence, and systems. Scores 85-100.",
+      "range": { "min": 85, "max": 100 },
       "colorToken": "level.strategic_lead",
       "order": 4
     }
